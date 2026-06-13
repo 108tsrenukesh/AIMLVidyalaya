@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Neural Networks — The Visual Climb</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222840;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f2f8;--text2:#b0bace;--text3:#6b7594;--accent:#5b8dee;--accent2:#8b6cf7;--teal:#30d4a8;--coral:#f96e4f;--amber:#f5a623;--green:#4cca78;--red:#e05c5c;--pink:#e86cad;--font-display:'Fraunces',serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;--radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.32)}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#fff;--bg3:#eef1f8;--bg4:#e0e6f0;--border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);--text:#111827;--text2:#374151;--text3:#6b7280;--accent:#2563eb;--accent2:#7c3aed;--teal:#0d9488;--coral:#dc4e2a;--amber:#d97706;--green:#16a34a;--red:#dc2626;--pink:#db2777;--shadow:0 4px 24px rgba(0,0,0,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:200;background:var(--bg3);border:1px solid var(--border2);border-radius:24px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:var(--font-body);color:var(--text2);font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:var(--shadow)}
+.theme-toggle:hover{color:var(--text);border-color:var(--accent)}
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:54px;backdrop-filter:blur(12px)}
+.nav-brand{font-family:var(--font-display);font-size:19px;color:var(--text);margin-right:2rem;white-space:nowrap;font-weight:600}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:54px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.03em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.hero{padding:84px 0 64px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(91,141,238,.10) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,62px);line-height:1.07;color:var(--text);margin-bottom:18px;font-weight:300}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:600}
+.hero-sub{font-size:17px;color:var(--text2);max-width:660px;margin:0 auto 32px;line-height:1.65}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;max-width:760px;margin:0 auto 30px}
+.hero-tag{font-family:var(--font-mono);font-size:11px;padding:5px 13px;border:1px solid var(--border2);border-radius:20px;color:var(--text3)}
+.hero-stats{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:8px}
+.hero-stat{text-align:center}
+.hero-stat .n{font-family:var(--font-mono);font-size:24px;font-weight:500;color:var(--accent)}
+.hero-stat .l{font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;margin-top:2px}
+.container{max-width:1120px;margin:0 auto;padding:0 2rem}
+.section{padding:64px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);color:var(--text);margin-bottom:14px;line-height:1.15;font-weight:300}
+.section-sub{font-size:15px;color:var(--text2);max-width:720px;margin-bottom:36px;line-height:1.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.badge{display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:500;padding:3px 9px;border-radius:20px;margin-right:5px;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.b-blue{background:rgba(91,141,238,.15);color:#7aabff;border:1px solid rgba(91,141,238,.25)}
+.b-teal{background:rgba(48,212,168,.12);color:#30d4a8;border:1px solid rgba(48,212,168,.2)}
+.b-coral{background:rgba(249,110,79,.12);color:#f96e4f;border:1px solid rgba(249,110,79,.2)}
+.b-green{background:rgba(76,202,120,.12);color:#4cca78;border:1px solid rgba(76,202,120,.2)}
+.b-amber{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2)}
+.b-purple{background:rgba(139,108,247,.12);color:#b09aff;border:1px solid rgba(139,108,247,.2)}
+.b-red{background:rgba(224,92,92,.12);color:#e05c5c;border:1px solid rgba(224,92,92,.2)}
+[data-theme="light"] .b-blue{background:rgba(37,99,235,.10);color:#1d4ed8;border-color:rgba(37,99,235,.25)}
+[data-theme="light"] .b-teal{background:rgba(13,148,136,.10);color:#0f766e;border-color:rgba(13,148,136,.25)}
+[data-theme="light"] .b-green{background:rgba(22,163,74,.10);color:#15803d;border-color:rgba(22,163,74,.25)}
+[data-theme="light"] .b-amber{background:rgba(217,119,6,.10);color:#b45309;border-color:rgba(217,119,6,.25)}
+[data-theme="light"] .b-purple{background:rgba(124,58,237,.10);color:#6d28d9;border-color:rgba(124,58,237,.25)}
+h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:7px}
+h5{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+p{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:20px;line-height:1.75}
+li{margin-bottom:6px}strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1);color:var(--accent);padding:2px 6px;border-radius:4px}
+.code-block{background:#0a0d14;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;font-family:var(--font-mono);font-size:12.5px;color:#c9d1d9;overflow-x:auto;margin:14px 0;line-height:1.7;position:relative;white-space:pre}
+[data-theme="light"] .code-block{background:#1e2330;color:#e2e8f5}
+.code-block .kw{color:#ff7b72}.code-block .fn{color:#d2a8ff}.code-block .st{color:#a5d6ff}.code-block .cm{color:#5d6580;font-style:italic}.code-block .num{color:#f2cc60}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--bg4);color:var(--text3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.7;border-left:3px solid}
+.alert-info{background:rgba(91,141,238,.07);border-color:var(--accent)}
+.alert-warn{background:rgba(245,166,35,.07);border-color:var(--amber)}
+.alert-success{background:rgba(76,202,120,.07);border-color:var(--green)}
+.alert-danger{background:rgba(224,92,92,.07);border-color:var(--red)}
+.pipeline{position:relative;padding-left:36px}
+.pipeline::before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2));opacity:.3}
+.pipe-item{position:relative;margin-bottom:20px}
+.pipe-dot{position:absolute;left:-29px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--bg4);border:2px solid var(--accent)}
+.pipe-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.pipe-body{font-size:14px;color:var(--text2);line-height:1.65}
+.formula{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:var(--font-mono);font-size:14px;color:var(--teal);text-align:center;margin:14px 0;overflow-x:auto}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-size:13px;font-weight:500;color:var(--text3);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s,border-color .2s;font-family:var(--font-body)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.algo-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:24px;transition:border-color .2s}
+.algo-card:hover{border-color:var(--border2)}
+.algo-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px}
+.algo-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:var(--font-mono);flex-shrink:0}
+.algo-body{padding:20px 24px}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.compare-table th{background:var(--bg3);color:var(--text2);font-weight:500;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:14px}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:700px){.pros-cons{grid-template-columns:1fr}}
+.qa-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.qa-filter-btn{font-size:12px;font-family:var(--font-mono);padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .2s}
+.qa-filter-btn:hover,.qa-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.qa-q{padding:14px 18px;font-size:15px;font-weight:500;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:var(--bg3);line-height:1.45}
+.qa-q:hover{background:var(--bg4)}
+.qa-q-text{flex:1}
+.qa-meta{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.qa-arrow{font-size:12px;color:var(--text3);transition:transform .2s}
+.qa-item.open .qa-arrow{transform:rotate(180deg)}
+.qa-a{padding:16px 18px;font-size:14px;color:var(--text2);line-height:1.72;border-top:1px solid var(--border);display:none;background:var(--bg2)}
+.qa-a p{font-size:14px;margin-bottom:8px}
+.qa-item.open .qa-a{display:block}
+.qa-difficulty{font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.diff-beginner{background:rgba(76,202,120,.15);color:#4cca78}
+.diff-intermediate{background:rgba(91,141,238,.15);color:#6ea8fe}
+.diff-advanced{background:rgba(245,166,35,.15);color:#f5a623}
+.diff-expert{background:rgba(249,110,79,.15);color:#f96e4f}
+.usecase-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;transition:border-color .2s}
+.usecase-card:hover{border-color:var(--border2)}
+.usecase-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.usecase-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.usecase-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px}
+.usecase-industry{font-size:11px;font-family:var(--font-mono);color:var(--text3)}
+.usecase-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.usecase-body{grid-template-columns:1fr}}
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:14px;transition:border-color .2s}
+.ex-block:hover{border-color:var(--border2)}
+.ex-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ex-num{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.ex-title{font-size:16px;font-weight:600;color:var(--text);margin:4px 0 8px}
+.ex-body{font-size:14px;color:var(--text2);line-height:1.7}
+.ex-hint{font-size:13px;color:var(--text3);margin-top:10px;font-style:italic;padding:9px 12px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--amber)}
+.ex-project-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:7px 14px;background:rgba(91,141,238,.10);border:1px solid rgba(91,141,238,.25);border-radius:8px;font-size:13px;color:var(--accent);cursor:pointer;transition:all .2s;text-decoration:none;font-weight:500}
+.ex-project-link:hover{background:rgba(91,141,238,.18)}
+.ref-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;text-decoration:none}
+.ref-card:hover{border-color:var(--accent)}
+.ref-num{font-family:var(--font-mono);font-size:11px;color:var(--text3);min-width:26px;padding-top:2px}
+.ref-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ref-meta{font-size:12px;color:var(--text3);line-height:1.5}
+.ref-tag{font-size:10px;font-family:var(--font-mono);color:var(--accent);background:rgba(91,141,238,.1);padding:2px 7px;border-radius:10px;display:inline-block;margin-top:5px}
+.deploy-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.deploy-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-26px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tl-body{font-size:14px;color:var(--text2);line-height:1.6}
+#top-btn{position:fixed;bottom:26px;right:26px;background:var(--accent);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(91,141,238,.4)}
+#top-btn.visible{opacity:1}
+@media(min-width:1250px){.main-layout{display:grid;grid-template-columns:210px 1fr}.toc{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:20px 0;border-right:1px solid var(--border);scrollbar-width:thin}.toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 18px 4px;letter-spacing:.08em;text-transform:uppercase}.toc-link{display:block;font-size:13px;color:var(--text3);padding:5px 18px;cursor:pointer;transition:color .15s;border-left:2px solid transparent}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--accent);border-left-color:var(--accent)}}
+.cite{color:var(--accent);font-size:12px;text-decoration:none;font-family:var(--font-mono);padding:2px 7px;background:rgba(91,141,238,.1);border-radius:4px;display:inline-block;margin-top:4px}
+.cite:hover{background:rgba(91,141,238,.2)}
+.viz-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0}
+.viz-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.viz-svg{width:100%;overflow:visible}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
+.metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<style>
+/* ---- Visual Primer additions: climb pedagogy + animations ---- */
+.climb-meter{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
+.climb-step{display:flex;align-items:center;gap:6px;font-size:11px;font-family:var(--font-mono);padding:5px 11px;border-radius:20px;border:1px solid var(--border2);color:var(--text3)}
+.climb-step.on{border-color:var(--accent);color:var(--accent);background:rgba(91,141,238,.08)}
+.climb-arrow{color:var(--text3);font-size:12px}
+.lvl{display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:12px;font-weight:600;padding:4px 12px;border-radius:20px;margin-bottom:12px;letter-spacing:.03em}
+.lvl-kid{background:rgba(76,202,120,.14);color:#4cca78;border:1px solid rgba(76,202,120,.3)}
+.lvl-teen{background:rgba(91,141,238,.14);color:#7aabff;border:1px solid rgba(91,141,238,.3)}
+.lvl-sci{background:rgba(139,108,247,.14);color:#b09aff;border:1px solid rgba(139,108,247,.3)}
+.analogy{background:linear-gradient(135deg,rgba(76,202,120,.07),rgba(91,141,238,.05));border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px 24px;margin:14px 0}
+.analogy-emoji{font-size:30px;line-height:1;margin-bottom:8px}
+.analogy p{font-size:16px;color:var(--text);line-height:1.7}
+.analogy p strong{color:var(--accent)}
+.levelup{display:flex;align-items:center;gap:10px;background:rgba(139,108,247,.07);border:1px solid rgba(139,108,247,.25);border-radius:var(--radius);padding:12px 16px;margin-top:16px;font-size:14px;color:var(--text2)}
+.levelup a{color:#b09aff;font-weight:600;text-decoration:none;white-space:nowrap}
+.levelup a:hover{text-decoration:underline}
+.fun-list{list-style:none;padding-left:0}
+.fun-list li{padding:8px 0 8px 30px;position:relative;font-size:15px;color:var(--text2)}
+.fun-list li::before{content:'→';position:absolute;left:0;color:var(--accent);font-weight:700}
+.try-tag{font-size:10px;font-family:var(--font-mono);color:var(--amber);border:1px dashed var(--amber);border-radius:6px;padding:2px 8px;margin-left:8px}
+/* animations */
+@keyframes pulseGlow{0%,100%{opacity:.35;r:8}50%{opacity:1;r:11}}
+@keyframes flowDash{to{stroke-dashoffset:-24}}
+@keyframes fireGlow{0%,100%{opacity:.4}50%{opacity:1}}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+.wire-flow{stroke-dasharray:6 6;animation:flowDash 1s linear infinite}
+.node-pulse{animation:pulseGlow 1.8s ease-in-out infinite}
+.fire{animation:fireGlow 1.6s ease-in-out infinite}
+.float{animation:floatY 3s ease-in-out infinite}
+.anim-note{font-family:var(--font-mono);font-size:10px;color:var(--text3);text-align:center;margin-top:6px;letter-spacing:.06em;text-transform:uppercase}
+@media(prefers-reduced-motion:reduce){.wire-flow,.node-pulse,.fire,.float{animation:none!important}*{scroll-behavior:auto}}
+</style>
+<nav>
+  <div class="nav-brand">The Visual Climb</div>
+  <div class="nav-links">
+    <div class="nav-link" onclick="gotoS('start')">Start</div>
+    <div class="nav-link" onclick="gotoS('whatis')">What is it?</div>
+    <div class="nav-link" onclick="gotoS('neuron')">The Neuron</div>
+    <div class="nav-link" onclick="gotoS('activation')">The Decision</div>
+    <div class="nav-link" onclick="gotoS('forward')">The Team</div>
+    <div class="nav-link" onclick="gotoS('loss')">Keeping Score</div>
+    <div class="nav-link" onclick="gotoS('gradient')">Getting Better</div>
+    <div class="nav-link" onclick="gotoS('backprop')">Who's to Blame</div>
+    <div class="nav-link" onclick="gotoS('training')">Practice</div>
+    <div class="nav-link" onclick="gotoS('next')">Level Up</div>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">No math to begin · We build up slowly · 2026</div>
+    <h1>Neural Networks:<br>the <em>visual climb</em></h1>
+    <p class="hero-sub">Everyone says neural networks are hard. They're not — they're just usually explained starting from the top of the mountain. Here we start at the bottom, with pizza, dogs, and a game of hot-or-cold. Each idea gets a picture, a fun example, then a gentle step up. By the end you'll understand what's really going on — and be ready for the math when you want it.</p>
+    <div class="climb-meter" style="justify-content:center">
+      <span class="climb-step on">🧒 Base camp — explain like I'm 10</span>
+      <span class="climb-arrow">→</span>
+      <span class="climb-step">🎓 Trail — the real idea</span>
+      <span class="climb-arrow">→</span>
+      <span class="climb-step">🔬 Summit — the science (in the Reference)</span>
+    </div>
+    <div class="hero-stats" style="margin-top:24px">
+      <div class="hero-stat"><div class="n">0</div><div class="l">math required to start</div></div>
+      <div class="hero-stat"><div class="n">8</div><div class="l">big ideas</div></div>
+      <div class="hero-stat"><div class="n">8</div><div class="l">animated visuals</div></div>
+      <div class="hero-stat"><div class="n">~25</div><div class="l">min read</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="main-layout">
+<aside class="toc" id="toc">
+  <div class="toc-section">The climb</div>
+  <div class="toc-link" onclick="gotoS('start')">How this works</div>
+  <div class="toc-link" onclick="gotoS('whatis')">1 · What even is it?</div>
+  <div class="toc-link" onclick="gotoS('neuron')">2 · The tiny decision-maker</div>
+  <div class="toc-link" onclick="gotoS('activation')">3 · Making a decision</div>
+  <div class="toc-link" onclick="gotoS('forward')">4 · A team in a line</div>
+  <div class="toc-link" onclick="gotoS('loss')">5 · Keeping score</div>
+  <div class="toc-link" onclick="gotoS('gradient')">6 · Getting less wrong</div>
+  <div class="toc-link" onclick="gotoS('backprop')">7 · Who's to blame?</div>
+  <div class="toc-link" onclick="gotoS('training')">8 · Practice makes perfect</div>
+  <div class="toc-section">Onward</div>
+  <div class="toc-link" onclick="gotoS('next')">Level up to the science</div>
+</aside>
+<div style="overflow:hidden">
+
+<section class="section" id="start"><div class="container">
+  <div class="section-eyebrow">Read me first · 2 min</div>
+  <h2 class="section-title">How this climb works</h2>
+  <p class="section-sub">A neural network has maybe seven core ideas. That's it. Once each one clicks as a simple picture, the scary words ("backpropagation", "gradient descent") turn out to be fancy names for things you already understand from everyday life.</p>
+  <div class="grid3">
+    <div class="card"><div class="lvl lvl-kid">🧒 Base camp</div><p>Every idea starts here: a plain-language story and a picture. A 10-year-old could follow it. No symbols, no equations.</p></div>
+    <div class="card"><div class="lvl lvl-teen">🎓 Trail</div><p>Then one small step up: what's <em>actually</em> happening under the story, still in words, with the real name attached.</p></div>
+    <div class="card"><div class="lvl lvl-sci">🔬 Summit</div><p>When you're ready for the formulas and code, a "level up" link jumps you to the exact spot in the Reference Guide.</p></div>
+  </div>
+  <div class="alert alert-info"><strong>You never have to climb higher than you want.</strong> Read just the base-camp stories and you'll understand more about AI than most people. Follow the level-up links and you'll be ready to build. Either way — start by having a little fun with it. 🍕</div>
+</div></section>
+<section class="section" id="whatis"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 1</div>
+  <h2 class="section-title">What even <em>is</em> a neural network?</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">🐶</div>
+    <p>Imagine teaching your little sister to spot dogs. You don't hand her rules like "four legs, furry, has a tail." You just show her photos — <strong>"dog!"</strong> … <strong>"dog!"</strong> … <strong>"nope, that's a cat."</strong> After enough photos, she just <em>knows</em> — even for dogs she's never seen before. A neural network learns the <strong>exact same way</strong>: show it examples, let it guess, tell it when it's wrong, and it slowly gets good all by itself.</p>
+  </div>
+  <p>It's a <strong>guess-and-get-better machine</strong>. Nobody programs in the rules. It figures them out from examples. Here's the same idea everywhere:</p>
+  <ul class="fun-list">
+    <li>Is this photo a <strong>dog or a muffin</strong>? (harder than it sounds — chihuahuas are basically muffins 🧁)</li>
+    <li>Is this email <strong>spam</strong> or real?</li>
+    <li>What <strong>song</strong> should play next?</li>
+    <li>What will the <strong>weather</strong> be tomorrow?</li>
+  </ul>
+
+  <div class="viz-container">
+    <div class="viz-label">A neural network = a box that takes something in and guesses something out</div>
+    <svg viewBox="0 0 680 180" class="viz-svg" style="max-height:180px">
+      <!-- input -->
+      <text x="70" y="100" text-anchor="middle" font-size="44">🐶</text>
+      <text x="70" y="140" text-anchor="middle" fill="var(--text3)" font-size="12">a photo goes in</text>
+      <!-- flowing wire in -->
+      <line x1="120" y1="90" x2="250" y2="90" stroke="var(--accent)" stroke-width="2.5" class="wire-flow"/>
+      <!-- the box -->
+      <rect x="255" y="50" width="170" height="80" rx="14" fill="var(--bg4)" stroke="var(--accent2)" stroke-width="2" class="fire"/>
+      <text x="340" y="88" text-anchor="middle" font-size="26">🤖</text>
+      <text x="340" y="112" text-anchor="middle" fill="var(--text2)" font-size="11" font-family="var(--font-mono)">the network</text>
+      <!-- flowing wire out -->
+      <line x1="425" y1="90" x2="555" y2="90" stroke="var(--green)" stroke-width="2.5" class="wire-flow"/>
+      <!-- output -->
+      <rect x="560" y="68" width="100" height="44" rx="10" fill="rgba(76,202,120,.12)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="610" y="88" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="700">DOG!</text>
+      <text x="610" y="104" text-anchor="middle" fill="var(--green)" font-size="11" font-family="var(--font-mono)">96% sure</text>
+    </svg>
+    <div class="anim-note">the dots flowing along the wires = information moving through</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>Under the hood, the box isn't memorizing photos. Inside are <strong>millions of tiny dials</strong>, and learning means slowly turning those dials until the guesses match reality. So really: a neural network is just a <strong>guessing machine that tunes its own dials</strong>. Everything else in this guide is about <em>what the dials are</em> and <em>how they get tuned</em>.</p>
+  <div class="levelup">🔬 Want the precise definition, the "when not to use one," and the function-not-a-brain view? <a href="neural_network_foundations.html#intro" target="_blank">Level up → Reference: What is a neural network ↗</a></div>
+</div></section>
+
+<section class="section" id="neuron"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 2</div>
+  <h2 class="section-title">The tiny decision-maker</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">🏞️</div>
+    <p>Zoom way in. The whole giant network is built from <strong>one tiny thing, copied millions of times</strong>. Picture deciding <em>"should I go to the park?"</em> You weigh stuff in your head: <strong>Is it sunny?</strong> (big yes 👍) … <strong>Do I have homework?</strong> (that's a no 👎) … <strong>Are my friends going?</strong> (big yes 👍). You add up the good and the bad, and if the total feels positive — you go. That little adder-upper is <strong>one neuron</strong>.</p>
+  </div>
+  <p>Two everyday words make it click:</p>
+  <ul class="fun-list">
+    <li><strong>Weights</strong> = how much each thing matters to you. "Friends going" might count way more than "it's a tiny bit cloudy." Big weight = big influence.</li>
+    <li><strong>Bias</strong> = your default mood. Woke up grumpy? Then it takes a <em>really</em> nice day to drag you outside — your bar is set high no matter what.</li>
+  </ul>
+
+  <div class="viz-container">
+    <div class="viz-label">One neuron: weigh the inputs, add them up, pass it on</div>
+    <svg viewBox="0 0 680 200" class="viz-svg" style="max-height:200px">
+      <!-- inputs with emojis -->
+      <text x="50" y="50" text-anchor="middle" font-size="22">☀️</text><text x="50" y="68" text-anchor="middle" fill="var(--text3)" font-size="10">sunny</text>
+      <text x="50" y="105" text-anchor="middle" font-size="22">📚</text><text x="50" y="123" text-anchor="middle" fill="var(--text3)" font-size="10">homework</text>
+      <text x="50" y="160" text-anchor="middle" font-size="22">🧑‍🤝‍🧑</text><text x="50" y="178" text-anchor="middle" fill="var(--text3)" font-size="10">friends</text>
+      <!-- weighted wires (thickness = weight) flowing -->
+      <line x1="75" y1="45" x2="285" y2="95" stroke="var(--green)" stroke-width="4" class="wire-flow"/><text x="180" y="58" fill="var(--green)" font-size="11" font-family="var(--font-mono)">+big</text>
+      <line x1="75" y1="100" x2="285" y2="100" stroke="var(--coral)" stroke-width="3" class="wire-flow"/><text x="180" y="93" fill="var(--coral)" font-size="11" font-family="var(--font-mono)">−counts against</text>
+      <line x1="75" y1="155" x2="285" y2="105" stroke="var(--green)" stroke-width="4" class="wire-flow"/><text x="180" y="150" fill="var(--green)" font-size="11" font-family="var(--font-mono)">+big</text>
+      <!-- sum node -->
+      <circle cx="320" cy="100" r="34" fill="var(--bg4)" stroke="var(--accent2)" stroke-width="2" class="fire"/>
+      <text x="320" y="98" text-anchor="middle" fill="var(--text)" font-size="22">➕</text>
+      <text x="320" y="150" text-anchor="middle" fill="var(--text3)" font-size="10" font-family="var(--font-mono)">+ default mood (bias)</text>
+      <!-- out -->
+      <line x1="354" y1="100" x2="500" y2="100" stroke="var(--accent)" stroke-width="2.5" class="wire-flow"/>
+      <rect x="505" y="76" width="140" height="48" rx="10" fill="rgba(76,202,120,.12)" stroke="var(--green)" stroke-width="1.5"/>
+      <text x="575" y="98" text-anchor="middle" fill="var(--text)" font-size="13" font-weight="700">GO! 🎉</text>
+      <text x="575" y="114" text-anchor="middle" fill="var(--green)" font-size="10" font-family="var(--font-mono)">total felt positive</text>
+    </svg>
+    <div class="anim-note">thicker wire = that input matters more (a bigger weight)</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>That's the whole neuron: multiply each input by its <strong>weight</strong> (how much it matters), add them all up with a <strong>bias</strong> (the baseline), and pass the total along. One neuron is just a simple voter. The magic comes later, when we wire thousands of them together — and when learning gets to <em>change those weights automatically</em>.</p>
+  <div class="levelup">🔬 Ready for <code>z = wᵀx + b</code>, the perceptron, and why one neuron can't solve "XOR"? <a href="neural_network_foundations.html#neuron" target="_blank">Level up → Reference: The neuron ↗</a></div>
+</div></section>
+<section class="section" id="activation"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 3</div>
+  <h2 class="section-title">Actually making a decision</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">🕴️</div>
+    <p>The neuron added everything up — now it has to actually <em>decide</em> something. Picture a <strong>bouncer at a club</strong>. He adds up how cool you are. Below the line? You're out — a flat <strong>zero</strong>. Above the line? You're in, and the cooler you are, the better your table. That yes/no-with-a-dial moment is the <strong>activation</strong>. It's the network's way of saying "is this enough to matter?"</p>
+  </div>
+  <p>You feel this in real life all the time:</p>
+  <ul class="fun-list">
+    <li><strong>Spice</strong> 🌶️ — a tiny bit does nothing; past a certain point your whole mouth is on fire.</li>
+    <li><strong>A plant</strong> 🌱 — needs <em>enough</em> sunlight before it grows at all.</li>
+    <li><strong>A dimmer switch</strong> 💡 — not just on/off, but <em>how</em> bright.</li>
+  </ul>
+  <p>The most popular one is called <strong>ReLU</strong>, and it's literally the bouncer: <em>"Negative? You're a zero. Positive? Come in — exactly as much as you brought."</em></p>
+
+  <div class="viz-container">
+    <div class="viz-label">ReLU the bouncer: negatives become 0, positives pass straight through</div>
+    <svg viewBox="0 0 680 220" class="viz-svg" style="max-height:220px">
+      <!-- axes -->
+      <line x1="60" y1="170" x2="620" y2="170" stroke="var(--border2)" stroke-width="1"/>
+      <line x1="340" y1="30" x2="340" y2="185" stroke="var(--border2)" stroke-width="1"/>
+      <text x="610" y="188" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">input →</text>
+      <text x="350" y="42" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">output</text>
+      <!-- ReLU path: flat then rising -->
+      <path id="reluPath" d="M60 170 L340 170 L600 50" fill="none" stroke="var(--amber)" stroke-width="3"/>
+      <!-- labels -->
+      <text x="200" y="160" text-anchor="middle" fill="var(--coral)" font-size="12">negative → squashed to 0</text>
+      <text x="490" y="100" text-anchor="middle" fill="var(--green)" font-size="12" transform="rotate(-22 490 100)">positive → passes through</text>
+      <!-- moving dot riding the curve -->
+      <circle r="9" fill="var(--accent)">
+        <animateMotion dur="4s" repeatCount="indefinite" rotate="auto">
+          <mpath href="#reluPath"/>
+        </animateMotion>
+      </circle>
+    </svg>
+    <div class="anim-note">watch the dot: flat on the floor for negatives, then climbing for positives</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>This little "decision curve" is the secret that makes deep learning work. Without it, stacking neuron after neuron would just blur into <strong>one big boring straight line</strong> — useless for anything curvy like a face or a voice. The squish (the <strong>non-linearity</strong>) is what lets a pile of simple neurons bend and fold to match messy, real-world patterns. Different curves have names — sigmoid, tanh, ReLU, GELU — but they all do the same job: <em>decide how much signal to pass on.</em></p>
+  <div class="levelup">🔬 Want every activation, its formula, its derivative, and when to use which? <a href="neural_network_foundations.html#activations" target="_blank">Level up → Reference: Activation functions ↗</a></div>
+</div></section>
+
+<section class="section" id="forward"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 4</div>
+  <h2 class="section-title">A whole team, lined up</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">📞</div>
+    <p>One neuron is a single voter — not very smart. The power comes from <strong>rows of them, lined up</strong>. The first row looks at the raw stuff (the actual pixels, the actual words). It passes its opinions to the next row, which combines them into <em>bigger</em> ideas, and so on. It's like the game of <strong>telephone</strong> — except each person is allowed to <em>improve</em> the message instead of garbling it. By the last row, a pile of meaningless pixels has turned into <strong>"that's a cat."</strong></p>
+  </div>
+  <p>Same shape as lots of things you know:</p>
+  <ul class="fun-list">
+    <li>A <strong>factory assembly line</strong> 🏭 — bolt → panel → door → finished car.</li>
+    <li>A <strong>kitchen line</strong> 🍳 — chop → cook → plate → dinner.</li>
+    <li>A <strong>relay race</strong> 🏃 — each runner passes the baton onward.</li>
+  </ul>
+
+  <div class="viz-container">
+    <div class="viz-label">The forward pass: information flows row by row, getting smarter each step</div>
+    <svg viewBox="0 0 680 220" class="viz-svg" style="max-height:220px">
+      <text x="80" y="24" text-anchor="middle" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">raw pixels</text>
+      <text x="340" y="24" text-anchor="middle" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">simple shapes</text>
+      <text x="600" y="24" text-anchor="middle" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">"it's a cat!"</text>
+      <!-- edges flowing -->
+      <g stroke="var(--accent)" stroke-width="1.5" opacity="0.6" class="wire-flow">
+        <line x1="100" y1="70" x2="320" y2="60"/><line x1="100" y1="70" x2="320" y2="120"/><line x1="100" y1="70" x2="320" y2="180"/>
+        <line x1="100" y1="130" x2="320" y2="60"/><line x1="100" y1="130" x2="320" y2="120"/><line x1="100" y1="130" x2="320" y2="180"/>
+        <line x1="100" y1="190" x2="320" y2="60"/><line x1="100" y1="190" x2="320" y2="120"/><line x1="100" y1="190" x2="320" y2="180"/>
+      </g>
+      <g stroke="var(--accent2)" stroke-width="1.5" opacity="0.6" class="wire-flow">
+        <line x1="360" y1="60" x2="580" y2="120"/><line x1="360" y1="120" x2="580" y2="120"/><line x1="360" y1="180" x2="580" y2="120"/>
+      </g>
+      <!-- nodes with staggered pulse -->
+      <circle cx="80" cy="70" r="16" fill="var(--bg4)" stroke="var(--accent)" stroke-width="1.5" class="node-pulse" style="animation-delay:0s"/>
+      <circle cx="80" cy="130" r="16" fill="var(--bg4)" stroke="var(--accent)" stroke-width="1.5" class="node-pulse" style="animation-delay:.15s"/>
+      <circle cx="80" cy="190" r="16" fill="var(--bg4)" stroke="var(--accent)" stroke-width="1.5" class="node-pulse" style="animation-delay:.3s"/>
+      <circle cx="340" cy="60" r="16" fill="var(--bg4)" stroke="var(--amber)" stroke-width="1.5" class="node-pulse" style="animation-delay:.6s"/>
+      <circle cx="340" cy="120" r="16" fill="var(--bg4)" stroke="var(--amber)" stroke-width="1.5" class="node-pulse" style="animation-delay:.75s"/>
+      <circle cx="340" cy="180" r="16" fill="var(--bg4)" stroke="var(--amber)" stroke-width="1.5" class="node-pulse" style="animation-delay:.9s"/>
+      <circle cx="600" cy="120" r="18" fill="var(--bg4)" stroke="var(--green)" stroke-width="1.8" class="node-pulse" style="animation-delay:1.2s"/>
+      <text x="600" y="125" text-anchor="middle" font-size="16">🐱</text>
+    </svg>
+    <div class="anim-note">the rows light up left-to-right — that's one "forward pass"</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>Pushing the input through every row to get an answer is called the <strong>forward pass</strong>. The beautiful part: nobody tells the middle rows what to look for. They <em>learn</em> that early rows should find simple things (edges, corners) and later rows should combine those into complex things (eyes, faces). "Deep" learning just means <strong>lots of rows</strong>.</p>
+  <div class="levelup">🔬 Want the matrix form, the shapes, and the runnable code? <a href="neural_network_foundations.html#forward" target="_blank">Level up → Reference: Forward propagation ↗</a></div>
+</div></section>
+<section class="section" id="loss"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 5</div>
+  <h2 class="section-title">Keeping score: how wrong was I?</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">🎯</div>
+    <p>The network made a guess. But how do we know if it's any good? We need a <strong>score for "how wrong"</strong>. Think of throwing <strong>darts</strong>: the closer to the bullseye, the better — and your score is basically <em>how far you missed</em>. A bullseye scores zero "wrongness." A dart in the wall scores a lot. And big misses hurt way more than little ones.</p>
+  </div>
+  <ul class="fun-list">
+    <li>Guessing someone's <strong>age</strong> 🎂 — off by 1 year? meh. Off by 30 years? <em>oof.</em></li>
+    <li><strong>The Price is Right</strong> 💰 — your score is the gap between your guess and the real price.</li>
+    <li>A <strong>test at school</strong> 📝 — the loss is, roughly, the points you got wrong.</li>
+  </ul>
+
+  <div class="viz-container">
+    <div class="viz-label">Loss = the distance from your guess to the bullseye (the truth)</div>
+    <svg viewBox="0 0 680 200" class="viz-svg" style="max-height:200px">
+      <!-- dartboard -->
+      <circle cx="340" cy="100" r="80" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+      <circle cx="340" cy="100" r="54" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+      <circle cx="340" cy="100" r="28" fill="none" stroke="var(--border2)" stroke-width="1.5"/>
+      <circle cx="340" cy="100" r="8" fill="var(--green)"/>
+      <text x="340" y="200" text-anchor="middle" fill="var(--green)" font-size="11">bullseye = the right answer (zero wrongness)</text>
+      <!-- homing dart -->
+      <circle r="7" fill="var(--coral)">
+        <animate attributeName="cx" values="470;420;380;352;470" dur="4s" repeatCount="indefinite"/>
+        <animate attributeName="cy" values="40;65;85;96;40" dur="4s" repeatCount="indefinite"/>
+      </circle>
+      <text x="540" y="50" fill="var(--coral)" font-size="11" font-family="var(--font-mono)">the guess,</text>
+      <text x="540" y="66" fill="var(--coral)" font-size="11" font-family="var(--font-mono)">homing in</text>
+    </svg>
+    <div class="anim-note">each round the dart lands closer — that shrinking gap is the loss going down</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>That score has a name: the <strong>loss</strong>. It's a single number for "total wrongness," and the entire goal of training is to make it as <strong>small as possible</strong>. Different jobs use different scorekeepers — one kind for predicting numbers (how far off), another for yes/no answers (how confidently wrong). The loss is the thing the network is relentlessly trying to shrink.</p>
+  <div class="levelup">🔬 Want MSE, cross-entropy, and the "match the loss to the task" table? <a href="neural_network_foundations.html#loss" target="_blank">Level up → Reference: Loss functions ↗</a></div>
+</div></section>
+
+<section class="section" id="gradient"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 6</div>
+  <h2 class="section-title">Getting less wrong, step by step</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">🌫️</div>
+    <p>Now the good part — actually improving. Imagine you're on a foggy hill, <strong>blindfolded</strong>, trying to reach the bottom of the valley. You can't see a thing… but you can <em>feel which way the ground slopes</em> under your feet. So you take a small step downhill. Feel again, step again. Bit by bit, you reach the bottom. That's exactly how a network gets better: feel the slope of "wrongness," take a little step toward less-wrong, and repeat.</p>
+  </div>
+  <p>The <strong>size of your step</strong> is a huge deal:</p>
+  <ul class="fun-list">
+    <li>Tiny baby steps 🐢 — you'll get there… eventually… maybe next year.</li>
+    <li>Giant leaps 🦘 — you fly right past the bottom and bounce around forever.</li>
+    <li><strong>Just-right steps</strong> ✅ — smooth and steady to the bottom. This "just right" size is the secret sauce.</li>
+  </ul>
+  <div class="analogy" style="background:linear-gradient(135deg,rgba(245,166,35,.07),rgba(249,110,79,.05))">
+    <div class="analogy-emoji">🚿</div>
+    <p>It's <strong>exactly like adjusting a shower</strong>. Nudge the knob a little and wait to feel the temperature. Crank it too far and you go from freezing to scalding and back. The careful little nudges? That's the famous <strong>"learning rate."</strong></p>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-label">Gradient descent: roll downhill to the lowest point (the least-wrong spot)</div>
+    <svg viewBox="0 0 680 220" class="viz-svg" style="max-height:220px">
+      <!-- the valley -->
+      <path id="bowl" d="M90 50 Q340 250 590 50" fill="none" stroke="var(--border2)" stroke-width="2.5"/>
+      <text x="340" y="200" text-anchor="middle" fill="var(--green)" font-size="12">⬇ the bottom = least wrong</text>
+      <!-- rolling ball -->
+      <circle r="12" fill="var(--accent)">
+        <animateMotion dur="3s" repeatCount="indefinite" keyPoints="0;0.5" keyTimes="0;1" calcMode="spline" keySplines="0.4 0 0.6 1">
+          <mpath href="#bowl"/>
+        </animateMotion>
+      </circle>
+      <text x="120" y="40" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">start (very wrong)</text>
+    </svg>
+    <div class="anim-note">the ball feels the slope and rolls toward the bottom — that's learning</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>Three real names for the three everyday ideas: feeling the slope is the <strong>gradient</strong>; stepping downhill is <strong>gradient descent</strong>; your step size is the <strong>learning rate</strong> — and yes, it really is the single most important setting to get right. This little loop (feel slope → step down → repeat) is <em>how every neural network on Earth learns</em>, from a toy example to a giant language model.</p>
+  <div class="levelup">🔬 Want batches vs SGD, momentum, Adam/AdamW, and the update rule? <a href="neural_network_foundations.html#gradient" target="_blank">Level up → Reference: Gradient descent ↗</a></div>
+</div></section>
+<style>@keyframes flowRev{to{stroke-dashoffset:24}} .wire-rev{stroke-dasharray:6 6;animation:flowRev 1s linear infinite}
+@keyframes lossDrop{0%{opacity:0}10%{opacity:1}100%{opacity:1}}</style>
+<section class="section" id="backprop"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 7 · the clever one</div>
+  <h2 class="section-title">Who's to blame for the mistake?</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">⚽</div>
+    <p>Here's the cleverest trick of all. The team guessed wrong — but with millions of little dials, <strong>who do we blame, and how much?</strong> Picture a soccer team that just lost. A great coach watches the replay <em>backwards</em>: "We missed the goal… but only because the pass was bad… which happened because the defender was out of position…" The coach traces the blame back through <strong>every</strong> player and tells each one <em>exactly</em> how to adjust next time. That backwards blame-tracing is <strong>backpropagation</strong>.</p>
+  </div>
+  <ul class="fun-list">
+    <li>A soup came out <strong>too salty</strong> 🍲 — trace back which step over-salted, and by how much.</li>
+    <li><strong>Telephone in reverse</strong> 📞 — walk back through the line to find who garbled the message.</li>
+    <li>A group project got a <strong>bad grade</strong> 📉 — figure out each person's share of the fix.</li>
+  </ul>
+
+  <div class="viz-container">
+    <div class="viz-label">The error flows backward, handing each part its share of the fix</div>
+    <svg viewBox="0 0 680 200" class="viz-svg" style="max-height:200px">
+      <text x="80" y="24" text-anchor="middle" fill="var(--text3)" font-size="11" font-family="var(--font-mono)">adjust these…</text>
+      <text x="600" y="24" text-anchor="middle" fill="var(--coral)" font-size="11" font-family="var(--font-mono)">…the mistake starts here</text>
+      <!-- edges drawn right->left so the flow animates right->left -->
+      <g stroke="var(--coral)" stroke-width="1.6" opacity="0.7">
+        <line x1="582" y1="100" x2="358" y2="55" class="wire-rev"/><line x1="582" y1="100" x2="358" y2="110" class="wire-rev"/><line x1="582" y1="100" x2="358" y2="165" class="wire-rev"/>
+        <line x1="322" y1="55" x2="98" y2="70" class="wire-rev"/><line x1="322" y1="110" x2="98" y2="70" class="wire-rev"/><line x1="322" y1="165" x2="98" y2="70" class="wire-rev"/>
+        <line x1="322" y1="55" x2="98" y2="130" class="wire-rev"/><line x1="322" y1="110" x2="98" y2="130" class="wire-rev"/><line x1="322" y1="165" x2="98" y2="130" class="wire-rev"/>
+      </g>
+      <!-- nodes -->
+      <circle cx="80" cy="70" r="16" fill="var(--bg4)" stroke="var(--accent)" stroke-width="1.5"/>
+      <circle cx="80" cy="130" r="16" fill="var(--bg4)" stroke="var(--accent)" stroke-width="1.5"/>
+      <circle cx="340" cy="55" r="16" fill="var(--bg4)" stroke="var(--amber)" stroke-width="1.5"/>
+      <circle cx="340" cy="110" r="16" fill="var(--bg4)" stroke="var(--amber)" stroke-width="1.5"/>
+      <circle cx="340" cy="165" r="16" fill="var(--bg4)" stroke="var(--amber)" stroke-width="1.5"/>
+      <circle cx="600" cy="100" r="18" fill="var(--bg4)" stroke="var(--coral)" stroke-width="2" class="fire"/>
+      <text x="600" y="105" text-anchor="middle" font-size="15">❌</text>
+    </svg>
+    <div class="anim-note">the dashes flow right → left: blame travelling back from the mistake to every dial</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>The real name is <strong>backpropagation</strong> ("back-prop" to friends). It sends the error backward through the network, layer by layer, working out how much <em>each</em> weight should change to reduce the mistake. The genius is that it <strong>reuses the math from the forward pass</strong>, so even with millions of dials it's fast. Pair it with the downhill-stepping from idea 6, and the network knows both <em>which</em> dials to turn and <em>which way</em>.</p>
+  <div class="levelup">🔬 Want the chain rule, the four equations, and a worked example with real numbers? <a href="neural_network_foundations.html#backprop" target="_blank">Level up → Reference: Backpropagation ↗</a></div>
+</div></section>
+
+<section class="section" id="training"><div class="container">
+  <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
+  <div class="section-eyebrow">Big idea 8 · putting it together</div>
+  <h2 class="section-title">Practice makes perfect</h2>
+
+  <div class="lvl lvl-kid">🧒 Explain like I'm 10</div>
+  <div class="analogy">
+    <div class="analogy-emoji">🏀</div>
+    <p>Now snap the pieces together and you get one simple thing: <strong>practice</strong>. Guess → check the score → trace the blame → nudge the dials. Then do it again. And again. <em>Thousands</em> of times. It's exactly how <strong>you</strong> got good at anything — shooting hoops, riding a bike, beating a video game. At first you're hopeless. Every single try, you adjust a tiny bit. Slowly, you stop missing. Slowly, you stop falling over. That's training.</p>
+  </div>
+
+  <div class="viz-container">
+    <div class="viz-label">The learning loop — repeat until the wrongness gets small</div>
+    <svg viewBox="0 0 680 210" class="viz-svg" style="max-height:210px">
+      <!-- left: the cycle -->
+      <g font-size="11" font-family="var(--font-mono)">
+        <rect x="30" y="30" width="90" height="34" rx="8" fill="var(--bg4)" stroke="var(--accent)"/><text x="75" y="51" text-anchor="middle" fill="var(--text)">1. guess</text>
+        <rect x="170" y="30" width="90" height="34" rx="8" fill="var(--bg4)" stroke="var(--amber)"/><text x="215" y="51" text-anchor="middle" fill="var(--text)">2. score it</text>
+        <rect x="170" y="120" width="90" height="34" rx="8" fill="var(--bg4)" stroke="var(--coral)"/><text x="215" y="141" text-anchor="middle" fill="var(--text)">3. blame</text>
+        <rect x="30" y="120" width="90" height="34" rx="8" fill="var(--bg4)" stroke="var(--green)"/><text x="75" y="141" text-anchor="middle" fill="var(--text)">4. nudge</text>
+      </g>
+      <defs><marker id="ar" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="var(--text3)" stroke-width="1.5"/></marker></defs>
+      <line x1="120" y1="47" x2="168" y2="47" stroke="var(--text3)" marker-end="url(#ar)"/>
+      <line x1="215" y1="64" x2="215" y2="118" stroke="var(--text3)" marker-end="url(#ar)"/>
+      <line x1="168" y1="137" x2="122" y2="137" stroke="var(--text3)" marker-end="url(#ar)"/>
+      <line x1="75" y1="118" x2="75" y2="66" stroke="var(--text3)" marker-end="url(#ar)"/>
+      <text x="148" y="195" text-anchor="middle" fill="var(--text3)" font-size="11">…repeat thousands of times…</text>
+      <!-- right: loss dropping curve -->
+      <line x1="360" y1="40" x2="360" y2="170" stroke="var(--border2)"/><line x1="360" y1="170" x2="640" y2="170" stroke="var(--border2)"/>
+      <text x="345" y="45" text-anchor="end" fill="var(--text3)" font-size="10">wrong</text>
+      <text x="500" y="190" text-anchor="middle" fill="var(--text3)" font-size="10">practice rounds →</text>
+      <path id="losscurve" d="M368 50 C 430 60, 470 150, 520 158 C 570 163, 600 165, 632 166" fill="none" stroke="var(--green)" stroke-width="2.5"/>
+      <circle r="6" fill="var(--green)"><animateMotion dur="3.5s" repeatCount="indefinite"><mpath href="#losscurve"/></animateMotion></circle>
+    </svg>
+    <div class="anim-note">left: the loop · right: the loss sliding down as practice piles up</div>
+  </div>
+
+  <div class="lvl lvl-teen">🎓 One step up the trail</div>
+  <p>One trip around the loop on a handful of examples is a <strong>training step</strong>; one full pass over all your data is an <strong>epoch</strong>. Run many epochs and the loss steadily drops — the network is learning. The one catch: you keep a separate <strong>"pop quiz" set</strong> it never trains on, to make sure it's truly learning the idea and not just <em>memorizing</em> the answers (that's called overfitting).</p>
+  <div class="levelup">🔬 Want the real PyTorch training loop, regularization, and the tuning recipe? <a href="neural_network_foundations.html#training" target="_blank">Level up → Reference: Training in practice ↗</a></div>
+</div></section>
+<section class="section" id="next"><div class="container">
+  <div class="climb-meter"><span class="climb-step">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step on">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit next</span></div>
+  <div class="section-eyebrow">You made it up the first stretch</div>
+  <h2 class="section-title">What you now actually understand</h2>
+  <p class="section-sub">That's the whole core. Every scary term you'll ever hear about neural networks is one of these everyday ideas wearing a lab coat. Here's the translation table — keep it handy.</p>
+
+  <table class="compare-table">
+    <thead><tr><th>The everyday idea</th><th>Its real name</th><th>In one line</th></tr></thead>
+    <tbody>
+      <tr><td>A guess-and-get-better machine</td><td>Neural network</td><td>Learns patterns from examples, not rules</td></tr>
+      <tr><td>The little decision-weigher</td><td>Neuron</td><td>Weighs inputs, adds them up, passes it on</td></tr>
+      <tr><td>How much each thing matters / default mood</td><td>Weights &amp; bias</td><td>The dials that get tuned</td></tr>
+      <tr><td>The bouncer / dimmer switch</td><td>Activation function</td><td>The decision-squish that lets it bend to reality</td></tr>
+      <tr><td>The assembly line / telephone</td><td>Forward pass (layers)</td><td>Information flowing row by row to an answer</td></tr>
+      <tr><td>The dartboard score</td><td>Loss function</td><td>One number for "how wrong"</td></tr>
+      <tr><td>Feeling the slope downhill in fog</td><td>Gradient descent</td><td>Step toward less-wrong; step size = learning rate</td></tr>
+      <tr><td>The coach's backwards blame review</td><td>Backpropagation</td><td>Works out how to fix every dial</td></tr>
+      <tr><td>Practice makes perfect</td><td>Training (epochs)</td><td>Repeat the loop until the loss is small</td></tr>
+    </tbody>
+  </table>
+
+  <div class="alert alert-success" style="margin-top:20px"><strong>Seriously — that's the foundation.</strong> CNNs (for images), Transformers (the thing behind ChatGPT), and every other architecture are just these same ideas plus one extra clever twist. You're not "almost" there; you're standing on the exact ground everything else is built on. 🎉</div>
+
+  <h3 style="margin-top:28px">Ready to climb higher?</h3>
+  <div class="grid2" style="margin-top:14px">
+    <a href="neural_network_foundations.html" target="_blank" style="text-decoration:none"><div class="card" style="border-color:rgba(139,108,247,.4)"><div class="lvl lvl-sci">🔬 The Summit</div><h4 style="font-size:17px">Reference Guide</h4><p>The same ideas with the real math, the formulas, runnable code, the worked backprop example, pitfalls, and the tuning recipe. Each "level up" link above lands you exactly here.</p><p style="color:#b09aff;font-weight:600;margin-top:8px">Open the Reference →</p></div></a>
+    <a href="projects_guide.html" target="_blank" style="text-decoration:none"><div class="card" style="border-color:rgba(91,141,238,.4)"><div class="lvl lvl-teen">🛠️ Hands-on</div><h4 style="font-size:17px">Projects Guide</h4><p>Build it yourself: a neuron from scratch, a network that learns by your own backprop, then a real digit-recognizer in PyTorch. The best way to make all of this stick.</p><p style="color:#7aabff;font-weight:600;margin-top:8px">Open the Projects →</p></div></a>
+  </div>
+  <div class="alert alert-info" style="margin-top:18px"><strong>Tip:</strong> keep all three files in the same folder — the "level up" links jump straight from a story here to the exact math in the Reference, and on to the matching project.</div>
+</div></section>
+
+<footer style="padding:48px 0 60px;text-align:center">
+  <div class="container">
+    <p style="font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:10px">From pizza to PyTorch. 🍕→🤖</p>
+    <p style="max-width:620px;margin:0 auto 22px">You started at "explain like I'm 10" and climbed to the doorstep of the real science. That's the hardest part of any subject — the first honest understanding. The rest is just detail and practice.</p>
+    <a href="neural_network_foundations.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px">🔬 Continue to the Reference Guide</a>
+    <p style="font-size:12px;color:var(--text3);margin-top:28px;font-family:var(--font-mono)">Neural Networks · The Visual Climb · Start here, climb at your own pace · 2026</p>
+  </div>
+</footer>
+</div></div>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</button>
+
+<script>
+const sids=['start','whatis','neuron','activation','forward','loss','gradient','backprop','training','next'];
+function toggleTheme(){const h=document.documentElement;const t=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',t);document.getElementById('theme-btn').textContent=t==='dark'?'🌙 Dark':'☀️ Light';}
+function gotoS(id){const el=document.getElementById(id);if(el){const y=el.getBoundingClientRect().top+window.pageYOffset-60;window.scrollTo({top:y,behavior:'smooth'});}}
+const navLinks=document.querySelectorAll('.nav-link');
+const tocLinks=document.querySelectorAll('.toc-link');
+function spy(){
+  let cur=sids[0];
+  for(const id of sids){const el=document.getElementById(id);if(el&&el.getBoundingClientRect().top<=120)cur=id;}
+  navLinks.forEach((l,i)=>l.classList.toggle('active',sids[i]===cur));
+  tocLinks.forEach((l,i)=>l.classList.toggle('active',sids[i]===cur));
+  document.getElementById('top-btn').classList.toggle('visible',window.pageYOffset>500);
+}
+window.addEventListener('scroll',spy);window.addEventListener('load',spy);
+</script>
+</body>
+</html>

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+dist-electron/
+release/
+.env
+*.log
+.DS_Store
+Thumbs.db
+src/utils/content-manifest.json
+public/content/

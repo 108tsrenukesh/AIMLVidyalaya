@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demand Forecasting — Projects &amp; Hands-On Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222840;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f2f8;--text2:#b0bace;--text3:#6b7594;--accent:#5b8dee;--accent2:#8b6cf7;--teal:#30d4a8;--coral:#f96e4f;--amber:#f5a623;--green:#4cca78;--red:#e05c5c;--pink:#e86cad;--font-display:'Fraunces',serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;--radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.32)}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#fff;--bg3:#eef1f8;--bg4:#e0e6f0;--border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);--text:#111827;--text2:#374151;--text3:#6b7280;--accent:#2563eb;--accent2:#7c3aed;--teal:#0d9488;--coral:#dc4e2a;--amber:#d97706;--green:#16a34a;--red:#dc2626;--pink:#db2777;--shadow:0 4px 24px rgba(0,0,0,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:200;background:var(--bg3);border:1px solid var(--border2);border-radius:24px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:var(--font-body);color:var(--text2);font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:var(--shadow)}
+.theme-toggle:hover{color:var(--text);border-color:var(--accent)}
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:54px;backdrop-filter:blur(12px)}
+.nav-brand{font-family:var(--font-display);font-size:19px;color:var(--text);margin-right:2rem;white-space:nowrap;font-weight:600}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:54px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.03em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.hero{padding:84px 0 64px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(91,141,238,.10) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,62px);line-height:1.07;color:var(--text);margin-bottom:18px;font-weight:300}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:600}
+.hero-sub{font-size:17px;color:var(--text2);max-width:660px;margin:0 auto 32px;line-height:1.65}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.hero-tag{font-family:var(--font-mono);font-size:11px;padding:5px 13px;border:1px solid var(--border2);border-radius:20px;color:var(--text3)}
+.container{max-width:1120px;margin:0 auto;padding:0 2rem}
+.section{padding:64px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);color:var(--text);margin-bottom:14px;line-height:1.15;font-weight:300}
+.section-sub{font-size:15px;color:var(--text2);max-width:720px;margin-bottom:36px;line-height:1.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.badge{display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:500;padding:3px 9px;border-radius:20px;margin-right:5px;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.b-blue{background:rgba(91,141,238,.15);color:#7aabff;border:1px solid rgba(91,141,238,.25)}
+.b-teal{background:rgba(48,212,168,.12);color:#30d4a8;border:1px solid rgba(48,212,168,.2)}
+.b-coral{background:rgba(249,110,79,.12);color:#f96e4f;border:1px solid rgba(249,110,79,.2)}
+.b-green{background:rgba(76,202,120,.12);color:#4cca78;border:1px solid rgba(76,202,120,.2)}
+.b-amber{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2)}
+.b-purple{background:rgba(139,108,247,.12);color:#b09aff;border:1px solid rgba(139,108,247,.2)}
+.b-red{background:rgba(224,92,92,.12);color:#e05c5c;border:1px solid rgba(224,92,92,.2)}
+[data-theme="light"] .b-blue{background:rgba(37,99,235,.10);color:#1d4ed8;border-color:rgba(37,99,235,.25)}
+[data-theme="light"] .b-teal{background:rgba(13,148,136,.10);color:#0f766e;border-color:rgba(13,148,136,.25)}
+[data-theme="light"] .b-green{background:rgba(22,163,74,.10);color:#15803d;border-color:rgba(22,163,74,.25)}
+[data-theme="light"] .b-amber{background:rgba(217,119,6,.10);color:#b45309;border-color:rgba(217,119,6,.25)}
+[data-theme="light"] .b-purple{background:rgba(124,58,237,.10);color:#6d28d9;border-color:rgba(124,58,237,.25)}
+h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:7px}
+h5{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+p{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:20px;line-height:1.75}
+li{margin-bottom:6px}strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1);color:var(--accent);padding:2px 6px;border-radius:4px}
+.code-block{background:#0a0d14;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;font-family:var(--font-mono);font-size:12.5px;color:#c9d1d9;overflow-x:auto;margin:14px 0;line-height:1.7;position:relative}
+[data-theme="light"] .code-block{background:#1e2330;color:#e2e8f5}
+.code-block .kw{color:#ff7b72}.code-block .fn{color:#d2a8ff}.code-block .st{color:#a5d6ff}.code-block .cm{color:#5d6580;font-style:italic}.code-block .num{color:#f2cc60}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--bg4);color:var(--text3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.7;border-left:3px solid}
+.alert-info{background:rgba(91,141,238,.07);border-color:var(--accent)}
+.alert-warn{background:rgba(245,166,35,.07);border-color:var(--amber)}
+.alert-success{background:rgba(76,202,120,.07);border-color:var(--green)}
+.alert-danger{background:rgba(224,92,92,.07);border-color:var(--red)}
+.pipeline{position:relative;padding-left:36px}
+.pipeline::before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2));opacity:.3}
+.pipe-item{position:relative;margin-bottom:20px}
+.pipe-dot{position:absolute;left:-29px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--bg4);border:2px solid var(--accent)}
+.pipe-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.pipe-body{font-size:14px;color:var(--text2);line-height:1.65}
+.formula{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:var(--font-mono);font-size:14px;color:var(--teal);text-align:center;margin:14px 0;overflow-x:auto}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-size:13px;font-weight:500;color:var(--text3);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s,border-color .2s;font-family:var(--font-body)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.algo-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:24px;transition:border-color .2s}
+.algo-card:hover{border-color:var(--border2)}
+.algo-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px}
+.algo-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:var(--font-mono);flex-shrink:0}
+.algo-body{padding:20px 24px}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.compare-table th{background:var(--bg3);color:var(--text2);font-weight:500;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:14px}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:700px){.pros-cons{grid-template-columns:1fr}}
+.qa-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.qa-filter-btn{font-size:12px;font-family:var(--font-mono);padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .2s}
+.qa-filter-btn:hover,.qa-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.qa-q{padding:14px 18px;font-size:15px;font-weight:500;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:var(--bg3);line-height:1.45}
+.qa-q:hover{background:var(--bg4)}
+.qa-q-text{flex:1}
+.qa-meta{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.qa-arrow{font-size:12px;color:var(--text3);transition:transform .2s}
+.qa-item.open .qa-arrow{transform:rotate(180deg)}
+.qa-a{padding:16px 18px;font-size:14px;color:var(--text2);line-height:1.72;border-top:1px solid var(--border);display:none;background:var(--bg2)}
+.qa-a p{font-size:14px;margin-bottom:8px}
+.qa-item.open .qa-a{display:block}
+.qa-difficulty{font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.diff-beginner{background:rgba(76,202,120,.15);color:#4cca78}
+.diff-intermediate{background:rgba(91,141,238,.15);color:#6ea8fe}
+.diff-advanced{background:rgba(245,166,35,.15);color:#f5a623}
+.diff-expert{background:rgba(249,110,79,.15);color:#f96e4f}
+.usecase-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;transition:border-color .2s}
+.usecase-card:hover{border-color:var(--border2)}
+.usecase-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.usecase-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.usecase-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px}
+.usecase-industry{font-size:11px;font-family:var(--font-mono);color:var(--text3)}
+.usecase-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.usecase-body{grid-template-columns:1fr}}
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:14px;transition:border-color .2s}
+.ex-block:hover{border-color:var(--border2)}
+.ex-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ex-num{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.ex-title{font-size:16px;font-weight:600;color:var(--text);margin:4px 0 8px}
+.ex-body{font-size:14px;color:var(--text2);line-height:1.7}
+.ex-hint{font-size:13px;color:var(--text3);margin-top:10px;font-style:italic;padding:9px 12px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--amber)}
+.ex-project-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:7px 14px;background:rgba(91,141,238,.10);border:1px solid rgba(91,141,238,.25);border-radius:8px;font-size:13px;color:var(--accent);cursor:pointer;transition:all .2s;text-decoration:none;font-weight:500}
+.ex-project-link:hover{background:rgba(91,141,238,.18)}
+.ref-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;text-decoration:none}
+.ref-card:hover{border-color:var(--accent)}
+.ref-num{font-family:var(--font-mono);font-size:11px;color:var(--text3);min-width:26px;padding-top:2px}
+.ref-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ref-meta{font-size:12px;color:var(--text3);line-height:1.5}
+.ref-tag{font-size:10px;font-family:var(--font-mono);color:var(--accent);background:rgba(91,141,238,.1);padding:2px 7px;border-radius:10px;display:inline-block;margin-top:5px}
+.deploy-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.deploy-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-26px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tl-body{font-size:14px;color:var(--text2);line-height:1.6}
+#top-btn{position:fixed;bottom:26px;right:26px;background:var(--accent);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(91,141,238,.4)}
+#top-btn.visible{opacity:1}
+@media(min-width:1250px){.main-layout{display:grid;grid-template-columns:210px 1fr}.toc{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:20px 0;border-right:1px solid var(--border);scrollbar-width:thin}.toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 18px 4px;letter-spacing:.08em;text-transform:uppercase}.toc-link{display:block;font-size:13px;color:var(--text3);padding:5px 18px;cursor:pointer;transition:color .15s;border-left:2px solid transparent}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--accent);border-left-color:var(--accent)}}
+.cite{color:var(--accent);font-size:12px;text-decoration:none;font-family:var(--font-mono);padding:2px 7px;background:rgba(91,141,238,.1);border-radius:4px;display:inline-block;margin-top:4px}
+.cite:hover{background:rgba(91,141,238,.2)}
+.viz-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0}
+.viz-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.viz-svg{width:100%;overflow:visible}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
+.metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<nav>
+  <div class="nav-brand">Forecasting · Projects</div>
+  <div class="nav-links">
+    <div class="nav-link" onclick="gotoS('overview')">Overview</div>
+    <div class="nav-link" onclick="gotoS('datasets')">Datasets</div>
+    <div class="nav-link" onclick="gotoS('p1')">P1 · Baselines</div>
+    <div class="nav-link" onclick="gotoS('p2')">P2 · LightGBM</div>
+    <div class="nav-link" onclick="gotoS('p3')">P3 · Intermittent</div>
+    <div class="nav-link" onclick="gotoS('p4')">P4 · Hierarchy</div>
+    <div class="nav-link" onclick="gotoS('p5')">P5 · Harness</div>
+    <div class="nav-link" onclick="gotoS('exercises')">Exercises</div>
+    <div class="nav-link" onclick="gotoS('publish')">Publish</div>
+    <div class="nav-link" onclick="gotoS('next')">What's Next</div>
+    <div class="nav-link" onclick="gotoS('refs')">References</div>
+  </div>
+</nav>
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Hands-On Projects · Beginner to Expert · 2026</div>
+    <h1>Build a <em>Demand Forecasting</em> Stack</h1>
+    <p class="hero-sub">Five projects that take you from a classical baseline to a production backtesting harness — on real retail datasets, with production-shaped code. Do all five and you'll have built, in miniature, the forecasting engine of an FMCG supply chain.</p>
+    <div class="hero-tags">
+      <span class="hero-tag">statsforecast</span>
+      <span class="hero-tag">LightGBM + mlforecast</span>
+      <span class="hero-tag">Croston / SBA / TSB</span>
+      <span class="hero-tag">hierarchicalforecast · MinT</span>
+      <span class="hero-tag">Chronos / TimesFM</span>
+      <span class="hero-tag">rolling-origin CV</span>
+    </div>
+    <div class="metric-row" style="max-width:760px;margin:34px auto 0">
+      <div class="metric"><div class="val">5</div><div class="lbl">Projects</div></div>
+      <div class="metric"><div class="val">~22 hrs</div><div class="lbl">Total build time</div></div>
+      <div class="metric"><div class="val">Beg → Expert</div><div class="lbl">Difficulty span</div></div>
+      <div class="metric"><div class="val">5</div><div class="lbl">Real datasets</div></div>
+      <div class="metric"><div class="val">8</div><div class="lbl">Cross-cutting exercises</div></div>
+    </div>
+  </div>
+</div>
+<div class="main-layout">
+<aside class="toc" id="toc">
+  <div class="toc-section">Start here</div>
+  <div class="toc-link" onclick="gotoS('overview')">Overview &amp; progress</div>
+  <div class="toc-link" onclick="gotoS('datasets')">Datasets hub</div>
+  <div class="toc-section">Projects</div>
+  <div class="toc-link" onclick="gotoS('p1')">P1 · Beat the baseline</div>
+  <div class="toc-link" onclick="gotoS('p2')">P2 · LightGBM at scale</div>
+  <div class="toc-link" onclick="gotoS('p3')">P3 · Intermittent engine</div>
+  <div class="toc-link" onclick="gotoS('p4')">P4 · Reconciliation</div>
+  <div class="toc-link" onclick="gotoS('p5')">P5 · Backtest harness</div>
+  <div class="toc-section">Beyond</div>
+  <div class="toc-link" onclick="gotoS('exercises')">Exercises</div>
+  <div class="toc-link" onclick="gotoS('publish')">Publish your work</div>
+  <div class="toc-link" onclick="gotoS('next')">What's next</div>
+  <div class="toc-link" onclick="gotoS('refs')">References</div>
+</aside>
+<div style="overflow:hidden">
+<section class="section" id="overview">
+<div class="container">
+  <div class="section-eyebrow">Start here · the path</div>
+  <h2 class="section-title">Five projects, one forecasting stack</h2>
+  <p class="section-sub">Each project is self-contained but they compose: baselines (P1) become the yardstick for the ML model (P2); the intermittent engine (P3) and reconciliation (P4) handle the parts P2 can't; the harness (P5) ties everything into a champion/challenger system. Tick them off as you go — progress is saved in your browser.</p>
+
+  <div class="card" style="margin-bottom:18px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <h4 style="margin:0">Your progress</h4>
+      <span id="prog-label" style="font-family:var(--font-mono);font-size:13px;color:var(--accent)">0 / 5 complete</span>
+    </div>
+    <div style="height:8px;background:var(--bg4);border-radius:6px;overflow:hidden"><div id="prog-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--teal));transition:width .3s"></div></div>
+  </div>
+
+  <table class="compare-table">
+    <tr><th>Done</th><th>#</th><th>Project</th><th>Difficulty</th><th>Dataset</th><th>Core skill</th></tr>
+    <tr onclick="gotoS('p1')" style="cursor:pointer"><td><input type="checkbox" id="cb-p1" onclick="event.stopPropagation();toggleProg('p1')"></td><td>P1</td><td><strong>Beat the baseline</strong></td><td><span class="badge b-green">Beginner</span></td><td>Store Item Demand</td><td>Classical models + rolling-origin CV</td></tr>
+    <tr onclick="gotoS('p2')" style="cursor:pointer"><td><input type="checkbox" id="cb-p2" onclick="event.stopPropagation();toggleProg('p2')"></td><td>P2</td><td><strong>LightGBM at scale</strong></td><td><span class="badge b-amber">Intermediate</span></td><td>M5 (Walmart)</td><td>Cross-learning, features, recursive vs direct</td></tr>
+    <tr onclick="gotoS('p3')" style="cursor:pointer"><td><input type="checkbox" id="cb-p3" onclick="event.stopPropagation();toggleProg('p3')"></td><td>P3</td><td><strong>Intermittent engine</strong></td><td><span class="badge b-amber">Intermediate</span></td><td>Online Retail II</td><td>ADI/CV² routing, Croston/SBA/TSB</td></tr>
+    <tr onclick="gotoS('p4')" style="cursor:pointer"><td><input type="checkbox" id="cb-p4" onclick="event.stopPropagation();toggleProg('p4')"></td><td>P4</td><td><strong>Hierarchical reconciliation</strong></td><td><span class="badge b-coral">Advanced</span></td><td>M5 (hierarchy)</td><td>BU / MinT coherence across channel/zone</td></tr>
+    <tr onclick="gotoS('p5')" style="cursor:pointer"><td><input type="checkbox" id="cb-p5" onclick="event.stopPropagation();toggleProg('p5')"></td><td>P5</td><td><strong>Backtest &amp; champion/challenger harness</strong></td><td><span class="badge b-coral">Advanced–Expert</span></td><td>Rossmann + any</td><td>Foundation-model baseline, model selection</td></tr>
+  </table>
+  <div class="alert alert-info">New to the topic? Read the companion <a class="cite" href="demand_forecasting_reference.html" target="_blank">Reference Guide ↗</a> first — each project links back to the exact section it puts into practice. Suggested order is P1 → P5, but P3 (intermittent) and P4 (hierarchy) are independent and can be done in either order.</div>
+</div>
+</section>
+
+<section class="section" id="datasets">
+<div class="container">
+  <div class="section-eyebrow">Start here · data</div>
+  <h2 class="section-title">Datasets hub</h2>
+  <p class="section-sub">All real, all free (a Kaggle account is needed for the competition datasets). Each is chosen to expose a specific challenge — hierarchy, intermittency, promotions, or scale.</p>
+
+  <div class="grid2">
+    <a class="ref-card" href="https://www.kaggle.com/competitions/m5-forecasting-accuracy" target="_blank"><div class="ref-num">D1</div><div><div class="ref-title">M5 Forecasting — Accuracy (Walmart)</div><div class="ref-meta">~42k hierarchical daily series (item × store), intermittent &amp; promo-driven, with calendar &amp; price files. The canonical retail benchmark. ~450 MB. → Projects 2 &amp; 4.</div><span class="ref-tag">hierarchy · intermittent</span></div></a>
+    <a class="ref-card" href="https://www.kaggle.com/c/demand-forecasting-kernels-only" target="_blank"><div class="ref-num">D2</div><div><div class="ref-title">Store Item Demand Forecasting Challenge</div><div class="ref-meta">5 years of daily sales for 50 items across 10 stores — clean, seasonal, perfect for first baselines. ~15 MB. → Project 1.</div><span class="ref-tag">clean · seasonal</span></div></a>
+    <a class="ref-card" href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" target="_blank"><div class="ref-num">D3</div><div><div class="ref-title">Online Retail II (UCI)</div><div class="ref-meta">Two years of transactional online-retail data; aggregate to SKU-week and the long intermittent tail appears naturally. ~45 MB. → Project 3.</div><span class="ref-tag">intermittent · transactional</span></div></a>
+    <a class="ref-card" href="https://www.kaggle.com/c/rossmann-store-sales" target="_blank"><div class="ref-num">D4</div><div><div class="ref-title">Rossmann Store Sales</div><div class="ref-meta">Daily sales for 1,115 drug stores with promo, holiday &amp; competition features — great for covariates and backtesting. ~30 MB. → Project 5.</div><span class="ref-tag">promo · covariates</span></div></a>
+    <a class="ref-card" href="https://www.kaggle.com/c/favorita-grocery-sales-forecasting" target="_blank"><div class="ref-num">D5</div><div><div class="ref-title">Corporación Favorita Grocery Sales</div><div class="ref-meta">Large-scale Ecuadorian grocery data with promotions, oil price &amp; holidays — an optional stretch dataset for P2/P4 at real scale. ~5 GB. → Stretch.</div><span class="ref-tag">scale · promo</span></div></a>
+  </div>
+  <div class="alert alert-warn"><strong>Don't have Kaggle access?</strong> Every technique here works on your own sales export shaped as <code>(unique_id, ds, y)</code> in long format. The datasets are for reproducibility and portfolio value — the code is dataset-agnostic.</div>
+</div>
+</section>
+<section class="section" id="p1">
+<div class="container">
+  <div class="section-eyebrow">Project 1 · Beginner · ~3 hrs</div>
+  <h2 class="section-title">Beat the baseline</h2>
+  <p class="section-sub">Before any fancy model, prove you can beat seasonal-naive with classical methods — and, just as important, build the rolling-origin backtest that every later project will reuse. This is the project that teaches you to measure honestly.</p>
+  <div class="tab-nav" id="p1-nav">
+    <button class="tab-btn active" onclick="switchTab('p1-nav','p1-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p1-nav','p1-steps')">Build steps</button>
+    <button class="tab-btn" onclick="switchTab('p1-nav','p1-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p1-nav','p1-res')">Results &amp; errors</button>
+    <button class="tab-btn" onclick="switchTab('p1-nav','p1-ship')">Ship it</button>
+  </div>
+  <div class="tab-content active" id="p1-about">
+    <h3>What you'll build</h3>
+    <p>A clean, reusable backtesting notebook that fits SeasonalNaive, AutoETS, and AutoARIMA across all 500 store-item series at once with <code>statsforecast</code>, evaluates them on rolling-origin cross-validation, and reports WMAPE, bias, and MASE per model. The deliverable is a leaderboard that answers one question honestly: <em>which models actually beat the naive baseline, and by how much?</em></p>
+    <p><strong>Real-world analogue:</strong> the first thing any forecasting team should do with a new dataset — establish the floor before investing in complexity. <strong>Dataset:</strong> <a class="cite" href="https://www.kaggle.com/c/demand-forecasting-kernels-only" target="_blank">Store Item Demand Forecasting ↗</a>. <strong>Reinforces:</strong> reference <a class="cite" href="demand_forecasting_reference.html#methods" target="_blank">Methods (classical) ↗</a> and <a class="cite" href="demand_forecasting_reference.html#evaluation" target="_blank">Evaluation ↗</a>.</p>
+    <div class="viz-container">
+      <div class="viz-label">What you'll produce — a backtested model leaderboard</div>
+      <svg viewBox="0 0 680 130" class="viz-svg" style="max-height:130px">
+        <g font-family="monospace" font-size="10">
+        <text x="6" y="16" fill="var(--text3)">500 series → 4 rolling folds → score each model</text>
+        <rect x="6" y="30" width="200" height="22" fill="var(--text3)" opacity="0.25"/><text x="14" y="45" fill="var(--text2)">SeasonalNaive · WMAPE 0.42 (floor)</text>
+        <rect x="6" y="56" width="150" height="22" fill="var(--teal)" opacity="0.4"/><text x="14" y="71" fill="var(--text2)">AutoETS · WMAPE 0.31 ✓ beats</text>
+        <rect x="6" y="82" width="140" height="22" fill="var(--accent)" opacity="0.4"/><text x="14" y="97" fill="var(--text2)">AutoARIMA · WMAPE 0.29 ✓ beats</text>
+        <text x="360" y="60" fill="var(--green)">← lower is better;</text><text x="360" y="76" fill="var(--green)">must clear the grey floor</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-content" id="p1-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Load &amp; shape to long format <span style="color:var(--text3)">(~25 min)</span></div><div class="tl-body">Read the sales CSV; reshape to the three columns every Nixtla tool expects: <code>unique_id</code> (store-item key), <code>ds</code> (date), <code>y</code> (sales). Verify there are no gaps in the daily index per series.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Eyeball a sample <span style="color:var(--text3)">(~20 min)</span></div><div class="tl-body">Plot 6 random series. Note trend, weekly + yearly seasonality, and whether any are intermittent (they shouldn't be in this dataset — that's Project 3).</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Define the baseline <span style="color:var(--text3)">(~15 min)</span></div><div class="tl-body">Add SeasonalNaive(season_length=7) — and conceptually a 365-day one. This is the number to beat; everything else is measured against it.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Fit classical models cross-series <span style="color:var(--text3)">(~30 min)</span></div><div class="tl-body">Add AutoETS and AutoARIMA. Run <code>StatsForecast.cross_validation</code> with h=28, 4 windows — that's rolling-origin backtesting in one call.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Score &amp; build the leaderboard <span style="color:var(--text3)">(~45 min)</span></div><div class="tl-body">Compute WMAPE, bias, MASE per model over the CV output. Rank models; flag any that fail to beat seasonal-naive. Slice WMAPE by horizon to see degradation.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">6 · Write up the finding <span style="color:var(--text3)">(~25 min)</span></div><div class="tl-body">One chart (leaderboard) + one paragraph: which model wins, by how much over naive, and where it's weakest (which horizon, which series).</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p1-code">
+    <h4>Reshape to long format</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.read_csv(<span class="st">"train.csv"</span>, parse_dates=[<span class="st">"date"</span>])
+df = df.rename(columns={<span class="st">"date"</span>:<span class="st">"ds"</span>, <span class="st">"sales"</span>:<span class="st">"y"</span>})
+df[<span class="st">"unique_id"</span>] = <span class="st">"s"</span> + df[<span class="st">"store"</span>].astype(str) + <span class="st">"_i"</span> + df[<span class="st">"item"</span>].astype(str)
+df = df[[<span class="st">"unique_id"</span>, <span class="st">"ds"</span>, <span class="st">"y"</span>]].sort_values([<span class="st">"unique_id"</span>, <span class="st">"ds"</span>])</div>
+    <h4>Fit models + rolling-origin backtest in one call</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> statsforecast <span class="kw">import</span> StatsForecast
+<span class="kw">from</span> statsforecast.models <span class="kw">import</span> SeasonalNaive, AutoETS, AutoARIMA
+
+sf = StatsForecast(
+    models=[SeasonalNaive(season_length=<span class="num">7</span>), AutoETS(season_length=<span class="num">7</span>),
+            AutoARIMA(season_length=<span class="num">7</span>)],
+    freq=<span class="st">"D"</span>, n_jobs=-<span class="num">1</span>,
+)
+<span class="cm"># rolling origin: 4 windows of 28-day horizon, stepping by 28 days</span>
+cv = sf.cross_validation(df=df, h=<span class="num">28</span>, step_size=<span class="num">28</span>, n_windows=<span class="num">4</span>)</div>
+    <h4>Score: WMAPE, bias, MASE leaderboard</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> numpy <span class="kw">as</span> np
+models = [<span class="st">"SeasonalNaive"</span>, <span class="st">"AutoETS"</span>, <span class="st">"AutoARIMA"</span>]
+naive_mae = np.abs(cv[<span class="st">"y"</span>] - cv[<span class="st">"SeasonalNaive"</span>]).mean()
+board = []
+<span class="kw">for</span> m <span class="kw">in</span> models:
+    e = cv[m] - cv[<span class="st">"y"</span>]
+    board.append({
+        <span class="st">"model"</span>: m,
+        <span class="st">"WMAPE"</span>: np.abs(e).sum() / np.abs(cv[<span class="st">"y"</span>]).sum(),
+        <span class="st">"bias"</span>:  e.mean(),
+        <span class="st">"MASE"</span>:  np.abs(e).mean() / naive_mae,
+    })
+print(pd.DataFrame(board).sort_values(<span class="st">"WMAPE"</span>))</div>
+  </div>
+  <div class="tab-content" id="p1-res">
+    <h4>Expected results</h4>
+    <ul>
+      <li>AutoETS and AutoARIMA should both <strong>beat SeasonalNaive</strong> on WMAPE for this clean, seasonal dataset — typically a 20–35% relative improvement. If they don't, you have a bug (often a frequency or season_length mismatch).</li>
+      <li>MASE for the good models should be <strong>well below 1</strong> (≈0.6–0.8); SeasonalNaive's MASE is ≈1 by construction.</li>
+      <li>Bias should be small relative to the mean demand; a large systematic bias signals a seasonality the model isn't capturing.</li>
+      <li>WMAPE should <strong>rise with horizon</strong> — fold-level WMAPE at h=1–7 lower than h=22–28.</li>
+    </ul>
+    <h4>Common errors</h4>
+    <div class="card-sm"><strong>Wrong season_length.</strong> Daily retail has both weekly (7) and yearly (365) seasonality; using 7 captures the dominant weekly cycle. Setting it to 1 silently disables seasonality and the models lose to naive.</div>
+    <div class="card-sm"><strong>Gaps in the date index.</strong> If a series is missing dates, AutoARIMA mis-infers the frequency. Reindex each series to a complete daily range first.</div>
+    <div class="card-sm"><strong>Scoring on a single fold.</strong> Tempting, but it's the exact mistake the project exists to cure — always average across the 4 windows and look at the spread.</div>
+  </div>
+  <div class="tab-content" id="p1-ship">
+    <h4>Deliverables</h4>
+    <ul>
+      <li>A notebook that goes from raw CSV → long format → cross-validated leaderboard, runnable top to bottom.</li>
+      <li>A single leaderboard chart (WMAPE per model with the naive floor marked) and a 1-paragraph finding.</li>
+      <li>A reusable <code>score(cv_df)</code> function returning WMAPE/bias/MASE — you'll import it in every later project.</li>
+    </ul>
+    <h5 style="margin-top:14px">Self-check</h5>
+    <ul><li>☐ Does at least one model beat seasonal-naive on the average of 4 folds?</li><li>☐ Can you state WMAPE at h=1–7 vs h=22–28?</li><li>☐ Is your scoring function leakage-free and reusable?</li></ul>
+    <h4 style="margin-top:14px">Challenges</h4>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-amber">Stretch</span> Add a second seasonal period (365) via a model that supports multiple seasonalities (e.g. MSTL) and see if it helps the longer horizons.</div>
+    <div class="ex-block"><span class="badge b-coral">Hard</span> Add a simple equal-weight ensemble of ETS + ARIMA and test whether it beats both individually on the folds — the classic "combining wins" result.</div>
+  </div>
+</div>
+</section>
+<section class="section" id="p2">
+<div class="container">
+  <div class="section-eyebrow">Project 2 · Intermediate · ~6 hrs</div>
+  <h2 class="section-title">LightGBM at scale — cross-learning pipeline</h2>
+  <p class="section-sub">The centerpiece. Rebuild, in miniature, the approach that swept the M5 competition: one gradient-boosted model trained across all series, fed engineered lag and calendar features, with a Tweedie objective for zero-inflated sales — and a head-to-head of recursive vs direct multi-step forecasting.</p>
+  <div class="tab-nav" id="p2-nav">
+    <button class="tab-btn active" onclick="switchTab('p2-nav','p2-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p2-nav','p2-steps')">Build steps</button>
+    <button class="tab-btn" onclick="switchTab('p2-nav','p2-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p2-nav','p2-res')">Results &amp; errors</button>
+    <button class="tab-btn" onclick="switchTab('p2-nav','p2-ship')">Ship it</button>
+  </div>
+  <div class="tab-content active" id="p2-about">
+    <h3>What you'll build</h3>
+    <p>A production-shaped forecasting pipeline: feature engineering (lags, rolling stats, calendar, price/promo), a single cross-learned LightGBM with a Tweedie objective, recursive multi-step forecasting, and an honest comparison against the Project 1 baselines on the same rolling-origin folds. Then you'll add a direct (per-horizon) variant and compare error-by-horizon — the exact recursive-vs-direct trade-off the M5 winners exploited.</p>
+    <p><strong>Real-world analogue:</strong> the core demand engine for the dense, promo-driven majority of a retail catalogue. <strong>Dataset:</strong> <a class="cite" href="https://www.kaggle.com/competitions/m5-forecasting-accuracy" target="_blank">M5 Walmart ↗</a> (start with one store to keep it tractable). <strong>Reinforces:</strong> reference <a class="cite" href="demand_forecasting_reference.html#methods" target="_blank">Methods (ML) ↗</a> and <a class="cite" href="demand_forecasting_reference.html#pitfalls" target="_blank">Pitfalls (leakage) ↗</a>.</p>
+    <div class="viz-container">
+      <div class="viz-label">The pipeline you'll build</div>
+      <svg viewBox="0 0 680 120" class="viz-svg" style="max-height:120px">
+        <defs><marker id="pah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <g font-family="monospace" font-size="9">
+        <rect x="6" y="40" width="110" height="40" rx="6" fill="var(--bg2)" stroke="var(--teal)"/><text x="61" y="58" fill="var(--text)" text-anchor="middle">sales+calendar</text><text x="61" y="72" fill="var(--text3)" text-anchor="middle">+price</text>
+        <line x1="116" y1="60" x2="142" y2="60" stroke="var(--text3)" marker-end="url(#pah)"/>
+        <rect x="144" y="40" width="120" height="40" rx="6" fill="var(--bg2)" stroke="var(--accent)"/><text x="204" y="58" fill="var(--text)" text-anchor="middle">make_features</text><text x="204" y="72" fill="var(--text3)" text-anchor="middle">lags/rolling/cal</text>
+        <line x1="264" y1="60" x2="290" y2="60" stroke="var(--text3)" marker-end="url(#pah)"/>
+        <rect x="292" y="40" width="120" height="40" rx="6" fill="var(--bg2)" stroke="var(--accent2)"/><text x="352" y="58" fill="var(--text)" text-anchor="middle">LightGBM</text><text x="352" y="72" fill="var(--text3)" text-anchor="middle">tweedie, global</text>
+        <line x1="412" y1="60" x2="438" y2="60" stroke="var(--text3)" marker-end="url(#pah)"/>
+        <rect x="440" y="40" width="120" height="40" rx="6" fill="var(--bg2)" stroke="var(--amber)"/><text x="500" y="58" fill="var(--text)" text-anchor="middle">recursive /</text><text x="500" y="72" fill="var(--text)" text-anchor="middle">direct forecast</text>
+        <line x1="560" y1="60" x2="586" y2="60" stroke="var(--text3)" marker-end="url(#pah)"/>
+        <rect x="588" y="40" width="86" height="40" rx="6" fill="var(--bg2)" stroke="var(--green)"/><text x="631" y="58" fill="var(--text)" text-anchor="middle">vs P1</text><text x="631" y="72" fill="var(--text3)" text-anchor="middle">leaderboard</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-content" id="p2-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Assemble the panel <span style="color:var(--text3)">(~45 min)</span></div><div class="tl-body">Join sales with the calendar (events, SNAP) and price files; melt to long <code>(unique_id, ds, y)</code> plus covariates. Start with one store (~3k series) before scaling out.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Engineer leakage-safe features <span style="color:var(--text3)">(~75 min)</span></div><div class="tl-body">Lags (1,7,14,28,364), rolling mean/std on shifted demand, calendar parts, price change, promo/event flags. Every rolling stat preceded by <code>.shift(1)</code> within each series.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Train the global model <span style="color:var(--text3)">(~45 min)</span></div><div class="tl-body">One LightGBM across all series with <code>objective="tweedie"</code>. Use a time-based train/valid split for early stopping — never random.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Recursive multi-step forecast <span style="color:var(--text3)">(~60 min)</span></div><div class="tl-body">Predict day 1, append it, recompute lags, predict day 2 … to h=28. Wrap in a function so the harness can call it.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Backtest vs P1 baselines <span style="color:var(--text3)">(~45 min)</span></div><div class="tl-body">Run the same rolling-origin folds as Project 1; add LightGBM to the leaderboard. Confirm it beats AutoETS/ARIMA and naive — and by how much.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">6 · Add a direct variant &amp; compare by horizon <span style="color:var(--text3)">(~60 min)</span></div><div class="tl-body">Train per-horizon models (or use mlforecast's max_horizon). Plot WMAPE by horizon for recursive vs direct and explain the crossover.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p2-code">
+    <h4>Leakage-safe feature engineering</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">make_features</span>(df):
+    df = df.sort_values([<span class="st">"unique_id"</span>, <span class="st">"ds"</span>]).copy()
+    g = df.groupby(<span class="st">"unique_id"</span>)[<span class="st">"y"</span>]
+    <span class="kw">for</span> lag <span class="kw">in</span> (<span class="num">1</span>, <span class="num">7</span>, <span class="num">14</span>, <span class="num">28</span>, <span class="num">364</span>):
+        df[<span class="st">f"lag_{lag}"</span>] = g.shift(lag)
+    <span class="kw">for</span> w <span class="kw">in</span> (<span class="num">7</span>, <span class="num">28</span>):                       <span class="cm"># shift(1) FIRST = no leakage</span>
+        df[<span class="st">f"rmean_{w}"</span>] = g.shift(<span class="num">1</span>).rolling(w).mean()
+        df[<span class="st">f"rstd_{w}"</span>]  = g.shift(<span class="num">1</span>).rolling(w).std()
+    df[<span class="st">"dow"</span>]   = df[<span class="st">"ds"</span>].dt.dayofweek
+    df[<span class="st">"week"</span>]  = df[<span class="st">"ds"</span>].dt.isocalendar().week.astype(<span class="st">"int16"</span>)
+    df[<span class="st">"month"</span>] = df[<span class="st">"ds"</span>].dt.month
+    <span class="kw">return</span> df</div>
+    <h4>Train one cross-learned model (Tweedie)</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> lightgbm <span class="kw">as</span> lgb
+feat = make_features(panel).dropna(subset=[<span class="st">"lag_364"</span>])
+cols = [c <span class="kw">for</span> c <span class="kw">in</span> feat.columns <span class="kw">if</span> c <span class="kw">not in</span> (<span class="st">"y"</span>,<span class="st">"ds"</span>,<span class="st">"unique_id"</span>)]
+cutoff = feat[<span class="st">"ds"</span>].max() - pd.Timedelta(days=<span class="num">28</span>)
+tr, va = feat[feat.ds &lt;= cutoff], feat[feat.ds &gt; cutoff]   <span class="cm"># time split</span>
+
+model = lgb.LGBMRegressor(objective=<span class="st">"tweedie"</span>, tweedie_variance_power=<span class="num">1.1</span>,
+                          n_estimators=<span class="num">2000</span>, learning_rate=<span class="num">0.03</span>,
+                          num_leaves=<span class="num">128</span>, subsample=<span class="num">0.8</span>, colsample_bytree=<span class="num">0.8</span>)
+model.fit(tr[cols], tr[<span class="st">"y"</span>], eval_set=[(va[cols], va[<span class="st">"y"</span>])],
+          callbacks=[lgb.early_stopping(<span class="num">100</span>), lgb.log_evaluation(<span class="num">0</span>)])</div>
+    <h4>Recursive multi-step forecast</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">def</span> <span class="fn">recursive_forecast</span>(model, hist, cols, h=<span class="num">28</span>):
+    hist = hist.copy()
+    preds = []
+    <span class="kw">for</span> step <span class="kw">in</span> range(h):
+        nxt = next_day_frame(hist)            <span class="cm"># one row per series, ds = last+1</span>
+        feats = make_features(pd.concat([hist, nxt])).tail(len(nxt))
+        nxt[<span class="st">"y"</span>] = model.predict(feats[cols]).clip(min=<span class="num">0</span>)  <span class="cm"># demand &gt;= 0</span>
+        preds.append(nxt)
+        hist = pd.concat([hist, nxt])         <span class="cm"># feed prediction back as a lag</span>
+    <span class="kw">return</span> pd.concat(preds)</div>
+    <h4>Recursive vs direct (mlforecast does the bookkeeping)</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> mlforecast <span class="kw">import</span> MLForecast
+<span class="kw">from</span> mlforecast.target_transforms <span class="kw">import</span> Differences
+
+fcst = MLForecast(models={<span class="st">"lgb"</span>: lgb.LGBMRegressor(objective=<span class="st">"tweedie"</span>)},
+                  freq=<span class="st">"D"</span>, lags=[<span class="num">1</span>,<span class="num">7</span>,<span class="num">14</span>,<span class="num">28</span>,<span class="num">364</span>],
+                  lag_transforms={<span class="num">1</span>: [(<span class="fn">rolling_mean</span>, <span class="num">7</span>), (<span class="fn">rolling_mean</span>, <span class="num">28</span>)]},
+                  date_features=[<span class="st">"dayofweek"</span>,<span class="st">"month"</span>])
+<span class="cm"># recursive by default; max_horizon=H trains direct per-horizon models</span>
+cv_rec = fcst.cross_validation(panel, h=<span class="num">28</span>, n_windows=<span class="num">4</span>, step_size=<span class="num">28</span>)
+cv_dir = fcst.cross_validation(panel, h=<span class="num">28</span>, n_windows=<span class="num">4</span>, step_size=<span class="num">28</span>, max_horizon=<span class="num">28</span>)</div>
+  </div>
+  <div class="tab-content" id="p2-res">
+    <h4>Expected results</h4>
+    <ul>
+      <li>The cross-learned LightGBM should <strong>beat the classical baselines</strong> from Project 1 on WMAPE once price/promo/calendar features are in — often a further 5–15% relative improvement on promo-heavy series.</li>
+      <li>Feature importance should rank <strong>recent lags (lag_7, lag_28), rolling means, and price/event flags</strong> near the top. If a calendar dummy dominates everything, suspect leakage.</li>
+      <li><strong>Recursive vs direct:</strong> recursive is usually competitive at short horizons but degrades faster; direct is steadier at h&gt;14. The averaged combination typically beats either — the M5 finding.</li>
+      <li>On the intermittent tail, the dense-model WMAPE will look worse — that's expected, and exactly why Project 3 exists.</li>
+    </ul>
+    <h4>Common errors</h4>
+    <div class="card-sm"><strong>Leakage via rolling features.</strong> A rolling mean that includes the current day inflates the backtest and dies live. The <code>.shift(1)</code> before <code>.rolling()</code> is non-negotiable. (See reference Pitfalls.)</div>
+    <div class="card-sm"><strong>Random train/valid split.</strong> Shuffling time series leaks the future into validation. Always split by date for early stopping.</div>
+    <div class="card-sm"><strong>Forgetting to clip at zero.</strong> Demand can't be negative; clip predictions. With a non-Tweedie objective you'll also see more negative predictions.</div>
+    <div class="card-sm"><strong>Trees not extrapolating a trend.</strong> If a series trends strongly, add a trend feature or difference the target (the <code>Differences</code> transform), or the forecast will flatten.</div>
+  </div>
+  <div class="tab-content" id="p2-ship">
+    <h4>Deliverables</h4>
+    <ul>
+      <li>A pipeline notebook/module: panel assembly → <code>make_features</code> → train → recursive forecast → backtest, reusing Project 1's scoring function.</li>
+      <li>An updated leaderboard with LightGBM added, plus a WMAPE-by-horizon chart for recursive vs direct.</li>
+      <li>A short write-up of feature importance and the recursive/direct trade-off, with the numbers.</li>
+    </ul>
+    <h5 style="margin-top:14px">Self-check</h5>
+    <ul><li>☐ Does LightGBM beat both AutoETS/ARIMA and seasonal-naive on the same folds?</li><li>☐ Can you prove no feature leaks the future?</li><li>☐ Can you explain where recursive beats direct and vice versa?</li></ul>
+    <h4 style="margin-top:14px">Challenges</h4>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-amber">Stretch</span> Train quantile models (LightGBM <code>objective="quantile"</code> at 0.5/0.9) and report pinball loss — your first probabilistic forecast.</div>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-coral">Hard</span> Reproduce the M5 winner's idea: train models at item-store, store-category, and store-department levels and average them. Does the ensemble beat the single global model?</div>
+    <div class="ex-block"><span class="badge b-coral">Hard</span> Scale from one store to all ten with <code>mlforecast</code> and measure training time; this is where global-model throughput becomes the real engineering problem.</div>
+  </div>
+</div>
+</section>
+<section class="section" id="p3">
+<div class="container">
+  <div class="section-eyebrow">Project 3 · Intermediate · ~4 hrs</div>
+  <h2 class="section-title">Intermittent-demand engine</h2>
+  <p class="section-sub">The long tail that Project 2's dense model handles badly. Build a classifier that segments every SKU by ADI/CV² and routes it to the right method — Croston, SBA, or TSB — and demonstrate why TSB is the one that survives obsolescence.</p>
+  <div class="tab-nav" id="p3-nav">
+    <button class="tab-btn active" onclick="switchTab('p3-nav','p3-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p3-nav','p3-steps')">Build steps</button>
+    <button class="tab-btn" onclick="switchTab('p3-nav','p3-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p3-nav','p3-res')">Results &amp; errors</button>
+    <button class="tab-btn" onclick="switchTab('p3-nav','p3-ship')">Ship it</button>
+  </div>
+  <div class="tab-content active" id="p3-about">
+    <h3>What you'll build</h3>
+    <p>A routing engine: for every SKU, compute ADI and CV², place it in the smooth/intermittent/erratic/lumpy quadrant, and forecast it with the method that quadrant prescribes. You'll run Croston, SBA, and TSB, then construct a deliberately obsolescing item to show — with a plot — that only TSB decays toward zero while Croston/SBA stay frozen.</p>
+    <p><strong>Real-world analogue:</strong> spare-parts and slow-mover planning, and the tail of any FMCG catalogue. <strong>Dataset:</strong> <a class="cite" href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" target="_blank">Online Retail II ↗</a>, aggregated to SKU-week. <strong>Reinforces:</strong> reference <a class="cite" href="demand_forecasting_reference.html#intermittent" target="_blank">Intermittent &amp; lumpy demand ↗</a>.</p>
+    <div class="viz-container">
+      <div class="viz-label">Classify → route → forecast</div>
+      <svg viewBox="0 0 680 120" class="viz-svg" style="max-height:120px">
+        <defs><marker id="p3ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <g font-family="monospace" font-size="9">
+        <rect x="6" y="44" width="120" height="34" rx="6" fill="var(--bg2)" stroke="var(--accent)"/><text x="66" y="65" fill="var(--text)" text-anchor="middle">compute ADI, CV²</text>
+        <line x1="126" y1="61" x2="152" y2="61" stroke="var(--text3)" marker-end="url(#p3ah)"/>
+        <rect x="154" y="22" width="130" height="22" rx="5" fill="var(--green)" opacity="0.15" stroke="var(--green)"/><text x="219" y="37" fill="var(--text2)" text-anchor="middle">smooth → ETS/GBM</text>
+        <rect x="154" y="50" width="130" height="22" rx="5" fill="var(--accent)" opacity="0.15" stroke="var(--accent)"/><text x="219" y="65" fill="var(--text2)" text-anchor="middle">intermittent → Croston/SBA</text>
+        <rect x="154" y="78" width="130" height="22" rx="5" fill="var(--coral)" opacity="0.15" stroke="var(--coral)"/><text x="219" y="93" fill="var(--text2)" text-anchor="middle">lumpy → SBA/TSB</text>
+        <line x1="284" y1="61" x2="310" y2="61" stroke="var(--text3)" marker-end="url(#p3ah)"/>
+        <rect x="312" y="44" width="150" height="34" rx="6" fill="var(--bg2)" stroke="var(--amber)"/><text x="387" y="65" fill="var(--text)" text-anchor="middle">forecast per route</text>
+        <line x1="462" y1="61" x2="488" y2="61" stroke="var(--text3)" marker-end="url(#p3ah)"/>
+        <rect x="490" y="44" width="184" height="34" rx="6" fill="var(--bg2)" stroke="var(--green)"/><text x="582" y="61" fill="var(--text)" text-anchor="middle">TSB decays on obsolescence</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-content" id="p3-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Aggregate to SKU-week <span style="color:var(--text3)">(~40 min)</span></div><div class="tl-body">Sum transactional quantities to weekly per StockCode; reindex to a complete weekly grid so zero-demand weeks are explicit zeros, not missing rows. The zeros are the whole point.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Compute ADI &amp; CV² <span style="color:var(--text3)">(~35 min)</span></div><div class="tl-body">Per SKU: ADI = periods ÷ non-zero periods; CV² = variance/mean² of the non-zero sizes. Assign the quadrant with the 1.32 / 0.49 cutoffs.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Profile the catalogue <span style="color:var(--text3)">(~25 min)</span></div><div class="tl-body">Plot the SKUs on the ADI–CV² plane. You'll typically find most SKUs are intermittent or lumpy — a vivid reminder of why dense models alone are insufficient.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Route &amp; forecast <span style="color:var(--text3)">(~50 min)</span></div><div class="tl-body">Run CrostonClassic, CrostonSBA, and TSB via statsforecast on the intermittent/lumpy SKUs; keep ETS for the smooth ones. Backtest with a count-appropriate metric.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · The obsolescence demo <span style="color:var(--text3)">(~40 min)</span></div><div class="tl-body">Take (or synthesise) an item that sells then dies. Forecast with SBA and TSB; plot both. Show SBA stays flat while TSB decays toward zero.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">6 · Evaluate by inventory lens <span style="color:var(--text3)">(~30 min)</span></div><div class="tl-body">Beyond point error, simulate a simple order-up-to policy and compare holding + stock-out outcomes — the right way to judge intermittent forecasts.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p3-code">
+    <h4>Classify each SKU by ADI / CV²</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">adi_cv2</span>(y):
+    y = np.asarray(y, dtype=float)
+    nz = y[y &gt; <span class="num">0</span>]
+    <span class="kw">if</span> len(nz) &lt; <span class="num">2</span>:
+        <span class="kw">return</span> np.inf, np.inf
+    adi = len(y) / len(nz)
+    cv2 = (nz.std(ddof=<span class="num">1</span>) / nz.mean())**<span class="num">2</span>
+    <span class="kw">return</span> adi, cv2
+
+<span class="kw">def</span> <span class="fn">quadrant</span>(adi, cv2):
+    <span class="kw">if</span> adi &lt; <span class="num">1.32</span> <span class="kw">and</span> cv2 &lt; <span class="num">0.49</span>: <span class="kw">return</span> <span class="st">"smooth"</span>
+    <span class="kw">if</span> adi &lt; <span class="num">1.32</span>:                     <span class="kw">return</span> <span class="st">"erratic"</span>
+    <span class="kw">if</span> cv2 &lt; <span class="num">0.49</span>:                     <span class="kw">return</span> <span class="st">"intermittent"</span>
+    <span class="kw">return</span> <span class="st">"lumpy"</span>
+
+seg = (weekly.groupby(<span class="st">"unique_id"</span>)[<span class="st">"y"</span>]
+              .apply(<span class="kw">lambda</span> s: quadrant(*adi_cv2(s))))</div>
+    <h4>Route to the right method</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> statsforecast <span class="kw">import</span> StatsForecast
+<span class="kw">from</span> statsforecast.models <span class="kw">import</span> AutoETS, CrostonClassic, CrostonSBA, TSB
+
+routes = {
+    <span class="st">"smooth"</span>:       [AutoETS(season_length=<span class="num">52</span>)],
+    <span class="st">"erratic"</span>:      [CrostonSBA()],
+    <span class="st">"intermittent"</span>: [CrostonClassic(), CrostonSBA()],
+    <span class="st">"lumpy"</span>:        [CrostonSBA(), TSB(alpha_d=<span class="num">0.2</span>, alpha_p=<span class="num">0.2</span>)],
+}
+out = {}
+<span class="kw">for</span> q, models <span class="kw">in</span> routes.items():
+    ids = seg[seg == q].index
+    sub = weekly[weekly.unique_id.isin(ids)]
+    <span class="kw">if</span> len(sub):
+        out[q] = StatsForecast(models=models, freq=<span class="st">"W"</span>, n_jobs=-<span class="num">1</span>).forecast(df=sub, h=<span class="num">8</span>)</div>
+    <h4>Obsolescence: TSB decays, Croston/SBA don't</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># item sells for 40 weeks, then goes dead for 20</span>
+y = np.r_[np.random.poisson(<span class="num">3</span>, <span class="num">40</span>), np.zeros(<span class="num">20</span>)]
+dead = pd.DataFrame({<span class="st">"unique_id"</span>:<span class="st">"DEAD"</span>,
+                     <span class="st">"ds"</span>: pd.date_range(<span class="st">"2025-01-05"</span>, periods=<span class="num">60</span>, freq=<span class="st">"W"</span>),
+                     <span class="st">"y"</span>: y})
+sf = StatsForecast(models=[CrostonSBA(), TSB(<span class="num">0.2</span>,<span class="num">0.2</span>)], freq=<span class="st">"W"</span>)
+fc = sf.forecast(df=dead, h=<span class="num">8</span>)
+<span class="cm"># CrostonSBA ~ frozen at its last positive-demand rate;</span>
+<span class="cm"># TSB has decayed toward 0 because probability was smoothed down each zero week.</span>
+print(fc)</div>
+  </div>
+  <div class="tab-content" id="p3-res">
+    <h4>Expected results</h4>
+    <ul>
+      <li>Most real-catalogue SKUs land in the <strong>intermittent or lumpy</strong> quadrants — often well over half. This is the headline insight to show stakeholders.</li>
+      <li>On the obsolescence demo, <strong>TSB's forecast is markedly lower</strong> (decaying toward zero) than CrostonSBA's, which stays near the last active rate. That gap is the whole reason TSB exists.</li>
+      <li>SBA's forecasts should be slightly <strong>lower than Croston's</strong> on the same series (the (1−α/2) de-biasing).</li>
+      <li>Using MAPE here will produce infinities — confirm your metric is WMAPE/MASE or an inventory measure, not MAPE.</li>
+    </ul>
+    <h4>Common errors</h4>
+    <div class="card-sm"><strong>Dropping zero weeks.</strong> If you aggregate and only keep weeks with sales, ADI collapses to ~1 and every SKU looks smooth. Reindex to a full weekly grid first.</div>
+    <div class="card-sm"><strong>CV² on all data instead of non-zero sizes.</strong> CV² must use only the positive demand sizes; including zeros distorts it.</div>
+    <div class="card-sm"><strong>Expecting point accuracy to look good.</strong> Intermittent point forecasts are inherently "wrong" most weeks (you predict a rate, demand is 0 or a spike). Judge by inventory outcomes, not week-by-week hits.</div>
+  </div>
+  <div class="tab-content" id="p3-ship">
+    <h4>Deliverables</h4>
+    <ul>
+      <li>A classification report: the ADI–CV² scatter with quadrant counts for the catalogue.</li>
+      <li>A routing function mapping each SKU to its method, and forecasts produced per route.</li>
+      <li>The obsolescence plot (SBA vs TSB on a dying item) with a one-line takeaway.</li>
+    </ul>
+    <h5 style="margin-top:14px">Self-check</h5>
+    <ul><li>☐ Are zero-demand weeks explicit in your data?</li><li>☐ Can you state what fraction of SKUs are lumpy/intermittent?</li><li>☐ Does your plot clearly show TSB decaying and SBA not?</li></ul>
+    <h4 style="margin-top:14px">Challenges</h4>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-amber">Stretch</span> Add a simple order-up-to inventory simulation and compare fill rate + holding cost of SBA vs TSB on the obsolescing items.</div>
+    <div class="ex-block"><span class="badge b-coral">Hard</span> Compare the intermittent methods against the Project 2 LightGBM (Tweedie) on the same tail SKUs — when does cross-learning beat dedicated intermittent methods?</div>
+  </div>
+</div>
+</section>
+<section class="section" id="p4">
+<div class="container">
+  <div class="section-eyebrow">Project 4 · Advanced · ~4.5 hrs</div>
+  <h2 class="section-title">Hierarchical reconciliation across channel &amp; zone</h2>
+  <p class="section-sub">Make your forecasts add up. Build base forecasts at every level of a SKU → channel → zone → national tree, then reconcile them with bottom-up and MinT so the numbers are coherent — and measure whether reconciliation also improves accuracy.</p>
+  <div class="tab-nav" id="p4-nav">
+    <button class="tab-btn active" onclick="switchTab('p4-nav','p4-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p4-nav','p4-steps')">Build steps</button>
+    <button class="tab-btn" onclick="switchTab('p4-nav','p4-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p4-nav','p4-res')">Results &amp; errors</button>
+    <button class="tab-btn" onclick="switchTab('p4-nav','p4-ship')">Ship it</button>
+  </div>
+  <div class="tab-content active" id="p4-about">
+    <h3>What you'll build</h3>
+    <p>A reconciliation pipeline using Nixtla's <code>hierarchicalforecast</code>: define the aggregation structure, generate base forecasts at every node with <code>statsforecast</code>, then reconcile with BottomUp and MinTrace. You'll verify coherence (children sum to parents to the cent) and compare accuracy at each level — testing the claim that MinT can beat bottom-up even at the top.</p>
+    <p><strong>Real-world analogue:</strong> the S&amp;OP problem — one coherent demand number from SKU to national, across GT/MT/Ecom/IN channels and zones. <strong>Dataset:</strong> <a class="cite" href="https://www.kaggle.com/competitions/m5-forecasting-accuracy" target="_blank">M5 ↗</a> (state → store → category gives a natural hierarchy). <strong>Reinforces:</strong> reference <a class="cite" href="demand_forecasting_reference.html#hierarchy" target="_blank">Hierarchical reconciliation ↗</a>.</p>
+    <div class="viz-container">
+      <div class="viz-label">Base forecasts (incoherent) → reconciled (coherent)</div>
+      <svg viewBox="0 0 680 120" class="viz-svg" style="max-height:120px">
+        <g font-family="monospace" font-size="9">
+        <text x="6" y="16" fill="var(--text3)">BEFORE — children don't sum to parent</text>
+        <rect x="40" y="26" width="70" height="20" fill="var(--bg2)" stroke="var(--red)"/><text x="75" y="40" fill="var(--text2)" text-anchor="middle">Nat 980</text>
+        <rect x="10" y="60" width="60" height="20" fill="var(--bg2)" stroke="var(--red)"/><text x="40" y="74" fill="var(--text2)" text-anchor="middle">W 520</text>
+        <rect x="80" y="60" width="60" height="20" fill="var(--bg2)" stroke="var(--red)"/><text x="110" y="74" fill="var(--text2)" text-anchor="middle">S 510</text>
+        <text x="40" y="98" fill="var(--red)">520+510=1030 ≠ 980 ✗</text>
+        <text x="380" y="16" fill="var(--text3)">AFTER — MinT reconciled, coherent</text>
+        <rect x="414" y="26" width="70" height="20" fill="var(--bg2)" stroke="var(--green)"/><text x="449" y="40" fill="var(--text2)" text-anchor="middle">Nat 1012</text>
+        <rect x="384" y="60" width="60" height="20" fill="var(--bg2)" stroke="var(--green)"/><text x="414" y="74" fill="var(--text2)" text-anchor="middle">W 511</text>
+        <rect x="454" y="60" width="60" height="20" fill="var(--bg2)" stroke="var(--green)"/><text x="484" y="74" fill="var(--text2)" text-anchor="middle">S 501</text>
+        <text x="384" y="98" fill="var(--green)">511+501=1012 = Nat ✓</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-content" id="p4-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Define the hierarchy spec <span style="color:var(--text3)">(~40 min)</span></div><div class="tl-body">Choose your levels (e.g. state → store → category). Use <code>aggregate()</code> to build the series at every level and the summing matrix S that encodes the tree.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Generate base forecasts everywhere <span style="color:var(--text3)">(~60 min)</span></div><div class="tl-body">Fit AutoETS/AutoARIMA on every node (top, middle, leaves) with statsforecast. These are deliberately independent, so they won't be coherent.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Verify the incoherence <span style="color:var(--text3)">(~20 min)</span></div><div class="tl-body">Sum the leaf forecasts and compare to the parent forecast — confirm they differ. This is the problem reconciliation solves.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Reconcile (BU + MinT) <span style="color:var(--text3)">(~50 min)</span></div><div class="tl-body">Apply BottomUp and MinTrace(mint_shrink). Confirm children now sum to parents exactly at every level.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Evaluate accuracy by level <span style="color:var(--text3)">(~50 min)</span></div><div class="tl-body">Backtest base vs BU vs MinT with rolling-origin; report WMAPE at national, zone, and leaf levels. Look for where MinT beats BU.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">6 · Interpret &amp; write up <span style="color:var(--text3)">(~30 min)</span></div><div class="tl-body">Explain the accuracy/coherence trade-offs you observed and which method you'd ship for an S&amp;OP process.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p4-code">
+    <h4>Build the hierarchy</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> hierarchicalforecast.utils <span class="kw">import</span> aggregate
+
+<span class="cm"># each list is one level of the tree, coarse to fine</span>
+spec = [
+    [<span class="st">"state"</span>],
+    [<span class="st">"state"</span>, <span class="st">"store"</span>],
+    [<span class="st">"state"</span>, <span class="st">"store"</span>, <span class="st">"cat"</span>],
+]
+Y_df, S_df, tags = aggregate(df, spec)   <span class="cm"># Y_df has every level stacked; S_df is the summing matrix</span></div>
+    <h4>Base forecasts at every node</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> statsforecast <span class="kw">import</span> StatsForecast
+<span class="kw">from</span> statsforecast.models <span class="kw">import</span> AutoETS
+
+sf = StatsForecast(models=[AutoETS(season_length=<span class="num">7</span>)], freq=<span class="st">"D"</span>, n_jobs=-<span class="num">1</span>)
+Y_hat = sf.forecast(df=Y_df, h=<span class="num">28</span>, fitted=<span class="kw">True</span>)
+Y_fitted = sf.forecast_fitted_values()   <span class="cm"># needed by MinT to estimate error covariance</span></div>
+    <h4>Reconcile with BottomUp and MinT</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> hierarchicalforecast.core <span class="kw">import</span> HierarchicalReconciliation
+<span class="kw">from</span> hierarchicalforecast.methods <span class="kw">import</span> BottomUp, MinTrace
+
+hrec = HierarchicalReconciliation(reconcilers=[
+    BottomUp(),
+    MinTrace(method=<span class="st">"mint_shrink"</span>),
+])
+Y_rec = hrec.reconcile(Y_hat_df=Y_hat, Y_df=Y_fitted, S=S_df, tags=tags)
+<span class="cm"># Y_rec now has coherent columns: AutoETS/BottomUp and AutoETS/MinTrace_method-mint_shrink</span></div>
+    <h4>Prove coherence</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># sum of leaf forecasts must equal the national forecast, per method</span>
+col = <span class="st">"AutoETS/MinTrace_method-mint_shrink"</span>
+leaves = Y_rec.loc[tags[<span class="st">"state/store/cat"</span>]]
+national = Y_rec.loc[tags[<span class="st">"state"</span>]].groupby(<span class="st">"ds"</span>)[col].sum()
+<span class="kw">assert</span> np.allclose(leaves.groupby(<span class="st">"ds"</span>)[col].sum(), national)  <span class="cm"># coherent ✓</span></div>
+  </div>
+  <div class="tab-content" id="p4-res">
+    <h4>Expected results</h4>
+    <ul>
+      <li>Base (independent) forecasts will be <strong>incoherent</strong> — leaf sums won't match parents. After BU and MinT, coherence holds <strong>exactly</strong> (your assert passes).</li>
+      <li>Bottom-up is unbiased but often <strong>noisier at the top</strong>; <strong>MinT frequently matches or beats it at aggregate levels</strong> while staying competitive at the leaves — the result the method promises.</li>
+      <li>Improvements are usually modest but consistent; the bigger operational win is coherence itself (a single number that ties out across the org).</li>
+      <li>MinT needs a reasonable error-covariance estimate; <code>mint_shrink</code> is the robust default — plain <code>mint_cov</code> can be unstable on short histories.</li>
+    </ul>
+    <h4>Common errors</h4>
+    <div class="card-sm"><strong>Forgetting fitted values.</strong> MinT needs in-sample fitted values to estimate the error covariance — pass <code>fitted=True</code> and supply them, or MinT can't run.</div>
+    <div class="card-sm"><strong>Inconsistent keys across levels.</strong> The aggregation spec must use columns that nest cleanly; a store appearing under two states breaks the tree.</div>
+    <div class="card-sm"><strong>Comparing accuracy only at one level.</strong> Reconciliation's effect differs by level — report national, middle, and leaf WMAPE separately.</div>
+  </div>
+  <div class="tab-content" id="p4-ship">
+    <h4>Deliverables</h4>
+    <ul>
+      <li>A reconciliation notebook: spec → base forecasts → BU + MinT → coherence proof.</li>
+      <li>A by-level accuracy table (base vs BU vs MinT) from rolling-origin backtesting.</li>
+      <li>A short recommendation: which method you'd use for S&amp;OP and why.</li>
+    </ul>
+    <h5 style="margin-top:14px">Self-check</h5>
+    <ul><li>☐ Does your coherence assert pass for both BU and MinT?</li><li>☐ Can you show a level where MinT beats bottom-up?</li><li>☐ Do you understand why independent forecasts were incoherent?</li></ul>
+    <h4 style="margin-top:14px">Challenges</h4>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-amber">Stretch</span> Add a middle-out reconciliation anchored at the store level and compare to BU/MinT.</div>
+    <div class="ex-block"><span class="badge b-coral">Hard</span> Use Project 2's LightGBM as the base forecaster instead of AutoETS, then reconcile — does a stronger base change which reconciliation method wins?</div>
+  </div>
+</div>
+</section>
+<section class="section" id="p5">
+<div class="container">
+  <div class="section-eyebrow">Project 5 · Advanced–Expert · ~4.5 hrs</div>
+  <h2 class="section-title">Backtest &amp; champion/challenger harness</h2>
+  <p class="section-sub">Tie it all together. Build a reusable rolling-origin harness that scores any model with WMAPE/bias/MASE per horizon and segment, add a foundation-model (Chronos/TimesFM) zero-shot challenger, and implement champion/challenger selection — the system that decides what ships.</p>
+  <div class="tab-nav" id="p5-nav">
+    <button class="tab-btn active" onclick="switchTab('p5-nav','p5-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p5-nav','p5-steps')">Build steps</button>
+    <button class="tab-btn" onclick="switchTab('p5-nav','p5-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p5-nav','p5-res')">Results &amp; errors</button>
+    <button class="tab-btn" onclick="switchTab('p5-nav','p5-ship')">Ship it</button>
+  </div>
+  <div class="tab-content active" id="p5-about">
+    <h3>What you'll build</h3>
+    <p>A model-agnostic backtesting harness that takes any forecaster, runs rolling-origin CV, and emits per-fold, per-horizon, per-segment WMAPE/bias/MASE with seasonal-naive always included as the floor. You'll plug in the classical baselines (P1), LightGBM (P2), and a <strong>foundation-model zero-shot</strong> forecaster (Chronos or TimesFM), then build champion/challenger logic with hysteresis that promotes a model only when it wins consistently.</p>
+    <p><strong>Real-world analogue:</strong> the evaluation-and-selection backbone of a production forecasting platform. <strong>Dataset:</strong> <a class="cite" href="https://www.kaggle.com/c/rossmann-store-sales" target="_blank">Rossmann ↗</a> (rich promo/holiday covariates) plus any series from earlier projects. <strong>Reinforces:</strong> reference <a class="cite" href="demand_forecasting_reference.html#evaluation" target="_blank">Evaluation ↗</a>, <a class="cite" href="demand_forecasting_reference.html#evaladv" target="_blank">Advanced evaluation (Diebold-Mariano) ↗</a>, <a class="cite" href="demand_forecasting_reference.html#probabilistic" target="_blank">Probabilistic &amp; conformal ↗</a>, <a class="cite" href="demand_forecasting_reference.html#decision" target="_blank">Forecast&#8594;decision ↗</a> and <a class="cite" href="demand_forecasting_reference.html#advanced" target="_blank">the 2026 frontier ↗</a>.</p>
+    <div class="viz-container">
+      <div class="viz-label">The harness: every model scored the same way, then selected</div>
+      <svg viewBox="0 0 680 130" class="viz-svg" style="max-height:130px">
+        <defs><marker id="p5ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <g font-family="monospace" font-size="9">
+        <rect x="6" y="20" width="120" height="20" rx="5" fill="var(--text3)" opacity="0.2"/><text x="66" y="34" fill="var(--text2)" text-anchor="middle">SeasonalNaive (floor)</text>
+        <rect x="6" y="46" width="120" height="20" rx="5" fill="var(--teal)" opacity="0.3"/><text x="66" y="60" fill="var(--text2)" text-anchor="middle">AutoETS / ARIMA</text>
+        <rect x="6" y="72" width="120" height="20" rx="5" fill="var(--accent)" opacity="0.3"/><text x="66" y="86" fill="var(--text2)" text-anchor="middle">LightGBM</text>
+        <rect x="6" y="98" width="120" height="20" rx="5" fill="var(--accent2)" opacity="0.3"/><text x="66" y="112" fill="var(--text2)" text-anchor="middle">Chronos zero-shot</text>
+        <line x1="126" y1="69" x2="200" y2="69" stroke="var(--text3)" marker-end="url(#p5ah)"/>
+        <rect x="202" y="48" width="150" height="42" rx="6" fill="var(--bg2)" stroke="var(--amber)"/><text x="277" y="66" fill="var(--text)" text-anchor="middle">rolling-origin harness</text><text x="277" y="80" fill="var(--text3)" text-anchor="middle">WMAPE/bias/MASE</text>
+        <line x1="352" y1="69" x2="426" y2="69" stroke="var(--text3)" marker-end="url(#p5ah)"/>
+        <rect x="428" y="48" width="150" height="42" rx="6" fill="var(--bg2)" stroke="var(--green)"/><text x="503" y="66" fill="var(--text)" text-anchor="middle">champion / challenger</text><text x="503" y="80" fill="var(--text3)" text-anchor="middle">promote w/ hysteresis</text>
+        <line x1="578" y1="69" x2="604" y2="69" stroke="var(--text3)" marker-end="url(#p5ah)"/>
+        <rect x="606" y="48" width="68" height="42" rx="6" fill="var(--bg2)" stroke="var(--accent)"/><text x="640" y="73" fill="var(--text)" text-anchor="middle">ship</text>
+        </g>
+      </svg>
+    </div>
+  </div>
+  <div class="tab-content" id="p5-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Define the harness interface <span style="color:var(--text3)">(~40 min)</span></div><div class="tl-body">A <code>backtest(forecaster, df, h, n_windows, step)</code> that loops rolling origins, calls the forecaster on each train slice, and collects predictions tagged with fold and horizon. Every forecaster shares one signature.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Scoring with segments &amp; horizons <span style="color:var(--text3)">(~45 min)</span></div><div class="tl-body">Compute WMAPE/bias/MASE overall, by horizon, and by segment (store type, promo vs non-promo). Always include SeasonalNaive as a column.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Wrap existing models <span style="color:var(--text3)">(~40 min)</span></div><div class="tl-body">Adapt P1 classical and P2 LightGBM to the harness interface so they're directly comparable.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Add a foundation-model challenger <span style="color:var(--text3)">(~55 min)</span></div><div class="tl-body">Wrap Chronos (or TimesFM) zero-shot: feed each series' history, get a quantile forecast, no training. Slot it into the harness like any other model.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Champion/challenger selection <span style="color:var(--text3)">(~40 min)</span></div><div class="tl-body">Pick the champion per segment by mean WMAPE across folds; promote a challenger only if it beats the champion by a margin on most folds (hysteresis to avoid flip-flopping).</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">6 · Report &amp; decide <span style="color:var(--text3)">(~30 min)</span></div><div class="tl-body">Produce the scorecard and a clear recommendation: which model wins where (e.g. GBM on covariate-rich promo series, foundation model on cold-start), and what you'd deploy.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p5-code">
+    <h4>The model-agnostic rolling-origin harness</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+
+<span class="kw">def</span> <span class="fn">backtest</span>(forecaster, df, h=<span class="num">28</span>, n_windows=<span class="num">4</span>, step=<span class="num">28</span>):
+    <span class="st">"""forecaster(train_df, h) -&gt; df[unique_id, ds, yhat]."""</span>
+    cutoffs = sorted(df[<span class="st">"ds"</span>].unique())[-(n_windows*step + h):][::step][:n_windows]
+    rows = []
+    <span class="kw">for</span> k, cut <span class="kw">in</span> enumerate(cutoffs):
+        train = df[df.ds &lt;= cut]
+        test  = df[(df.ds &gt; cut) &amp; (df.ds &lt;= cut + pd.Timedelta(days=h))]
+        pred  = forecaster(train, h).merge(test, on=[<span class="st">"unique_id"</span>,<span class="st">"ds"</span>])
+        pred[<span class="st">"fold"</span>] = k
+        pred[<span class="st">"horizon"</span>] = (pred.ds - cut).dt.days
+        rows.append(pred)
+    <span class="kw">return</span> pd.concat(rows, ignore_index=<span class="kw">True</span>)</div>
+    <h4>Score by horizon and segment</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">def</span> <span class="fn">wmape</span>(g): <span class="kw">return</span> (g.yhat - g.y).abs().sum() / g.y.abs().sum()
+
+<span class="kw">def</span> <span class="fn">scorecard</span>(bt, by=<span class="kw">None</span>):
+    keys = ([by] <span class="kw">if</span> by <span class="kw">else</span> []) 
+    out = (bt.groupby(keys + [<span class="st">"fold"</span>]).apply(wmape).rename(<span class="st">"wmape"</span>).reset_index())
+    <span class="kw">return</span> out.groupby(keys)[<span class="st">"wmape"</span>].agg([<span class="st">"mean"</span>, <span class="st">"std"</span>]) <span class="kw">if</span> keys <span class="kw">else</span> out.wmape.agg([<span class="st">"mean"</span>,<span class="st">"std"</span>])
+
+print(scorecard(bt_lgb, by=<span class="st">"horizon"</span>))   <span class="cm"># degradation curve</span>
+print(scorecard(bt_lgb, by=<span class="st">"promo"</span>))     <span class="cm"># promo vs non-promo</span></div>
+    <h4>Foundation-model zero-shot challenger (Chronos)</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">import</span> torch, numpy <span class="kw">as</span> np, pandas <span class="kw">as</span> pd
+<span class="kw">from</span> chronos <span class="kw">import</span> ChronosPipeline
+pipe = ChronosPipeline.from_pretrained(<span class="st">"amazon/chronos-bolt-base"</span>, device_map=<span class="st">"cuda"</span>)
+
+<span class="kw">def</span> <span class="fn">chronos_forecaster</span>(train, h):
+    out = []
+    <span class="kw">for</span> uid, g <span class="kw">in</span> train.groupby(<span class="st">"unique_id"</span>):
+        ctx = torch.tensor(g.sort_values(<span class="st">"ds"</span>)[<span class="st">"y"</span>].values, dtype=torch.float32)
+        q, mean = pipe.predict_quantiles(context=ctx, prediction_length=h,
+                                         quantile_levels=[<span class="num">0.5</span>])
+        future = pd.date_range(g.ds.max() + pd.Timedelta(days=<span class="num">1</span>), periods=h)
+        out.append(pd.DataFrame({<span class="st">"unique_id"</span>:uid, <span class="st">"ds"</span>:future,
+                                 <span class="st">"yhat"</span>: q[<span class="num">0</span>,:,<span class="num">0</span>].numpy().clip(min=<span class="num">0</span>)}))
+    <span class="kw">return</span> pd.concat(out, ignore_index=<span class="kw">True</span>)</div>
+    <h4>Champion / challenger with hysteresis</h4>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">def</span> <span class="fn">select</span>(scores, champion, margin=<span class="num">0.02</span>, min_win_folds=<span class="num">3</span>):
+    <span class="st">"""scores: {model: wmape_per_fold array}. Promote only on consistent wins."""</span>
+    champ = scores[champion]
+    best, best_mean = champion, champ.mean()
+    <span class="kw">for</span> m, s <span class="kw">in</span> scores.items():
+        wins = (s &lt; champ).sum()
+        <span class="kw">if</span> s.mean() &lt; best_mean - margin <span class="kw">and</span> wins &gt;= min_win_folds:
+            best, best_mean = m, s.mean()       <span class="cm"># beat by margin AND on most folds</span>
+    <span class="kw">return</span> best</div>
+  </div>
+  <div class="tab-content" id="p5-res">
+    <h4>Expected results</h4>
+    <ul>
+      <li>On Rossmann's covariate-rich, promo-heavy series, the <strong>tuned LightGBM usually beats the zero-shot foundation model</strong> — the honest 2026 result. The gap narrows or reverses on short-history/cold-start series.</li>
+      <li>The foundation model is a <strong>strong, near-instant baseline</strong> — often beating classical methods with zero training, which is genuinely useful for cold-start.</li>
+      <li>WMAPE rises with horizon for all models; segment slices reveal promo weeks are where models differ most.</li>
+      <li>The selector should <strong>not</strong> flip the champion on a single lucky fold — that's the hysteresis working.</li>
+    </ul>
+    <h4>Common errors</h4>
+    <div class="card-sm"><strong>Recomputing features outside the fold.</strong> The harness must build features inside each train slice, or you reintroduce leakage. Keep feature logic behind the forecaster interface.</div>
+    <div class="card-sm"><strong>Comparing models on different folds.</strong> Every model must see identical train/test splits, or the comparison is meaningless. The harness enforces this by construction.</div>
+    <div class="card-sm"><strong>Judging the foundation model unfairly.</strong> Zero-shot can't see your promo covariates; note that when interpreting — it's a covariate handicap, not pure model weakness.</div>
+    <div class="card-sm"><strong>GPU/memory for foundation models.</strong> Batch series and use the Bolt variant; running thousands of series one-by-one on CPU is slow.</div>
+  </div>
+  <div class="tab-content" id="p5-ship">
+    <h4>Deliverables</h4>
+    <ul>
+      <li>A reusable <code>backtest()</code> + <code>scorecard()</code> module that any future model can plug into.</li>
+      <li>A multi-model scorecard (naive, classical, LightGBM, foundation) by horizon and segment.</li>
+      <li>A champion/challenger selector with hysteresis and a written deployment recommendation.</li>
+    </ul>
+    <h5 style="margin-top:14px">Self-check</h5>
+    <ul><li>☐ Do all models share identical folds and a leakage-free interface?</li><li>☐ Can you state where each model wins (cold-start vs covariate-rich)?</li><li>☐ Does the selector resist single-fold noise?</li></ul>
+    <h4 style="margin-top:14px">Challenges</h4>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-amber">Stretch</span> Add interval coverage to the scorecard for the quantile models and check whether nominal 90% intervals actually cover ~90%.</div>
+    <div class="ex-block" style="margin-bottom:10px"><span class="badge b-coral">Hard</span> Add a drift trigger: simulate a regime change mid-series and show the harness flagging the champion falling below the naive floor.</div>
+    <div class="ex-block"><span class="badge b-coral">Expert</span> Fine-tune the foundation model on your data and re-benchmark — quantify how much fine-tuning closes the gap to the tuned GBM.</div>
+  </div>
+</div>
+</section>
+<section class="section" id="exercises">
+<div class="container">
+  <div class="section-eyebrow">Beyond the projects · self-paced</div>
+  <h2 class="section-title">Cross-cutting exercises</h2>
+  <p class="section-sub">Eight exercises that sit between the projects and connect them to the theory. Each is tagged with the projects it draws on and links back to the reference section it reinforces.</p>
+
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-01 · uses P1, P2</span><span><span class="qa-difficulty diff-intermediate">Intermediate</span></span></div><div class="ex-title">One scoring module to rule them all</div><div class="ex-body">Refactor the WMAPE/bias/MASE logic from P1 and the harness from P5 into a single importable module, and re-run P1 and P2 through it so every project reports identically. Prove the numbers match.</div><a class="ex-project-link" href="demand_forecasting_reference.html#evaluation" target="_blank">→ Reference: Evaluation</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-02 · uses P2</span><span><span class="qa-difficulty diff-advanced">Advanced</span></span></div><div class="ex-title">Hunt the leak</div><div class="ex-body">Deliberately introduce a leaking feature (a rolling mean without the shift) into the P2 pipeline, observe the backtest improve, then catch it with a leakage audit. Document the symptom and the fix.</div><a class="ex-project-link" href="demand_forecasting_reference.html#pitfalls" target="_blank">→ Reference: Pitfalls</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-03 · uses P1, P2, P5</span><span><span class="qa-difficulty diff-intermediate">Intermediate</span></span></div><div class="ex-title">The combining experiment</div><div class="ex-body">Build a simple equal-weight ensemble of your best classical model and LightGBM, score it in the harness, and test the M-competition claim that combining beats the best single model. Report whether it held for you.</div><a class="ex-project-link" href="demand_forecasting_reference.html#methods" target="_blank">→ Reference: Methods</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-04 · uses P3</span><span><span class="qa-difficulty diff-intermediate">Intermediate</span></span></div><div class="ex-title">Inventory-lens evaluation</div><div class="ex-body">For the intermittent SKUs, replace point-error ranking with a simple order-up-to simulation and rank methods by fill rate and holding cost. Show that the "best WMAPE" method isn't always the best inventory method.</div><a class="ex-project-link" href="demand_forecasting_reference.html#intermittent" target="_blank">→ Reference: Intermittent demand</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-05 · uses P2, P4</span><span><span class="qa-difficulty diff-advanced">Advanced</span></span></div><div class="ex-title">Strong base, then reconcile</div><div class="ex-body">Feed LightGBM forecasts (P2) as the base into the reconciliation pipeline (P4) and compare against AutoETS-based reconciliation. Does a better base change which reconciliation method wins, or by how much?</div><a class="ex-project-link" href="demand_forecasting_reference.html#hierarchy" target="_blank">→ Reference: Hierarchy</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-06 · uses P5</span><span><span class="qa-difficulty diff-advanced">Advanced</span></span></div><div class="ex-title">Where does zero-shot win?</div><div class="ex-body">Segment your P5 results by history length and covariate richness, and pinpoint the regimes where the foundation model beats the GBM. Write the one-paragraph rule you'd use to route series between them.</div><a class="ex-project-link" href="demand_forecasting_reference.html#advanced" target="_blank">→ Reference: Advanced</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-07 · uses P2, P3, P5</span><span><span class="qa-difficulty diff-expert">Expert</span></span></div><div class="ex-title">The routed meta-forecaster</div><div class="ex-body">Combine everything: classify each series (P3), route smooth/dense to LightGBM (P2) and the tail to TSB/SBA, with a foundation-model fallback for cold-start, all scored through one harness (P5). Beat any single-model approach on the full catalogue.</div><a class="ex-project-link" href="demand_forecasting_reference.html#alternates" target="_blank">→ Reference: Method chooser</a></div>
+  <div class="ex-block"><div class="ex-header"><span class="ex-num">PX-08 · uses P5</span><span><span class="qa-difficulty diff-expert">Expert</span></span></div><div class="ex-title">Drift-aware retraining loop</div><div class="ex-body">Wrap the harness in a loop that simulates weekly cycles, monitors realised WMAPE/bias vs the naive floor, and triggers retraining + champion promotion on breach. Tune it so it reacts to real drift without thrashing on noise.</div><a class="ex-project-link" href="demand_forecasting_reference.html#pipeline" target="_blank">→ Reference: Production &amp; lifecycle</a></div>
+</div>
+</section>
+
+<section class="section" id="publish">
+<div class="container">
+  <div class="section-eyebrow">Beyond the projects · share it</div>
+  <h2 class="section-title">Publish your work</h2>
+  <p class="section-sub">A forecasting project nobody can read is half-finished. Turn these into portfolio pieces and internal artifacts that demonstrate judgment, not just code.</p>
+  <div class="grid2">
+    <div class="card">
+      <h3>Notebook structure that reads well</h3>
+      <ol>
+        <li><strong>The question &amp; the baseline</strong> — state what you're forecasting and the seasonal-naive floor up front.</li>
+        <li><strong>Data &amp; EDA</strong> — a few plots that motivate the method (seasonality, intermittency).</li>
+        <li><strong>Method &amp; why</strong> — the model and the reasoning, not just the call.</li>
+        <li><strong>Backtest &amp; results</strong> — the leaderboard vs naive, by horizon and segment.</li>
+        <li><strong>Honest limitations</strong> — where it fails and what you'd do next.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>The write-up template</h3>
+      <p>Lead with the result a planner cares about: "WMAPE improved from X to Y vs the prior baseline; bias fell from +Z% to ~0; here's where it still struggles." Then the how. Recruiters and managers skim — the headline number and an honest limitation section signal seniority more than model complexity does.</p>
+      <p>Good homes: a clean GitHub repo with a README that shows the leaderboard chart, a short blog post, or an internal one-pager for an S&amp;OP audience.</p>
+    </div>
+  </div>
+  <h3 style="margin-top:8px">Pre-publish checklist</h3>
+  <div class="card-sm">☐ Runs top-to-bottom on a fresh kernel from the public dataset.</div>
+  <div class="card-sm">☐ Every model is compared to seasonal-naive on the same rolling-origin folds.</div>
+  <div class="card-sm">☐ No leakage — features audited; a reviewer could verify cutoff discipline.</div>
+  <div class="card-sm">☐ Results reported by horizon and segment, with bias alongside magnitude.</div>
+  <div class="card-sm">☐ Limitations stated honestly; next steps named.</div>
+  <div class="card-sm">☐ One chart a non-technical stakeholder can read in five seconds.</div>
+</div>
+</section>
+
+<section class="section" id="next">
+<div class="container">
+  <div class="section-eyebrow">Beyond the projects · roadmap</div>
+  <h2 class="section-title">What's next</h2>
+  <p class="section-sub">A staged path from "I built five projects" to "I run a forecasting capability." Extend in the direction your work pulls hardest.</p>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 1 · Probabilistic everything</div><div class="tl-body">Convert every model to quantile output, score with pinball loss, and add conformal calibration so intervals are honest. Inventory decisions need distributions, not points.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 2 · Promotions &amp; price elasticity</div><div class="tl-body">Model baseline vs uplift, bring committed promo/price as future-known covariates, and build a what-if endpoint planners can use to test a plan before committing.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 3 · Scale &amp; deep models</div><div class="tl-body">Push the global model to the full catalogue with mlforecast/Spark, and benchmark TFT/N-HiTS/PatchTST honestly against the GBM on your real panel.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 4 · Foundation-model fine-tuning</div><div class="tl-body">Fine-tune Chronos/TimesFM/Moirai on your catalogue and measure the gap-closing vs zero-shot; decide where it earns a place in the routed meta-forecaster.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 5 · Operate it</div><div class="tl-body">Wire monitoring (WMAPE/bias by segment, drift), scheduled + triggered retraining, versioned forecasts, and forecast-value-added tracking on human overrides. Now it's a system.</div></div>
+  </div>
+</div>
+</section>
+
+<section class="section" id="refs">
+<div class="container">
+  <div class="section-eyebrow">Reference · links open in a new tab</div>
+  <h2 class="section-title">References</h2>
+  <p class="section-sub">The datasets and the core libraries these projects use. For the full reading list — papers, textbook, foundation-model repos — see the companion reference guide.</p>
+  <h3>Datasets</h3>
+  <a class="ref-card" href="https://www.kaggle.com/competitions/m5-forecasting-accuracy" target="_blank"><div class="ref-num">D1</div><div><div class="ref-title">M5 Forecasting — Accuracy (Walmart)</div><div class="ref-meta">Hierarchical, intermittent retail benchmark. Projects 2 &amp; 4.</div><span class="ref-tag">kaggle</span></div></a>
+  <a class="ref-card" href="https://www.kaggle.com/c/demand-forecasting-kernels-only" target="_blank"><div class="ref-num">D2</div><div><div class="ref-title">Store Item Demand Forecasting Challenge</div><div class="ref-meta">Clean daily store-item sales. Project 1.</div><span class="ref-tag">kaggle</span></div></a>
+  <a class="ref-card" href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" target="_blank"><div class="ref-num">D3</div><div><div class="ref-title">Online Retail II (UCI)</div><div class="ref-meta">Transactional data → intermittent SKU-weeks. Project 3.</div><span class="ref-tag">uci</span></div></a>
+  <a class="ref-card" href="https://www.kaggle.com/c/rossmann-store-sales" target="_blank"><div class="ref-num">D4</div><div><div class="ref-title">Rossmann Store Sales</div><div class="ref-meta">Promo/holiday covariates for backtesting. Project 5.</div><span class="ref-tag">kaggle</span></div></a>
+  <h3 style="margin-top:22px">Core libraries</h3>
+  <a class="ref-card" href="https://nixtlaverse.nixtla.io/statsforecast/index.html" target="_blank"><div class="ref-num">L1</div><div><div class="ref-title">statsforecast</div><div class="ref-meta">Classical + intermittent at scale (P1, P3, P4).</div><span class="ref-tag">nixtla</span></div></a>
+  <a class="ref-card" href="https://nixtlaverse.nixtla.io/mlforecast/index.html" target="_blank"><div class="ref-num">L2</div><div><div class="ref-title">mlforecast</div><div class="ref-meta">Feature/lag handling + recursive/direct (P2).</div><span class="ref-tag">nixtla</span></div></a>
+  <a class="ref-card" href="https://nixtlaverse.nixtla.io/hierarchicalforecast/index.html" target="_blank"><div class="ref-num">L3</div><div><div class="ref-title">hierarchicalforecast</div><div class="ref-meta">BottomUp, MinTrace reconciliation (P4).</div><span class="ref-tag">nixtla</span></div></a>
+  <a class="ref-card" href="https://lightgbm.readthedocs.io/" target="_blank"><div class="ref-num">L4</div><div><div class="ref-title">LightGBM</div><div class="ref-meta">Gradient boosting + Tweedie objective (P2, P5).</div><span class="ref-tag">docs</span></div></a>
+  <a class="ref-card" href="https://github.com/amazon-science/chronos-forecasting" target="_blank"><div class="ref-num">L5</div><div><div class="ref-title">Chronos</div><div class="ref-meta">Zero-shot foundation-model challenger (P5).</div><span class="ref-tag">github</span></div></a>
+</div>
+</section>
+
+<footer style="padding:48px 0;text-align:center">
+  <div class="container">
+    <p style="font-size:14px;color:var(--text2)">Part of a three-guide set — new to the topic? Start gentle, then go deep, then build.</p>
+    <p style="font-size:14px;color:var(--text3);margin-top:8px"><a class="cite" href="demand_forecasting_intuition.html" target="_blank">🧒 Intuition</a> &nbsp;→&nbsp; <a class="cite" href="demand_forecasting_reference.html" target="_blank">📘 Reference</a> &nbsp;→&nbsp; 🛠️ <strong style="color:var(--text)">Projects</strong> (you're here)</p>
+    <p style="font-size:12px;color:var(--text3);margin-top:22px">Demand Forecasting · Projects &amp; Hands-On Guide · 2026 · build a retail/FMCG forecasting stack end to end.</p>
+  </div>
+</footer>
+</div>
+</div>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<script>
+function toggleTheme(){const d=document.documentElement,b=document.getElementById('theme-btn');if(d.getAttribute('data-theme')==='dark'){d.setAttribute('data-theme','light');b.textContent='☀️ Light';localStorage.setItem('theme','light');}else{d.setAttribute('data-theme','dark');b.textContent='🌙 Dark';localStorage.setItem('theme','dark');}}
+(function(){try{const t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');document.getElementById('theme-btn').textContent='☀️ Light';}}catch(e){}})();
+function gotoS(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+const sids=['overview','datasets','p1','p2','p3','p4','p5','exercises','publish','next','refs'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
+});
+function switchTab(navId,contentId){
+  const nav=document.getElementById(navId);if(!nav)return;
+  const scope=nav.parentElement;
+  nav.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  scope.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  const btn=Array.from(nav.querySelectorAll('.tab-btn')).find(b=>(b.getAttribute('onclick')||'').includes(contentId));
+  if(btn)btn.classList.add('active');
+  const content=document.getElementById(contentId);
+  if(content)content.classList.add('active');
+}
+function copyCode(btn){
+  const block=btn.closest('.code-block');
+  const text=Array.from(block.childNodes).filter(n=>n.nodeType===3||n.tagName!=='BUTTON').map(n=>n.textContent||'').join('');
+  navigator.clipboard.writeText(text.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});
+}
+/* ---- progress tracker (localStorage-backed) ---- */
+const PKEY='df_proj_progress';
+function loadProg(){try{return JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){return {};}}
+function saveProg(p){try{localStorage.setItem(PKEY,JSON.stringify(p));}catch(e){}}
+function renderProg(){
+  const p=loadProg();let done=0;
+  ['p1','p2','p3','p4','p5'].forEach(id=>{
+    const cb=document.getElementById('cb-'+id);
+    if(cb){cb.checked=!!p[id];}
+    if(p[id])done++;
+  });
+  const bar=document.getElementById('prog-bar');
+  const lbl=document.getElementById('prog-label');
+  if(bar)bar.style.width=(done/5*100)+'%';
+  if(lbl)lbl.textContent=done+' / 5 complete';
+}
+function toggleProg(id){const p=loadProg();p[id]=!p[id];saveProg(p);renderProg();}
+renderProg();
+</script>
+</body></html>

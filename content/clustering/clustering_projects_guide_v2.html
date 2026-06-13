@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clustering Projects — 5 Portfolio Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+/* ─── THEME TOKENS ─────────────────────────────────────────── */
+:root{
+  --bg:#0e1117;--bg2:#161b24;--bg3:#1c2232;--bg4:#232c40;
+  --border:rgba(255,255,255,0.08);--border2:rgba(255,255,255,0.14);
+  --text:#eef0f7;--text2:#a8b2cc;--text3:#606880;
+  --accent:#5b9cf6;--accent2:#8b74f7;--teal:#26d4a2;
+  --coral:#f97060;--amber:#f5b942;--green:#4dc483;
+  --red:#e06060;--pink:#e87ab8;
+  --font-display:'Lora',serif;
+  --font-body:'Inter',sans-serif;
+  --font-mono:'JetBrains Mono',monospace;
+  --radius:10px;--radius-lg:16px;
+  --shadow:0 4px 24px rgba(0,0,0,.4);
+  --nav-h:56px;
+}
+[data-theme="light"]{
+  --bg:#f7f8fc;--bg2:#ffffff;--bg3:#f0f2f8;--bg4:#e4e8f4;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.14);
+  --text:#1a1e2e;--text2:#4a5270;--text3:#8890b0;
+  --accent:#3a78e8;--accent2:#6b52e8;--teal:#1aaa80;
+  --coral:#e85a44;--amber:#d4960a;--green:#2aaa60;
+  --shadow:0 4px 24px rgba(0,0,0,.1);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .25s,color .25s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+
+/* ─── NAV ───────────────────────────────────────────────────── */
+nav{position:sticky;top:0;z-index:200;background:var(--bg);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  padding:0 1.5rem;display:flex;align-items:center;height:var(--nav-h);gap:0}
+.nav-brand{font-family:var(--font-display);font-size:18px;font-weight:600;color:var(--text);
+  margin-right:1.5rem;white-space:nowrap;text-decoration:none}
+.nav-brand em{color:var(--accent);font-style:normal}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:var(--nav-h);
+  display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;
+  white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.02em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.nav-actions{display:flex;align-items:center;gap:8px;margin-left:8px;flex-shrink:0}
+.theme-btn{background:var(--bg3);border:1px solid var(--border);border-radius:20px;
+  color:var(--text2);font-size:13px;padding:5px 13px;cursor:pointer;
+  font-family:var(--font-body);transition:all .2s;white-space:nowrap}
+.theme-btn:hover{background:var(--bg4);color:var(--text)}
+.ref-link-btn{background:var(--accent);color:#fff;border:none;border-radius:20px;
+  font-size:12px;font-weight:600;padding:5px 14px;cursor:pointer;
+  font-family:var(--font-body);transition:all .2s;white-space:nowrap;text-decoration:none;display:flex;align-items:center;gap:5px}
+.ref-link-btn:hover{opacity:.85;transform:translateY(-1px)}
+
+/* ─── HERO ──────────────────────────────────────────────────── */
+.hero{padding:80px 0 60px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 50% 0%,rgba(91,156,246,0.1) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-size:12px;font-family:var(--font-mono);color:var(--accent);
+  letter-spacing:.14em;text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:8px;justify-content:center}
+.hero-eyebrow::before,.hero-eyebrow::after{content:'';flex:0 0 32px;height:1px;background:var(--accent);opacity:.4}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,5.5vw,60px);line-height:1.1;color:var(--text);margin-bottom:18px;font-weight:600}
+.hero h1 em{color:var(--accent);font-style:italic}
+.hero-sub{font-size:17px;color:var(--text2);max-width:660px;margin:0 auto 28px;line-height:1.65}
+.hero-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.hero-chip{font-size:11px;font-family:var(--font-mono);padding:5px 14px;
+  border:1px solid var(--border2);border-radius:20px;color:var(--text3)}
+
+/* ─── LAYOUT ────────────────────────────────────────────────── */
+.container{max-width:1120px;margin:0 auto;padding:0 2rem}
+.section{padding:64px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);
+  letter-spacing:.12em;text-transform:uppercase;margin-bottom:8px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);
+  color:var(--text);margin-bottom:12px;line-height:1.15;font-weight:600}
+.section-sub{font-size:15px;color:var(--text2);max-width:700px;margin-bottom:36px;line-height:1.65}
+
+/* ─── CARDS ─────────────────────────────────────────────────── */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:16px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ─── BADGES ────────────────────────────────────────────────── */
+.badge{display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:500;
+  padding:3px 9px;border-radius:20px;margin-right:5px;margin-bottom:4px;letter-spacing:.04em;text-transform:uppercase}
+.b-blue{background:rgba(91,156,246,.15);color:var(--accent);border:1px solid rgba(91,156,246,.25)}
+.b-teal{background:rgba(38,212,162,.12);color:var(--teal);border:1px solid rgba(38,212,162,.2)}
+.b-coral{background:rgba(249,112,96,.12);color:var(--coral);border:1px solid rgba(249,112,96,.2)}
+.b-green{background:rgba(77,196,131,.12);color:var(--green);border:1px solid rgba(77,196,131,.2)}
+.b-amber{background:rgba(245,185,66,.12);color:var(--amber);border:1px solid rgba(245,185,66,.2)}
+.b-purple{background:rgba(139,116,247,.12);color:var(--accent2);border:1px solid rgba(139,116,247,.2)}
+.b-gray{background:rgba(128,128,128,.1);color:var(--text3);border:1px solid var(--border)}
+
+/* ─── TYPOGRAPHY ─────────────────────────────────────────────── */
+h3{font-size:19px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3}
+h4{font-size:15px;font-weight:600;color:var(--text);margin-bottom:6px}
+h5{font-size:13px;font-weight:600;color:var(--text2);margin-bottom:5px}
+p{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:22px;line-height:1.8}
+li{margin-bottom:6px}
+strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,156,246,.1);
+  color:var(--accent);padding:2px 7px;border-radius:4px}
+.code-block{background:var(--bg);border:1px solid var(--border2);border-radius:var(--radius);
+  padding:18px 20px;font-family:var(--font-mono);font-size:13px;color:#c9d1d9;
+  overflow-x:auto;margin:12px 0;line-height:1.7}
+[data-theme="light"] .code-block{background:#1e2433;color:#c9d1d9}
+.code-block .kw{color:#ff8080}.code-block .fn{color:#d2a8ff}
+.code-block .st{color:#a5d6ff}.code-block .cm{color:#5c6880;font-style:italic}.code-block .num{color:#f2cc60}
+
+/* ─── ALERTS ────────────────────────────────────────────────── */
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;
+  font-size:14px;color:var(--text2);line-height:1.65;border-left:3px solid}
+.alert-info{background:rgba(91,156,246,.06);border-color:var(--accent)}
+.alert-warn{background:rgba(245,185,66,.07);border-color:var(--amber)}
+.alert-success{background:rgba(77,196,131,.07);border-color:var(--green)}
+
+/* ─── DATASET OVERVIEW TABLE ─────────────────────────────────── */
+.ds-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:20px}
+.ds-table th{background:var(--bg3);color:var(--text2);font-weight:600;padding:11px 14px;
+  text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.ds-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle}
+.ds-table tr:last-child td{border-bottom:none}
+.ds-table tr:hover td{background:rgba(91,156,246,.04)}
+.ds-table .project-link{color:var(--accent);cursor:pointer;font-weight:500;text-decoration:none;
+  display:inline-flex;align-items:center;gap:4px;transition:gap .15s}
+.ds-table .project-link:hover{gap:8px}
+
+/* ─── PROJECT CARDS ─────────────────────────────────────────── */
+.project-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  overflow:hidden;margin-bottom:36px;transition:border-color .2s,box-shadow .2s}
+.project-card:hover{border-color:var(--border2);box-shadow:var(--shadow)}
+.project-header{padding:24px 28px 18px;border-bottom:1px solid var(--border);position:relative}
+.project-num-bg{font-family:var(--font-display);font-size:80px;color:rgba(255,255,255,.03);
+  position:absolute;top:8px;right:22px;line-height:1;pointer-events:none;font-weight:700}
+[data-theme="light"] .project-num-bg{color:rgba(0,0,0,.04)}
+.project-level{display:flex;align-items:center;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.project-title{font-family:var(--font-display);font-size:26px;font-weight:600;color:var(--text);margin-bottom:8px;line-height:1.2}
+.project-tagline{font-size:15px;color:var(--text2);line-height:1.55;max-width:640px}
+.project-body{padding:24px 28px}
+.dataset-pill{display:inline-flex;align-items:center;gap:6px;
+  background:var(--bg4);border:1px solid var(--border2);border-radius:8px;
+  padding:6px 12px;font-size:12px;font-family:var(--font-mono);color:var(--text2);margin-top:8px}
+.dataset-pill a{color:var(--accent);text-decoration:none;font-weight:500}
+.dataset-pill a:hover{text-decoration:underline}
+.dataset-icon{font-size:14px}
+
+/* ─── TABS ───────────────────────────────────────────────────── */
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none;flex-wrap:nowrap}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-size:13px;font-weight:500;color:var(--text3);padding:10px 18px;cursor:pointer;
+  border-bottom:2px solid transparent;white-space:nowrap;background:none;
+  border-top:none;border-left:none;border-right:none;
+  transition:color .2s,border-color .2s;font-family:var(--font-body)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+
+/* ─── PIPELINE STEPS ─────────────────────────────────────────── */
+.pipeline{position:relative;padding-left:34px}
+.pipeline::before{content:'';position:absolute;left:11px;top:8px;bottom:8px;width:2px;
+  background:linear-gradient(to bottom,var(--accent),var(--accent2));opacity:.3}
+.pipe-item{position:relative;margin-bottom:20px}
+.pipe-dot{position:absolute;left:-28px;top:5px;width:14px;height:14px;border-radius:50%;
+  background:var(--bg3);border:2px solid var(--accent);box-shadow:0 0 0 3px rgba(91,156,246,.1)}
+.pipe-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.pipe-body{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ─── DELIVERABLES ────────────────────────────────────────────── */
+.deliverable-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.deliverable{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.deliverable .d-icon{font-size:22px;margin-bottom:8px}
+.deliverable .d-title{font-size:13px;font-weight:600;color:var(--text);margin-bottom:4px}
+.deliverable .d-body{font-size:12px;color:var(--text3);line-height:1.45}
+
+/* ─── CHECKLIST ──────────────────────────────────────────────── */
+.checklist{list-style:none;padding:0}
+.checklist li{padding:7px 0;font-size:14px;color:var(--text2);display:flex;gap:10px;
+  align-items:flex-start;border-bottom:1px solid var(--border)}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:'○';color:var(--accent);flex-shrink:0;margin-top:1px;font-size:13px}
+
+/* ─── RUBRIC ─────────────────────────────────────────────────── */
+.rubric-row{display:grid;grid-template-columns:1fr auto;gap:12px;padding:9px 0;border-bottom:1px solid var(--border);font-size:14px}
+.rubric-row:last-child{border-bottom:none}
+.rubric-item{color:var(--text2)}.rubric-pts{color:var(--accent);font-family:var(--font-mono);font-weight:600}
+
+/* ─── VISUAL: DATASET MATCHING CARDS ─────────────────────────── */
+.ds-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;margin-bottom:24px}
+.ds-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:18px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.ds-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--ds-color,var(--accent))}
+.ds-card:hover{border-color:var(--border2);transform:translateY(-2px);box-shadow:var(--shadow)}
+.ds-card .ds-name{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.ds-card .ds-rows{font-size:11px;font-family:var(--font-mono);color:var(--text3);margin-bottom:8px}
+.ds-card .ds-desc{font-size:13px;color:var(--text2);line-height:1.5;margin-bottom:10px}
+.ds-card .ds-goto{font-size:12px;color:var(--accent);font-weight:600;cursor:pointer;
+  display:inline-flex;align-items:center;gap:4px;text-decoration:none;border:none;background:none;font-family:var(--font-body)}
+.ds-card .ds-goto:hover{text-decoration:underline}
+
+/* ─── SVG FLOWCHARTS ─────────────────────────────────────────── */
+.chart-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px;margin:20px 0;overflow-x:auto}
+.chart-wrap svg{display:block;margin:0 auto;max-width:100%;height:auto}
+
+/* ─── ALGO DECISION FLOWCHART INTERACTIVE ────────────────────── */
+.flow-box{fill:var(--bg2);stroke:var(--border2);stroke-width:1.5;rx:8}
+.flow-box-accent{fill:rgba(91,156,246,.15);stroke:var(--accent);stroke-width:1.5;rx:8}
+.flow-box-green{fill:rgba(77,196,131,.12);stroke:var(--green);stroke-width:1.5;rx:8}
+.flow-box-amber{fill:rgba(245,185,66,.1);stroke:var(--amber);stroke-width:1.5;rx:8}
+.flow-text{fill:var(--text);font-family:'Inter',sans-serif;font-size:12px;text-anchor:middle;dominant-baseline:middle}
+.flow-text-sm{fill:var(--text2);font-family:'Inter',sans-serif;font-size:10px;text-anchor:middle;dominant-baseline:middle}
+.flow-arrow{fill:none;stroke:var(--text3);stroke-width:1.5;marker-end:url(#arr)}
+.flow-label{fill:var(--text3);font-family:'Inter',sans-serif;font-size:10px;text-anchor:middle}
+
+/* ─── EXERCISES ─────────────────────────────────────────────── */
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);
+  padding:20px 22px;margin-bottom:14px;transition:border-color .2s}
+.ex-block:hover{border-color:var(--border2)}
+.ex-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;flex-wrap:wrap;gap:8px}
+.ex-meta{font-family:var(--font-mono);font-size:11px;color:var(--text3)}
+.ex-title{font-size:16px;font-weight:600;color:var(--text);margin:4px 0 8px}
+.ex-body{font-size:14px;color:var(--text2);line-height:1.65}
+.ex-hint{font-size:13px;color:var(--text3);margin-top:10px;font-style:italic;
+  padding:8px 12px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--border2)}
+.ex-project-link{margin-top:12px;padding:8px 14px;background:rgba(91,156,246,.08);
+  border:1px solid rgba(91,156,246,.2);border-radius:8px;font-size:13px;
+  display:flex;align-items:center;gap:8px;cursor:pointer}
+.ex-project-link span{color:var(--accent);font-weight:600}
+.ex-project-link p{color:var(--text2);margin:0;font-size:12px}
+
+/* ─── CITATION INLINE ─────────────────────────────────────────── */
+.cite{display:inline-flex;align-items:center;gap:3px;font-size:11px;
+  font-family:var(--font-mono);color:var(--teal);background:rgba(38,212,162,.08);
+  padding:1px 6px;border-radius:4px;cursor:pointer;vertical-align:middle;
+  border:1px solid rgba(38,212,162,.2);text-decoration:none;transition:all .15s}
+.cite:hover{background:rgba(38,212,162,.15)}
+.ref-inline{padding:8px 14px;background:var(--bg3);border:1px solid var(--border);
+  border-radius:8px;font-size:13px;color:var(--text3);margin-top:8px;display:flex;align-items:flex-start;gap:8px}
+.ref-inline a{color:var(--teal);text-decoration:none}
+.ref-inline a:hover{text-decoration:underline}
+
+/* ─── PUBLISH CARD ─────────────────────────────────────────────── */
+.publish-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.publish-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+
+/* ─── TIMELINE ───────────────────────────────────────────────── */
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:2px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:20px}
+.tl-dot{position:absolute;left:-26px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--accent)}
+.tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tl-body{font-size:14px;color:var(--text2);line-height:1.6}
+
+/* ─── BONUS BANNER ───────────────────────────────────────────── */
+.bonus-banner{background:linear-gradient(135deg,rgba(91,156,246,.08),rgba(139,116,247,.08));
+  border:1px solid rgba(91,156,246,.2);border-radius:var(--radius-lg);
+  padding:24px 28px;margin-bottom:24px;text-align:center}
+.bonus-banner h3{font-family:var(--font-display);font-size:22px;margin-bottom:8px}
+
+/* ─── BACK TO TOP ─────────────────────────────────────────────── */
+#top-btn{position:fixed;bottom:24px;right:24px;background:var(--accent);color:#fff;
+  border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;
+  opacity:0;transition:opacity .3s,transform .2s;z-index:99;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 16px rgba(91,156,246,.4)}
+#top-btn.visible{opacity:1}
+#top-btn:hover{transform:translateY(-2px)}
+</style>
+</head>
+<body>
+
+<!-- ─── NAV ─────────────────────────────────────────────────────── -->
+<nav>
+  <a class="nav-brand" href="#">Clustering<em>.</em>projects</a>
+  <div class="nav-links">
+    <div class="nav-link active" onclick="gotoS('overview')">Overview</div>
+    <div class="nav-link" onclick="gotoS('datasets')">Datasets</div>
+    <div class="nav-link" onclick="gotoS('p1')">Project 1</div>
+    <div class="nav-link" onclick="gotoS('p2')">Project 2</div>
+    <div class="nav-link" onclick="gotoS('p3')">Project 3</div>
+    <div class="nav-link" onclick="gotoS('p4')">Project 4</div>
+    <div class="nav-link" onclick="gotoS('p5')">Project 5</div>
+    <div class="nav-link" onclick="gotoS('exercises')">Exercises</div>
+    <div class="nav-link" onclick="gotoS('publish')">Publish</div>
+    <div class="nav-link" onclick="gotoS('whats-next')">What's Next</div>
+  </div>
+  <div class="nav-actions">
+    <button class="theme-btn" onclick="toggleTheme()">☀ Light</button>
+    <a class="ref-link-btn" href="clustering_complete_reference_v2.html">📖 Full Reference →</a>
+  </div>
+</nav>
+
+<!-- ─── HERO ─────────────────────────────────────────────────────── -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Portfolio Projects · Clustering Mastery Track · 2025</div>
+    <h1>5 Projects to Master<br><em>Clustering</em></h1>
+    <p class="hero-sub">From beginner to expert — real datasets, production-grade code, publishable notebooks. Each project links directly to its exercises and challenges below.</p>
+    <div class="hero-chips">
+      <span class="hero-chip">Beginner → Expert</span>
+      <span class="hero-chip">5 Real Datasets</span>
+      <span class="hero-chip">Kaggle + LinkedIn Ready</span>
+      <span class="hero-chip">Full Code + Rubrics</span>
+      <span class="hero-chip">Linked Challenges</span>
+    </div>
+  </div>
+</div>
+
+<!-- ─── OVERVIEW ─────────────────────────────────────────────────── -->
+<section class="section" id="overview">
+<div class="container">
+  <div class="section-eyebrow">Learning Path</div>
+  <div class="section-title">Project Overview</div>
+  <p class="section-sub">Five projects designed as a progressive journey. Each card below links directly to the project and its paired challenges. Click any project row or the "→ Go to Project" button to jump there.</p>
+
+  <!-- VISUAL FLOWCHART: Learning Path -->
+  <div class="chart-wrap" style="margin-bottom:32px">
+    <svg viewBox="0 0 900 130" xmlns="http://www.w3.org/2000/svg" style="min-width:600px">
+      <defs>
+        <marker id="arr2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#606880"/>
+        </marker>
+      </defs>
+      <!-- Project boxes -->
+      <rect x="20" y="35" width="140" height="60" rx="10" fill="rgba(77,196,131,.12)" stroke="var(--green,#4dc483)" stroke-width="1.5"/>
+      <text x="90" y="58" fill="#4dc483" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">PROJECT 1</text>
+      <text x="90" y="74" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Mall Customers</text>
+      <text x="90" y="87" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">K-Means · Beginner</text>
+
+      <line x1="160" y1="65" x2="188" y2="65" stroke="#606880" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="190" y="35" width="140" height="60" rx="10" fill="rgba(91,156,246,.12)" stroke="var(--accent,#5b9cf6)" stroke-width="1.5"/>
+      <text x="260" y="58" fill="#5b9cf6" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">PROJECT 2</text>
+      <text x="260" y="74" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">RFM Segmentation</text>
+      <text x="260" y="87" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">GMM · Intermediate</text>
+
+      <line x1="330" y1="65" x2="358" y2="65" stroke="#606880" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="360" y="35" width="140" height="60" rx="10" fill="rgba(91,156,246,.12)" stroke="var(--accent,#5b9cf6)" stroke-width="1.5"/>
+      <text x="430" y="58" fill="#5b9cf6" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">PROJECT 3</text>
+      <text x="430" y="74" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Fraud Detection</text>
+      <text x="430" y="87" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">DBSCAN · Intermediate</text>
+
+      <line x1="500" y1="65" x2="528" y2="65" stroke="#606880" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="530" y="35" width="140" height="60" rx="10" fill="rgba(245,185,66,.1)" stroke="var(--amber,#f5b942)" stroke-width="1.5"/>
+      <text x="600" y="58" fill="#f5b942" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">PROJECT 4</text>
+      <text x="600" y="74" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">NLP Topics</text>
+      <text x="600" y="87" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">HDBSCAN · Advanced</text>
+
+      <line x1="670" y1="65" x2="698" y2="65" stroke="#606880" stroke-width="1.5" marker-end="url(#arr2)"/>
+
+      <rect x="700" y="35" width="180" height="60" rx="10" fill="rgba(249,112,96,.1)" stroke="var(--coral,#f97060)" stroke-width="1.5"/>
+      <text x="790" y="58" fill="#f97060" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">PROJECT 5</text>
+      <text x="790" y="74" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">End-to-End MLOps</text>
+      <text x="790" y="87" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">All Algos · Expert</text>
+    </svg>
+  </div>
+
+  <!-- OVERVIEW TABLE with clickable project links -->
+  <table class="ds-table">
+    <tr>
+      <th>#</th><th>Project</th><th>Level</th><th>Algorithm Focus</th><th>Dataset</th><th>Time</th><th>Jump To</th>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);font-family:var(--font-mono);font-weight:600">01</td>
+      <td><strong>Mall Customer Segmentation</strong><br><span style="color:var(--text3);font-size:12px">Marketing strategy via K-Means</span></td>
+      <td><span class="badge b-green">Beginner</span></td>
+      <td style="font-size:13px">K-Means, Elbow, Silhouette</td>
+      <td style="font-size:13px">Kaggle Mall Customers (200 rows)</td>
+      <td style="font-size:13px">3–5 hrs</td>
+      <td><a class="project-link" onclick="gotoS('p1')">Go → P1</a></td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);font-family:var(--font-mono);font-weight:600">02</td>
+      <td><strong>E-Commerce RFM Segmentation</strong><br><span style="color:var(--text3);font-size:12px">Production-grade customer analytics</span></td>
+      <td><span class="badge b-blue">Intermediate</span></td>
+      <td style="font-size:13px">K-Means, GMM, Feature Eng.</td>
+      <td style="font-size:13px">UCI Online Retail (541k rows)</td>
+      <td style="font-size:13px">8–12 hrs</td>
+      <td><a class="project-link" onclick="gotoS('p2')">Go → P2</a></td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);font-family:var(--font-mono);font-weight:600">03</td>
+      <td><strong>Credit Card Fraud Detection</strong><br><span style="color:var(--text3);font-size:12px">DBSCAN + HDBSCAN for fraud</span></td>
+      <td><span class="badge b-blue">Intermediate</span></td>
+      <td style="font-size:13px">DBSCAN, HDBSCAN, Isolation Forest</td>
+      <td style="font-size:13px">Kaggle CC Fraud (284k rows)</td>
+      <td style="font-size:13px">10–14 hrs</td>
+      <td><a class="project-link" onclick="gotoS('p3')">Go → P3</a></td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);font-family:var(--font-mono);font-weight:600">04</td>
+      <td><strong>News Article Topic Discovery</strong><br><span style="color:var(--text3);font-size:12px">NLP + embedding clustering at scale</span></td>
+      <td><span class="badge b-amber">Advanced</span></td>
+      <td style="font-size:13px">BERT embeddings, UMAP, HDBSCAN, BERTopic</td>
+      <td style="font-size:13px">AG News (120k articles)</td>
+      <td style="font-size:13px">14–20 hrs</td>
+      <td><a class="project-link" onclick="gotoS('p4')">Go → P4</a></td>
+    </tr>
+    <tr>
+      <td style="color:var(--accent);font-family:var(--font-mono);font-weight:600">05</td>
+      <td><strong>End-to-End MLOps Clustering</strong><br><span style="color:var(--text3);font-size:12px">Production pipeline with drift monitoring</span></td>
+      <td><span class="badge b-coral">Expert</span></td>
+      <td style="font-size:13px">K-Means + all algorithms, MLflow, FastAPI</td>
+      <td style="font-size:13px">NYC Taxi / Airbnb (1M+ rows)</td>
+      <td style="font-size:13px">20–30 hrs</td>
+      <td><a class="project-link" onclick="gotoS('p5')">Go → P5</a></td>
+    </tr>
+  </table>
+</div>
+</section>
+
+<!-- ─── DATASETS SECTION ─────────────────────────────────────────── -->
+<section class="section" id="datasets">
+<div class="container">
+  <div class="section-eyebrow">Data Sources</div>
+  <div class="section-title">Datasets — What Goes Where</div>
+  <p class="section-sub">Each dataset is paired to exactly one project. Click the card to jump to that project, or use the dataset link to download from the source.</p>
+
+  <div class="ds-cards">
+    <!-- DS1 -->
+    <div class="ds-card" style="--ds-color:var(--green)" onclick="gotoS('p1')">
+      <div class="ds-name">🛍️ Mall Customers</div>
+      <div class="ds-rows">200 rows · 5 features · Kaggle</div>
+      <div class="ds-desc">CustomerID, Gender, Age, Annual Income, Spending Score. Perfect first dataset — clean, tiny, two clear features make visualisation effortless.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <a href="https://www.kaggle.com/datasets/vjchoudhary7/customer-segmentation-tutorial-in-python" target="_blank" class="ds-goto" onclick="event.stopPropagation()">📥 Download</a>
+        <button class="ds-goto" onclick="gotoS('p1')">→ Project 1</button>
+      </div>
+    </div>
+    <!-- DS2 -->
+    <div class="ds-card" style="--ds-color:var(--accent)" onclick="gotoS('p2')">
+      <div class="ds-name">🛒 UCI Online Retail</div>
+      <div class="ds-rows">541k rows · UK e-commerce · UCI ML Repo</div>
+      <div class="ds-desc">Raw transaction records: InvoiceNo, StockCode, Description, Quantity, InvoiceDate, UnitPrice, CustomerID, Country. Requires RFM feature engineering from scratch.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank" class="ds-goto" onclick="event.stopPropagation()">📥 Download</a>
+        <button class="ds-goto" onclick="gotoS('p2')">→ Project 2</button>
+      </div>
+    </div>
+    <!-- DS3 -->
+    <div class="ds-card" style="--ds-color:var(--accent)" onclick="gotoS('p3')">
+      <div class="ds-name">💳 CC Fraud Detection</div>
+      <div class="ds-rows">284k rows · 30 PCA features · Kaggle</div>
+      <div class="ds-desc">V1–V28 (PCA-anonymised), Time, Amount, Class. Heavily imbalanced: 0.17% fraud. Use DBSCAN/HDBSCAN to detect outlier fraud patterns without labels.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud" target="_blank" class="ds-goto" onclick="event.stopPropagation()">📥 Download</a>
+        <button class="ds-goto" onclick="gotoS('p3')">→ Project 3</button>
+      </div>
+    </div>
+    <!-- DS4 -->
+    <div class="ds-card" style="--ds-color:var(--amber)" onclick="gotoS('p4')">
+      <div class="ds-name">📰 AG News / CC-News</div>
+      <div class="ds-rows">120k articles · 4 categories · HuggingFace</div>
+      <div class="ds-desc">News articles across World, Sports, Business, Sci/Tech categories. Generate sentence-BERT embeddings → UMAP → HDBSCAN → BERTopic pipeline.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <a href="https://huggingface.co/datasets/ag_news" target="_blank" class="ds-goto" onclick="event.stopPropagation()">📥 Download</a>
+        <button class="ds-goto" onclick="gotoS('p4')">→ Project 4</button>
+      </div>
+    </div>
+    <!-- DS5 -->
+    <div class="ds-card" style="--ds-color:var(--coral)" onclick="gotoS('p5')">
+      <div class="ds-name">🗽 NYC Taxi / Airbnb</div>
+      <div class="ds-rows">1M+ rows · Geospatial · NYC Open Data</div>
+      <div class="ds-desc">Pickup/dropoff coordinates, timestamps, fares, trip durations. Combine with Airbnb listing data for a full geo-clustering + MLOps system. Requires DBSCAN with Haversine distance.</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+        <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page" target="_blank" class="ds-goto" onclick="event.stopPropagation()">📥 Download</a>
+        <button class="ds-goto" onclick="gotoS('p5')">→ Project 5</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ALGORITHM DECISION FLOWCHART -->
+  <h3 style="margin-top:8px;margin-bottom:16px">Algorithm Chooser — Which one for which project?</h3>
+  <div class="chart-wrap">
+    <svg viewBox="0 0 820 420" xmlns="http://www.w3.org/2000/svg" style="min-width:600px">
+      <defs>
+        <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+          <path d="M0,0 L0,6 L8,3 z" fill="#606880"/>
+        </marker>
+      </defs>
+      <!-- Start -->
+      <rect x="330" y="10" width="160" height="44" rx="22" fill="rgba(91,156,246,.2)" stroke="#5b9cf6" stroke-width="1.5"/>
+      <text x="410" y="37" fill="#eef0f7" font-family="Inter" font-size="12" font-weight="600" text-anchor="middle">Start: Your data</text>
+
+      <!-- Q1: Know K? -->
+      <line x1="410" y1="54" x2="410" y2="84" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <rect x="295" y="84" width="230" height="44" rx="8" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1.5"/>
+      <text x="410" y="111" fill="#eef0f7" font-family="Inter" font-size="12" text-anchor="middle">Do you know K (# clusters)?</text>
+
+      <!-- Yes branch -->
+      <line x1="295" y1="106" x2="220" y2="106" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="257" y="100" fill="#606880" font-family="Inter" font-size="10" text-anchor="middle">Yes</text>
+      <rect x="90" y="84" width="130" height="44" rx="8" fill="rgba(77,196,131,.12)" stroke="#4dc483" stroke-width="1.5"/>
+      <text x="155" y="106" fill="#4dc483" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">K-Means</text>
+      <text x="155" y="119" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Projects 1, 2, 5</text>
+
+      <!-- No branch → Q2 -->
+      <line x1="525" y1="106" x2="600" y2="106" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="562" y="100" fill="#606880" font-family="Inter" font-size="10" text-anchor="middle">No</text>
+      <rect x="600" y="84" width="200" height="44" rx="8" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1.5"/>
+      <text x="700" y="105" fill="#eef0f7" font-family="Inter" font-size="12" text-anchor="middle">Spherical clusters?</text>
+      <text x="700" y="119" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">(Or unknown shape?)</text>
+
+      <!-- Spherical Yes → GMM -->
+      <line x1="700" y1="128" x2="700" y2="174" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="706" y="155" fill="#606880" font-family="Inter" font-size="10">Yes</text>
+      <rect x="625" y="174" width="150" height="44" rx="8" fill="rgba(139,116,247,.12)" stroke="#8b74f7" stroke-width="1.5"/>
+      <text x="700" y="196" fill="#8b74f7" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">GMM</text>
+      <text x="700" y="209" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Project 2 (multi-alg)</text>
+
+      <!-- Spherical No → Q3 -->
+      <line x1="600" y1="106" x2="545" y2="174" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="560" y="148" fill="#606880" font-family="Inter" font-size="10">No</text>
+      <rect x="400" y="174" width="190" height="44" rx="8" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1.5"/>
+      <text x="495" y="195" fill="#eef0f7" font-family="Inter" font-size="12" text-anchor="middle">Variable density?</text>
+      <text x="495" y="208" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Clusters of diff. sizes?</text>
+
+      <!-- Variable density Yes → HDBSCAN -->
+      <line x1="495" y1="218" x2="495" y2="264" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="500" y="245" fill="#606880" font-family="Inter" font-size="10">Yes</text>
+      <rect x="420" y="264" width="150" height="44" rx="8" fill="rgba(38,212,162,.12)" stroke="#26d4a2" stroke-width="1.5"/>
+      <text x="495" y="286" fill="#26d4a2" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">HDBSCAN</text>
+      <text x="495" y="299" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Projects 3, 4</text>
+
+      <!-- Variable density No → DBSCAN -->
+      <line x1="400" y1="196" x2="295" y2="196" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="348" y="190" fill="#606880" font-family="Inter" font-size="10">No / uniform</text>
+      <rect x="165" y="174" width="130" height="44" rx="8" fill="rgba(245,185,66,.1)" stroke="#f5b942" stroke-width="1.5"/>
+      <text x="230" y="196" fill="#f5b942" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">DBSCAN</text>
+      <text x="230" y="209" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Project 3</text>
+
+      <!-- Text data branch from K-Means -->
+      <line x1="155" y1="128" x2="155" y2="264" stroke="#606880" stroke-width="1.5" marker-end="url(#arrow)"/>
+      <text x="160" y="200" fill="#606880" font-family="Inter" font-size="10">Text data?</text>
+      <rect x="80" y="264" width="150" height="44" rx="8" fill="rgba(249,112,96,.1)" stroke="#f97060" stroke-width="1.5"/>
+      <text x="155" y="283" fill="#f97060" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">BERT + UMAP</text>
+      <text x="155" y="297" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">+ HDBSCAN (Proj 4)</text>
+
+      <!-- Legend -->
+      <rect x="20" y="355" width="780" height="50" rx="8" fill="rgba(255,255,255,.02)" stroke="var(--border,rgba(255,255,255,.08))" stroke-width="1"/>
+      <text x="40" y="375" fill="#606880" font-family="Inter" font-size="10" font-weight="600">LEGEND:</text>
+      <rect x="110" y="365" width="12" height="12" rx="2" fill="rgba(77,196,131,.2)" stroke="#4dc483" stroke-width="1"/>
+      <text x="126" y="375" fill="#a8b2cc" font-family="Inter" font-size="10">K-Means family</text>
+      <rect x="240" y="365" width="12" height="12" rx="2" fill="rgba(245,185,66,.15)" stroke="#f5b942" stroke-width="1"/>
+      <text x="256" y="375" fill="#a8b2cc" font-family="Inter" font-size="10">Density-based</text>
+      <rect x="360" y="365" width="12" height="12" rx="2" fill="rgba(38,212,162,.15)" stroke="#26d4a2" stroke-width="1"/>
+      <text x="376" y="375" fill="#a8b2cc" font-family="Inter" font-size="10">Hierarchical density</text>
+      <rect x="510" y="365" width="12" height="12" rx="2" fill="rgba(139,116,247,.15)" stroke="#8b74f7" stroke-width="1"/>
+      <text x="526" y="375" fill="#a8b2cc" font-family="Inter" font-size="10">Probabilistic (GMM)</text>
+      <rect x="660" y="365" width="12" height="12" rx="2" fill="rgba(249,112,96,.15)" stroke="#f97060" stroke-width="1"/>
+      <text x="676" y="375" fill="#a8b2cc" font-family="Inter" font-size="10">Deep/NLP</text>
+    </svg>
+  </div>
+
+  <div class="alert alert-info" style="margin-top:0">
+    <strong>How to read this:</strong> Follow the arrows based on your data characteristics. Each terminal box names which project applies that algorithm. Projects 1 & 5 use K-Means as their primary tool; Projects 3 & 4 use density-based methods; Project 2 compares multiple algorithms. 
+    <a class="cite" href="https://scikit-learn.org/stable/modules/clustering.html" target="_blank">📄 sklearn clustering guide</a>
+  </div>
+</div>
+</section>
+
+<!-- ─── PROJECT 1 ─────────────────────────────────────────────────── -->
+<section class="section" id="p1">
+<div class="container">
+  <div class="section-eyebrow">Project 01 · Beginner · 3–5 hours</div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-num-bg">01</div>
+      <div class="project-level">
+        <span class="badge b-green">Beginner</span>
+        <span class="badge b-teal">K-Means</span>
+        <span class="badge b-gray">Visualisation</span>
+      </div>
+      <div class="project-title">Mall Customer Segmentation</div>
+      <p class="project-tagline">Your first clustering project. Discover 5 distinct customer segments from 200 mall customers. Ideal for learning the complete K-Means workflow end to end — from EDA to business recommendations.</p>
+      <div class="dataset-pill">
+        <span class="dataset-icon">📦</span>
+        <strong>Dataset:</strong>&nbsp;Kaggle Mall Customers (200 rows, 5 features) &nbsp;·&nbsp;
+        <a href="https://www.kaggle.com/datasets/vjchoudhary7/customer-segmentation-tutorial-in-python" target="_blank">Download here ↗</a>
+        &nbsp;·&nbsp; <a onclick="gotoS('datasets')" style="color:var(--accent);cursor:pointer">See all datasets ↑</a>
+      </div>
+    </div>
+    <div class="project-body">
+      <div class="tab-nav" id="p1-tabs">
+        <button class="tab-btn active" onclick="switchTab('p1-tabs','p1-about')">About</button>
+        <button class="tab-btn" onclick="switchTab('p1-tabs','p1-visual')">What You'll Build</button>
+        <button class="tab-btn" onclick="switchTab('p1-tabs','p1-steps')">Step-by-step</button>
+        <button class="tab-btn" onclick="switchTab('p1-tabs','p1-code')">Key Code</button>
+        <button class="tab-btn" onclick="switchTab('p1-tabs','p1-deliverables')">Deliverables</button>
+        <button class="tab-btn" onclick="switchTab('p1-tabs','p1-challenges')">⚡ Challenges</button>
+      </div>
+
+      <div id="p1-about" class="tab-content active">
+        <div class="grid2">
+          <div>
+            <h4>What you learn</h4>
+            <ul>
+              <li>The complete K-Means workflow: EDA → scaling → K selection → fitting → profiling</li>
+              <li>Elbow method and silhouette score for K selection</li>
+              <li>How to create publication-quality cluster visualisations</li>
+              <li>Translating cluster profiles into business recommendations</li>
+            </ul>
+            <div class="ref-inline" style="margin-top:12px">
+              📚 Reference: Arthur & Vassilvitskii (2007) K-Means++ paper — explains why <code>init='k-means++'</code> (sklearn default) dramatically reduces bad initialisation.
+              <a href="https://dl.acm.org/doi/10.5555/1283383.1283494" target="_blank" class="cite" style="margin-left:4px">📄 Paper</a>
+            </div>
+          </div>
+          <div>
+            <h4>Skills prerequisite</h4>
+            <ul>
+              <li>Python + pandas basics</li>
+              <li>Matplotlib / seaborn for plotting</li>
+              <li>No prior ML knowledge required</li>
+            </ul>
+            <div class="alert alert-success" style="margin-top:12px"><strong>Why this dataset?</strong> 200 clean rows with two obvious features (Income + Spending) means you can visualise every cluster in 2D without dimensionality reduction. No preprocessing headaches — focus is on the algorithm.</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="p1-visual" class="tab-content">
+        <h4 style="margin-bottom:16px">Visual output preview — what your project produces</h4>
+        <div class="grid3" style="gap:12px">
+          <div class="card-sm" style="text-align:center">
+            <!-- Elbow Curve SVG -->
+            <svg viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-bottom:8px">
+              <line x1="20" y1="110" x2="190" y2="110" stroke="#606880" stroke-width="1"/>
+              <line x1="20" y1="10" x2="20" y2="110" stroke="#606880" stroke-width="1"/>
+              <polyline points="30,20 55,40 80,65 105,80 130,90 155,95 180,98" fill="none" stroke="#5b9cf6" stroke-width="2"/>
+              <!-- Elbow marker -->
+              <circle cx="80" cy="65" r="5" fill="#f5b942" stroke="none"/>
+              <line x1="80" y1="65" x2="80" y2="110" stroke="#f5b942" stroke-dasharray="3,2" stroke-width="1"/>
+              <text x="80" y="108" fill="#f5b942" font-family="Inter" font-size="8" text-anchor="middle">K=5 ✓</text>
+              <text x="110" y="125" fill="#606880" font-family="Inter" font-size="8" text-anchor="middle">K (number of clusters)</text>
+              <text x="10" y="60" fill="#606880" font-family="Inter" font-size="8" text-anchor="middle" transform="rotate(-90,10,60)">WCSS</text>
+              <text x="100" y="9" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle" font-weight="600">Elbow Curve</text>
+            </svg>
+            <p style="font-size:12px;color:var(--text3);margin:0">Elbow at K=5 — WCSS flattens after this</p>
+          </div>
+          <div class="card-sm" style="text-align:center">
+            <!-- 2D Scatter SVG with 5 clusters -->
+            <svg viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-bottom:8px">
+              <line x1="20" y1="110" x2="190" y2="110" stroke="#606880" stroke-width="1"/>
+              <line x1="20" y1="10" x2="20" y2="110" stroke="#606880" stroke-width="1"/>
+              <!-- Cluster 1: top-left -->
+              <circle cx="45" cy="25" r="4" fill="#4dc483" opacity=".8"/>
+              <circle cx="38" cy="35" r="4" fill="#4dc483" opacity=".8"/>
+              <circle cx="52" cy="30" r="4" fill="#4dc483" opacity=".8"/>
+              <circle cx="44" cy="20" r="4" fill="#4dc483" opacity=".8"/>
+              <!-- Cluster 2: top-right -->
+              <circle cx="155" cy="25" r="4" fill="#5b9cf6" opacity=".8"/>
+              <circle cx="162" cy="35" r="4" fill="#5b9cf6" opacity=".8"/>
+              <circle cx="148" cy="20" r="4" fill="#5b9cf6" opacity=".8"/>
+              <circle cx="158" cy="30" r="4" fill="#5b9cf6" opacity=".8"/>
+              <!-- Cluster 3: middle -->
+              <circle cx="100" cy="65" r="4" fill="#f97060" opacity=".8"/>
+              <circle cx="108" cy="55" r="4" fill="#f97060" opacity=".8"/>
+              <circle cx="93" cy="72" r="4" fill="#f97060" opacity=".8"/>
+              <circle cx="105" cy="70" r="4" fill="#f97060" opacity=".8"/>
+              <!-- Cluster 4: bottom-left -->
+              <circle cx="45" cy="95" r="4" fill="#f5b942" opacity=".8"/>
+              <circle cx="38" cy="85" r="4" fill="#f5b942" opacity=".8"/>
+              <circle cx="52" cy="100" r="4" fill="#f5b942" opacity=".8"/>
+              <!-- Cluster 5: bottom-right -->
+              <circle cx="155" cy="95" r="4" fill="#8b74f7" opacity=".8"/>
+              <circle cx="162" cy="85" r="4" fill="#8b74f7" opacity=".8"/>
+              <circle cx="148" cy="100" r="4" fill="#8b74f7" opacity=".8"/>
+              <!-- Centroids -->
+              <path d="M44,27 l4,0 l-2,-4 z" fill="#fff" opacity=".9"/>
+              <path d="M157,27 l4,0 l-2,-4 z" fill="#fff" opacity=".9"/>
+              <text x="110" y="125" fill="#606880" font-family="Inter" font-size="8" text-anchor="middle">Annual Income (k$)</text>
+              <text x="10" y="60" fill="#606880" font-family="Inter" font-size="8" text-anchor="middle" transform="rotate(-90,10,60)">Spending</text>
+              <text x="100" y="9" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle" font-weight="600">2D Cluster Scatter</text>
+            </svg>
+            <p style="font-size:12px;color:var(--text3);margin:0">5 segments colour-coded with centroids</p>
+          </div>
+          <div class="card-sm" style="text-align:center">
+            <!-- Cluster Profile bar chart -->
+            <svg viewBox="0 0 200 130" xmlns="http://www.w3.org/2000/svg" style="width:100%;margin-bottom:8px">
+              <text x="100" y="9" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle" font-weight="600">Cluster Profiles</text>
+              <!-- Bars for Income -->
+              <rect x="25" y="60" width="18" height="40" fill="#4dc483" opacity=".8" rx="2"/>
+              <rect x="55" y="30" width="18" height="70" fill="#5b9cf6" opacity=".8" rx="2"/>
+              <rect x="85" y="50" width="18" height="50" fill="#f97060" opacity=".8" rx="2"/>
+              <rect x="115" y="75" width="18" height="25" fill="#f5b942" opacity=".8" rx="2"/>
+              <rect x="145" y="40" width="18" height="60" fill="#8b74f7" opacity=".8" rx="2"/>
+              <line x1="20" y1="100" x2="175" y2="100" stroke="#606880" stroke-width="1"/>
+              <text x="34" y="113" fill="#a8b2cc" font-family="Inter" font-size="7" text-anchor="middle">C1</text>
+              <text x="64" y="113" fill="#a8b2cc" font-family="Inter" font-size="7" text-anchor="middle">C2</text>
+              <text x="94" y="113" fill="#a8b2cc" font-family="Inter" font-size="7" text-anchor="middle">C3</text>
+              <text x="124" y="113" fill="#a8b2cc" font-family="Inter" font-size="7" text-anchor="middle">C4</text>
+              <text x="154" y="113" fill="#a8b2cc" font-family="Inter" font-size="7" text-anchor="middle">C5</text>
+              <text x="100" y="125" fill="#606880" font-family="Inter" font-size="7" text-anchor="middle">Mean Annual Income per Cluster</text>
+            </svg>
+            <p style="font-size:12px;color:var(--text3);margin:0">Named cluster profile comparison</p>
+          </div>
+        </div>
+        <div class="alert alert-info" style="margin-top:4px"><strong>Expectation check:</strong> After Project 1 you should be able to reproduce this figure type from scratch and explain the K=5 choice in 3 sentences to a non-technical stakeholder.</div>
+      </div>
+
+      <div id="p1-steps" class="tab-content">
+        <div class="pipeline">
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--accent)"></div><div class="pipe-title">Step 1: EDA (30 min)</div><div class="pipe-body">Load dataset. Check shape, dtypes, null counts. Plot distributions: Age, Income, Spending Score histograms. Plot scatter: Income vs Spending. Observe if you can already see potential clusters with your eye before running any algorithm.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 2: Feature selection and scaling (20 min)</div><div class="pipe-body">Start with 2 features: Income + Spending Score. Apply <code>StandardScaler</code> and document WHY scaling is needed. Hint: Income range is 0–137k, Spending range is 1–99 — unscaled, income dominates all distance calculations.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 3: K selection — elbow + silhouette (30 min)</div><div class="pipe-body">Loop K from 2 to 12. Plot WCSS (elbow curve) and Silhouette score side by side. Identify where the elbow is and where silhouette peaks. Expected: K=5 for Income + Spending. Document justification. <a class="cite" href="https://scikit-learn.org/stable/modules/generated/sklearn.metrics.silhouette_score.html" target="_blank">📄 sklearn silhouette docs</a></div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 4: Fit final model (15 min)</div><div class="pipe-body"><code>KMeans(n_clusters=5, init='k-means++', n_init=10, random_state=42)</code>. Assign cluster labels to original DataFrame. Print cluster sizes and unscaled centroid values.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 5: Visualise clusters (45 min)</div><div class="pipe-body">2D scatter (Income vs Spending, colour-coded). 3D scatter with Plotly (Income, Spending, Age). Box plots of each feature per cluster. Make publication-quality — good colour palette, labelled axes, legends.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 6: Profile and name clusters (30 min)</div><div class="pipe-body">Compute mean Age, Income, Spending Score, Gender ratio per cluster. Create a "profile card" for each. Name them: e.g. "Cluster 2: High Income, Low Spending — Cautious Savers." This business translation step is the most important part of the project.</div></div>
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--teal)"></div><div class="pipe-title">Step 7: Business recommendations (30 min)</div><div class="pipe-body">Write 2–3 specific marketing recommendations per cluster. e.g. "Cluster 3 (Young, Low Income, High Spending): Target with BNPL offers, trend-driven products, social proof messaging."</div></div>
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--teal)"></div><div class="pipe-title">Step 8: Polish and publish (45 min)</div><div class="pipe-body">Structure notebook. Add markdown explanations for every cell. Publish on Kaggle. See <a onclick="gotoS('publish')" style="color:var(--accent);cursor:pointer">Publish Guide →</a></div></div>
+        </div>
+      </div>
+
+      <div id="p1-code" class="tab-content">
+        <div class="code-block">
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt, seaborn <span class="kw">as</span> sns
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score
+
+<span class="cm"># 1. Load & EDA</span>
+df = pd.read_csv(<span class="st">'Mall_Customers.csv'</span>)
+X = df[[<span class="st">'Annual Income (k$)'</span>, <span class="st">'Spending Score (1-100)'</span>]].values
+X_scaled = StandardScaler().fit_transform(X)
+
+<span class="cm"># 2. K selection — ALWAYS run this before fitting</span>
+wcss, sil = [], []
+<span class="kw">for</span> k <span class="kw">in</span> range(<span class="num">2</span>, <span class="num">13</span>):
+    km = KMeans(n_clusters=k, init=<span class="st">'k-means++'</span>, n_init=<span class="num">10</span>, random_state=<span class="num">42</span>)
+    labels = km.fit_predict(X_scaled)
+    wcss.append(km.inertia_)
+    sil.append(silhouette_score(X_scaled, labels))
+
+fig, (ax1, ax2) = plt.subplots(<span class="num">1</span>, <span class="num">2</span>, figsize=(<span class="num">12</span>, <span class="num">4</span>))
+ax1.plot(range(<span class="num">2</span>, <span class="num">13</span>), wcss, <span class="st">'bo-'</span>); ax1.set_title(<span class="st">'Elbow Method (WCSS)'</span>)
+ax2.plot(range(<span class="num">2</span>, <span class="num">13</span>), sil, <span class="st">'go-'</span>); ax2.set_title(<span class="st">'Silhouette Score'</span>)
+
+<span class="cm"># 3. Final model — K=5 justified by both metrics</span>
+km_final = KMeans(n_clusters=<span class="num">5</span>, init=<span class="st">'k-means++'</span>, n_init=<span class="num">10</span>, random_state=<span class="num">42</span>)
+df[<span class="st">'Cluster'</span>] = km_final.fit_predict(X_scaled)
+<span class="kw">print</span>(<span class="st">f"Silhouette: {silhouette_score(X_scaled, df['Cluster']):.3f}"</span>)
+
+<span class="cm"># 4. Profile table — the business output</span>
+profile = df.groupby(<span class="st">'Cluster'</span>).agg({
+    <span class="st">'Age'</span>: <span class="st">'mean'</span>, <span class="st">'Annual Income (k$)'</span>: <span class="st">'mean'</span>,
+    <span class="st">'Spending Score (1-100)'</span>: <span class="st">'mean'</span>, <span class="st">'CustomerID'</span>: <span class="st">'count'</span>
+}).round(<span class="num">1</span>).rename(columns={<span class="st">'CustomerID'</span>: <span class="st">'Count'</span>})
+<span class="kw">print</span>(profile)
+</div>
+        <div class="ref-inline">📚 Géron, <em>Hands-On ML with scikit-learn</em> (O'Reilly) Chapter 9 covers this exact workflow with full code examples. <a href="https://www.oreilly.com/library/view/hands-on-machine-learning/9781492032632/" target="_blank">Book ↗</a></div>
+      
+      
+      <h4 style="margin-top:18px">Cluster profiling (the key output)</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="cm"># Profile each cluster — this is what you show stakeholders</span>
+cluster_profiles = df.groupby(<span class="st">'Cluster'</span>).agg({
+    <span class="st">'Age'</span>: [<span class="st">'mean'</span>, <span class="st">'std'</span>],
+    <span class="st">'Annual Income (k$)'</span>: [<span class="st">'mean'</span>, <span class="st">'std'</span>],
+    <span class="st">'Spending Score (1-100)'</span>: [<span class="st">'mean'</span>, <span class="st">'std'</span>],
+    <span class="st">'CustomerID'</span>: <span class="st">'count'</span>
+}).round(<span class="num">1</span>)
+cluster_profiles.columns = [<span class="st">'_'</span>.join(col) <span class="kw">for</span> col <span class="kw">in</span> cluster_profiles.columns]
+cluster_profiles[<span class="st">'pct_of_total'</span>] = (cluster_profiles[<span class="st">'CustomerID_count'</span>] / len(df) * <span class="num">100</span>).round(<span class="num">1</span>)
+display(cluster_profiles.style.background_gradient(cmap=<span class="st">'RdYlGn'</span>))
+
+<span class="cm"># Name the clusters based on profiles</span>
+cluster_names = {
+    <span class="num">0</span>: <span class="st">'Young Low Income High Spend'</span>,
+    <span class="num">1</span>: <span class="st">'Middle-Aged Average'</span>,
+    <span class="num">2</span>: <span class="st">'High Income High Spend (Champions)'</span>,
+    <span class="num">3</span>: <span class="st">'High Income Low Spend (Potential)'</span>,
+    <span class="num">4</span>: <span class="st">'Old Low Spend'</span>
+}
+df[<span class="st">'Segment'</span>] = df[<span class="st">'Cluster'</span>].map(cluster_names)</div>
+
+      <h4 style="margin-top:14px">4-metric K selection plot</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+K_range = range(<span class="num">2</span>, <span class="num">12</span>)
+wcss, sils, chs, dbs = [], [], [], []
+<span class="kw">for</span> k <span class="kw">in</span> K_range:
+    km = KMeans(n_clusters=k, init=<span class="st">'k-means++'</span>, n_init=<span class="num">10</span>, random_state=<span class="num">42</span>)
+    labels = km.fit_predict(X_scaled)
+    wcss.append(km.inertia_)
+    sils.append(silhouette_score(X_scaled, labels))
+    chs.append(calinski_harabasz_score(X_scaled, labels))
+    dbs.append(davies_bouldin_score(X_scaled, labels))
+
+fig, axes = plt.subplots(<span class="num">2</span>, <span class="num">2</span>, figsize=(<span class="num">12</span>, <span class="num">8</span>))
+axes[<span class="num">0</span>,<span class="num">0</span>].plot(K_range, wcss, <span class="st">'o-b'</span>); axes[<span class="num">0</span>,<span class="num">0</span>].set_title(<span class="st">'Elbow (WCSS)'</span>)
+axes[<span class="num">0</span>,<span class="num">1</span>].plot(K_range, sils, <span class="st">'o-g'</span>); axes[<span class="num">0</span>,<span class="num">1</span>].set_title(<span class="st">'Silhouette ↑'</span>)
+axes[<span class="num">1</span>,<span class="num">0</span>].plot(K_range, chs, <span class="st">'o-r'</span>); axes[<span class="num">1</span>,<span class="num">0</span>].set_title(<span class="st">'Calinski-Harabász ↑'</span>)
+axes[<span class="num">1</span>,<span class="num">1</span>].plot(K_range, dbs, <span class="st">'o-m'</span>); axes[<span class="num">1</span>,<span class="num">1</span>].set_title(<span class="st">'Davies-Bouldin ↓'</span>)
+plt.tight_layout(); plt.savefig(<span class="st">'k_selection.png'</span>, dpi=<span class="num">150</span>)</div>
+
+      <div class="alert alert-success" style="margin-top:18px">
+        <strong>Expected results for Project 1:</strong> Silhouette 0.45–0.65 · K=4 or K=5 most common · Elbow usually visible at K=4 or 5 · Cluster sizes roughly 20–35% each with one small "outlier-rich" cluster. If silhouette &lt;0.35, check that you applied log-transform to Annual Income before scaling.
+      </div>
+      <div class="alert alert-warn" style="margin-top:10px">
+        <strong>Common errors in P1:</strong>
+        <ul style="margin:6px 0 0;font-size:13px">
+          <li>Forgetting to scale before fitting — salary dominates age, all clusters split by income</li>
+          <li>Using n_init=1 (default in some configs) — bad local minimum, clusters look wrong</li>
+          <li>Including CustomerID in features — meaningless unique identifier, destroys structure</li>
+          <li>Plotting K-Means centroids on unscaled axes — centroids on scaled space, data on original space</li>
+        </ul>
+      </div>
+
+      </div>
+
+      <div id="p1-deliverables" class="tab-content">
+        <div class="deliverable-grid">
+          <div class="deliverable"><div class="d-icon">📓</div><div class="d-title">Kaggle Notebook</div><div class="d-body">Structured, markdown-annotated, all plots rendered inline.</div></div>
+          <div class="deliverable"><div class="d-icon">📊</div><div class="d-title">5 Visualisations</div><div class="d-body">Elbow, Silhouette, 2D scatter, 3D Plotly, cluster profile bars.</div></div>
+          <div class="deliverable"><div class="d-icon">🏷️</div><div class="d-title">Cluster Profile Table</div><div class="d-body">Named clusters with mean features, count, business label.</div></div>
+          <div class="deliverable"><div class="d-icon">📋</div><div class="d-title">Marketing Recommendations</div><div class="d-body">2–3 actionable recs per cluster.</div></div>
+          <div class="deliverable"><div class="d-icon">💼</div><div class="d-title">LinkedIn Post</div><div class="d-body">Use the template in the <a onclick="gotoS('publish')" style="color:var(--accent);cursor:pointer">Publish Guide →</a></div></div>
+        </div>
+        <h4 style="margin-top:16px">Self-check before publishing</h4>
+        <ul class="checklist">
+          <li>Can you explain WHY you chose K=5 in 3 sentences?</li>
+          <li>Can a non-technical person understand each cluster name?</li>
+          <li>Are all axes labelled on every plot?</li>
+          <li>Did you scale the data BEFORE clustering?</li>
+          <li>Did you compute and report the silhouette score?</li>
+          <li>Does each cluster have a business recommendation?</li>
+        </ul>
+      </div>
+
+      <div id="p1-challenges" class="tab-content">
+        <div class="alert alert-info" style="margin-bottom:16px"><strong>These challenges extend Project 1.</strong> Complete the main project first, then pick any challenge below to deepen your understanding. Each links back to the relevant theory in the <a href="clustering_complete_reference_v2.html" style="color:var(--accent)">Complete Reference</a>.</div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P1 Challenge 01 · Conceptual · 30 min</div><div class="ex-title">Why does scaling matter? — A calculation exercise</div></div>
+            <span class="badge b-green">Beginner</span>
+          </div>
+          <div class="ex-body">Two customers: A = (Age: 25, Salary: 50,000) and B = (Age: 30, Salary: 80,000). Centroid C = (Age: 27, Salary: 60,000). Manually calculate Euclidean distance from A to C and B to C WITHOUT scaling. Then apply StandardScaler manually and recalculate. Which customer changes cluster assignment after scaling?</div>
+          <div class="ex-hint">💡 Hint: Age range ≈ 5, Salary range ≈ 30,000. The salary difference drowns the age difference before scaling — that's exactly the problem scaling solves.</div>
+          <div class="ex-project-link"><span>📖 Reference:</span> <p>K-Means Data Prep section → "Feature Scaling" in the Complete Reference</p></div>
+        </div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P1 Challenge 02 · Coding · 45 min</div><div class="ex-title">K-Means from scratch — numpy only</div></div>
+            <span class="badge b-blue">Intermediate</span>
+          </div>
+          <div class="ex-body">Implement full K-Means using only numpy. Include: K-Means++ initialisation, assignment step, update step, convergence check, empty cluster handling. Run it on the Mall Customers dataset and verify your output matches sklearn's <code>KMeans</code>. Plot WCSS convergence per iteration.</div>
+          <div class="ex-hint">💡 Hint: K-Means++ init: first centroid random, next chosen with probability proportional to squared distance from existing centroids. The update step: new centroid = mean of all assigned points.</div>
+          <div class="ex-project-link"><span>📖 Reference:</span> <p>K-Means → Mathematics tab → "From Scratch" code in Complete Reference</p></div>
+        </div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P1 Challenge 03 · Conceptual · 20 min</div><div class="ex-title">Draw K-Means algorithm from memory</div></div>
+            <span class="badge b-green">Beginner</span>
+          </div>
+          <div class="ex-body">Without looking at any reference, draw a diagram showing: initial centroid placement, assignment step, update step, and convergence. Annotate with the WCSS formula (WCSS = Σᵢ Σ(x ∈ Cᵢ) ‖x − μᵢ‖²). Explain in 3 sentences what "convergence" means and why it is guaranteed.</div>
+          <div class="ex-hint">💡 Hint: Think about why WCSS can never increase between iterations — each step (assignment + update) either reduces it or keeps it the same.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ─── PROJECT 2 ─────────────────────────────────────────────────── -->
+<section class="section" id="p2">
+<div class="container">
+  <div class="section-eyebrow">Project 02 · Intermediate · 8–12 hours</div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-num-bg">02</div>
+      <div class="project-level">
+        <span class="badge b-blue">Intermediate</span>
+        <span class="badge b-teal">RFM Analysis</span>
+        <span class="badge b-purple">Multi-Algorithm</span>
+      </div>
+      <div class="project-title">E-Commerce Customer Analytics — RFM Segmentation</div>
+      <p class="project-tagline">Build a production-grade customer segmentation system on real UK e-commerce data. Engineer RFM features from raw transactions, compare K-Means vs GMM vs K-Medoids, and deliver a model that could run in production.</p>
+      <div class="dataset-pill">
+        <span class="dataset-icon">📦</span>
+        <strong>Dataset:</strong>&nbsp;UCI Online Retail (541k transactions, 8 columns) &nbsp;·&nbsp;
+        <a href="https://archive.ics.uci.edu/dataset/352/online+retail" target="_blank">Download here ↗</a>
+        &nbsp;·&nbsp; <a onclick="gotoS('datasets')" style="color:var(--accent);cursor:pointer">See all datasets ↑</a>
+      </div>
+    </div>
+    <div class="project-body">
+      <div class="tab-nav" id="p2-tabs">
+        <button class="tab-btn active" onclick="switchTab('p2-tabs','p2-about')">About</button>
+        <button class="tab-btn" onclick="switchTab('p2-tabs','p2-visual')">What You'll Build</button>
+        <button class="tab-btn" onclick="switchTab('p2-tabs','p2-steps')">Step-by-step</button>
+        <button class="tab-btn" onclick="switchTab('p2-tabs','p2-code')">Key Code</button>
+        <button class="tab-btn" onclick="switchTab('p2-tabs','p2-deliverables')">Deliverables</button>
+        <button class="tab-btn" onclick="switchTab('p2-tabs','p2-challenges')">⚡ Challenges</button>
+      </div>
+
+      <div id="p2-about" class="tab-content active">
+        <div class="grid2">
+          <div>
+            <h4>The core skill: feature engineering</h4>
+            <p>The dataset is raw transactions — you must engineer <strong>Recency</strong>, <strong>Frequency</strong>, and <strong>Monetary</strong> (RFM) features from scratch. This is the key skill: turning a transaction log into a customer-level feature matrix fit for clustering.</p>
+            <p>RFM is a proven marketing framework used by e-commerce companies worldwide. <a class="cite" href="https://doi.org/10.1016/j.eswa.2011.11.036" target="_blank">📄 Tsai & Chiu (2004) originated formalisation</a></p>
+            <div class="ref-inline" style="margin-top:8px">📚 Reference: <a href="https://www.dbmarketing.com/articles/Art149.htm" target="_blank">Hughes (1994) original RFM paper ↗</a> — explains why R, F, M each predict repurchase probability independently.</div>
+          </div>
+          <div>
+            <h4>Why compare 3 algorithms?</h4>
+            <ul>
+              <li><strong>K-Means:</strong> Fast, interpretable, centroid-based. Assumes spherical clusters.</li>
+              <li><strong>GMM:</strong> Soft assignments (membership probabilities). Handles elliptical clusters. Uses BIC for K selection. <a class="cite" href="https://link.springer.com/book/9780387310732" target="_blank">📄 Bishop 2006</a></li>
+              <li><strong>K-Medoids:</strong> Cluster centres are actual data points — more robust to outliers (high-spenders distort K-Means centroids).</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="p2-visual" class="tab-content">
+        <h4 style="margin-bottom:16px">What you will produce — RFM feature engineering flow</h4>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" style="min-width:500px">
+            <defs>
+              <marker id="arr3" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#606880"/>
+              </marker>
+            </defs>
+            <!-- Raw data box -->
+            <rect x="10" y="60" width="130" height="60" rx="8" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1.5"/>
+            <text x="75" y="85" fill="#eef0f7" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Raw Transactions</text>
+            <text x="75" y="100" fill="#606880" font-family="Inter" font-size="10" text-anchor="middle">541k rows</text>
+            <text x="75" y="113" fill="#606880" font-family="Inter" font-size="10" text-anchor="middle">InvoiceNo, CustomerID…</text>
+            <line x1="140" y1="90" x2="168" y2="90" stroke="#606880" stroke-width="1.5" marker-end="url(#arr3)"/>
+            <!-- Feature eng box -->
+            <rect x="170" y="40" width="150" height="100" rx="8" fill="rgba(245,185,66,.08)" stroke="#f5b942" stroke-width="1.5"/>
+            <text x="245" y="62" fill="#f5b942" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Feature Engineering</text>
+            <text x="245" y="80" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Recency = days since</text>
+            <text x="245" y="93" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Frequency = # invoices</text>
+            <text x="245" y="106" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Monetary = total spend</text>
+            <text x="245" y="125" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">groupby(CustomerID).agg()</text>
+            <line x1="320" y1="90" x2="348" y2="90" stroke="#606880" stroke-width="1.5" marker-end="url(#arr3)"/>
+            <!-- Log transform box -->
+            <rect x="350" y="55" width="120" height="70" rx="8" fill="rgba(91,156,246,.08)" stroke="#5b9cf6" stroke-width="1.5"/>
+            <text x="410" y="78" fill="#5b9cf6" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Log Transform</text>
+            <text x="410" y="95" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">+ StandardScaler</text>
+            <text x="410" y="110" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">RFM skew → normal</text>
+            <line x1="470" y1="90" x2="498" y2="90" stroke="#606880" stroke-width="1.5" marker-end="url(#arr3)"/>
+            <!-- Clustering box -->
+            <rect x="500" y="55" width="180" height="70" rx="8" fill="rgba(77,196,131,.08)" stroke="#4dc483" stroke-width="1.5"/>
+            <text x="590" y="78" fill="#4dc483" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Clustering</text>
+            <text x="590" y="95" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">K-Means vs GMM</text>
+            <text x="590" y="110" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">vs K-Medoids</text>
+            <!-- Labels below flow -->
+            <text x="75" y="148" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">GroupBy customers</text>
+            <text x="245" y="158" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">→ 4,339 unique customers</text>
+          </svg>
+        </div>
+        <div class="alert alert-warn"><strong>Common mistake:</strong> Students cluster on raw transaction data (541k rows) instead of aggregating first to customer-level RFM (4,339 rows). Always aggregate to your unit of analysis before clustering.</div>
+      </div>
+
+      <div id="p2-steps" class="tab-content">
+        <div class="pipeline">
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--amber)"></div><div class="pipe-title">Step 1: Data cleaning (1 hr)</div><div class="pipe-body">Handle cancelled orders (InvoiceNo starting with 'C'), missing CustomerIDs, negative quantities, UK-only filter. Log how many rows you remove and why — include this in your notebook narrative.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 2: RFM feature engineering (1 hr)</div><div class="pipe-body">Compute snapshot date (max invoice date + 1 day). GroupBy CustomerID: Recency = (snapshot − last_purchase).days, Frequency = count unique invoices, Monetary = sum of (Quantity × UnitPrice). Apply log1p transform to all three (they're heavily right-skewed).</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 3: Scaling and distribution check (30 min)</div><div class="pipe-body">StandardScaler on log-transformed RFM. Plot before/after distributions. Verify log transform + scaling gives approximately normal distributions. This is why log transform is essential for RFM data.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 4: Multi-algorithm comparison (2 hrs)</div><div class="pipe-body">Run K-Means (K=4 to 6), GMM (BIC curve for K selection), K-Medoids. Compare: Silhouette, Davies-Bouldin, cluster sizes. Which K and algorithm gives the most interpretable segments?</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 5: 3D RFM scatter visualisation (30 min)</div><div class="pipe-body">Plot R vs F vs M in 3D with Plotly. Colour by cluster. This is your headline visual — make it publication-quality. Name the clusters: "Champions", "At Risk", "New Customers", "Hibernating".</div></div>
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--teal)"></div><div class="pipe-title">Step 6: Business analysis (1 hr)</div><div class="pipe-body">For each segment: % of customers, % of revenue, RFM profile. Recommend CRM actions: reactivation emails for "At Risk", loyalty rewards for "Champions", onboarding for "New Customers."</div></div>
+        </div>
+      </div>
+
+      <div id="p2-code" class="tab-content">
+        <div class="code-block">
+<span class="cm"># RFM feature engineering — the core skill of this project</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans
+<span class="kw">from</span> sklearn.mixture <span class="kw">import</span> GaussianMixture
+
+df = pd.read_excel(<span class="st">'Online Retail.xlsx'</span>)
+df = df.dropna(subset=[<span class="st">'CustomerID'</span>])
+df = df[~df[<span class="st">'InvoiceNo'</span>].astype(<span class="st">str</span>).str.startswith(<span class="st">'C'</span>)]  <span class="cm"># remove cancellations</span>
+df[<span class="st">'Revenue'</span>] = df[<span class="st">'Quantity'</span>] * df[<span class="st">'UnitPrice'</span>]
+snapshot = df[<span class="st">'InvoiceDate'</span>].max() + pd.Timedelta(days=<span class="num">1</span>)
+
+rfm = df.groupby(<span class="st">'CustomerID'</span>).agg(
+    Recency=(<span class="st">'InvoiceDate'</span>, <span class="kw">lambda</span> x: (snapshot - x.max()).days),
+    Frequency=(<span class="st">'InvoiceNo'</span>, <span class="st">'nunique'</span>),
+    Monetary=(<span class="st">'Revenue'</span>, <span class="st">'sum'</span>)
+).reset_index()
+
+<span class="cm"># Log transform — ESSENTIAL for skewed RFM distributions</span>
+rfm_log = np.log1p(rfm[[<span class="st">'Recency'</span>, <span class="st">'Frequency'</span>, <span class="st">'Monetary'</span>]])
+rfm_scaled = StandardScaler().fit_transform(rfm_log)
+
+<span class="cm"># GMM with BIC for K selection</span>
+bics = [GaussianMixture(n_components=k, random_state=<span class="num">42</span>).fit(rfm_scaled).bic(rfm_scaled)
+        <span class="kw">for</span> k <span class="kw">in</span> range(<span class="num">2</span>, <span class="num">10</span>)]
+best_k = np.argmin(bics) + <span class="num">2</span>  <span class="cm"># K at min BIC</span>
+</div>
+      
+      
+      <h4 style="margin-top:18px">RFM feature engineering — complete implementation</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+df = pd.read_excel(<span class="st">'online_retail.xlsx'</span>)
+df = df[df[<span class="st">'Quantity'</span>] &gt; <span class="num">0</span>]              <span class="cm"># remove returns</span>
+df = df[~df[<span class="st">'InvoiceNo'</span>].str.startswith(<span class="st">'C'</span>)]  <span class="cm"># remove cancellations</span>
+df = df.dropna(subset=[<span class="st">'CustomerID'</span>])
+df[<span class="st">'TotalPrice'</span>] = df[<span class="st">'Quantity'</span>] * df[<span class="st">'UnitPrice'</span>]
+snapshot_date = df[<span class="st">'InvoiceDate'</span>].max() + pd.Timedelta(days=<span class="num">1</span>)
+rfm = df.groupby(<span class="st">'CustomerID'</span>).agg({
+    <span class="st">'InvoiceDate'</span>: <span class="kw">lambda</span> x: (snapshot_date - x.max()).days,
+    <span class="st">'InvoiceNo'</span>: <span class="st">'nunique'</span>,
+    <span class="st">'TotalPrice'</span>: <span class="st">'sum'</span>
+}).rename(columns={<span class="st">'InvoiceDate'</span>:<span class="st">'Recency'</span>,<span class="st">'InvoiceNo'</span>:<span class="st">'Frequency'</span>,<span class="st">'TotalPrice'</span>:<span class="st">'Monetary'</span>})
+rfm = rfm[rfm[<span class="st">'Monetary'</span>] &gt; <span class="num">0</span>]  <span class="cm"># remove net-negative customers</span>
+rfm_log = np.log1p(rfm)           <span class="cm"># CRITICAL: log-transform before scaling</span>
+scaler = RobustScaler()
+X = scaler.fit_transform(rfm_log)</div>
+
+      <h4 style="margin-top:14px">Bootstrap stability test</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="kw">from</span> scipy.optimize <span class="kw">import</span> linear_sum_assignment
+<span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> euclidean_distances
+<span class="kw">from</span> sklearn.metrics.cluster <span class="kw">import</span> adjusted_rand_score
+
+K = <span class="num">4</span>; n_boot = <span class="num">30</span>; ari_scores = []
+reference_km = KMeans(n_clusters=K, n_init=<span class="num">10</span>, random_state=<span class="num">42</span>).fit(X)
+<span class="kw">for</span> seed <span class="kw">in</span> range(n_boot):
+    idx = np.random.RandomState(seed).choice(len(X), size=int(len(X)*<span class="num">0.8</span>), replace=<span class="num">False</span>)
+    km_boot = KMeans(n_clusters=K, n_init=<span class="num">10</span>, random_state=seed).fit(X[idx])
+    <span class="cm"># Hungarian label alignment</span>
+    D = euclidean_distances(km_boot.cluster_centers_, reference_km.cluster_centers_)
+    _, col_ind = linear_sum_assignment(D)
+    mapping = {new:old <span class="kw">for</span> new, old <span class="kw">in</span> enumerate(col_ind)}
+    remapped = np.array([mapping[l] <span class="kw">for</span> l <span class="kw">in</span> km_boot.predict(X[idx])])
+    ari_scores.append(adjusted_rand_score(reference_km.predict(X[idx]), remapped))
+print(f<span class="st">"Bootstrap ARI: {np.mean(ari_scores):.3f} ± {np.std(ari_scores):.3f}"</span>)
+print(f<span class="st">"Stability: {'STABLE ✓' if np.mean(ari_scores) > 0.7 else 'UNSTABLE ✗ — try fewer K'}"</span>)</div>
+
+      <div class="alert alert-success" style="margin-top:18px">
+        <strong>Expected results for Project 2 (RFM):</strong> Silhouette 0.40–0.60 · K=4 standard RFM segments · Champions typically 5–15% · At Risk 15–25% · Loyal 25–35% · New/Occasional 30–45%. Log-transform is non-negotiable — without it expect one giant cluster. Bootstrap ARI should be &gt;0.75 for K=4.
+      </div>
+      <div class="alert alert-warn" style="margin-top:10px">
+        <strong>Common errors in P2:</strong>
+        <ul style="margin:6px 0 0;font-size:13px">
+          <li>Not handling negative Quantity values (returns) — these create negative Monetary values that break RFM</li>
+          <li>Computing Recency from a fixed "today" rather than max(InvoiceDate) in the dataset — all Recency values shift</li>
+          <li>Forgetting to use log1p (handles zeros) — customers with only 1 purchase get log(0) = -inf</li>
+          <li>Including cancelled transactions (InvoiceNo starts with 'C') in Frequency and Monetary</li>
+          <li>Not removing customers with negative total spend (net returns) — they form a spurious cluster</li>
+        </ul>
+      </div>
+
+      </div>
+
+      <div id="p2-deliverables" class="tab-content">
+        <div class="deliverable-grid">
+          <div class="deliverable"><div class="d-icon">🧮</div><div class="d-title">RFM Feature Table</div><div class="d-body">Clean customer-level R, F, M values with log transforms documented.</div></div>
+          <div class="deliverable"><div class="d-icon">📊</div><div class="d-title">Algorithm Comparison</div><div class="d-body">Side-by-side table: K-Means vs GMM vs K-Medoids with Silhouette, DB scores.</div></div>
+          <div class="deliverable"><div class="d-icon">🎯</div><div class="d-title">3D RFM Plot</div><div class="d-body">Plotly 3D scatter with named cluster segments and centroid markers.</div></div>
+          <div class="deliverable"><div class="d-icon">💰</div><div class="d-title">Revenue Breakdown</div><div class="d-body">% of customers and % of revenue per segment — the key business insight.</div></div>
+        </div>
+      </div>
+
+      <div id="p2-challenges" class="tab-content">
+        <div class="alert alert-info" style="margin-bottom:16px"><strong>These challenges extend Project 2.</strong> Each builds on skills introduced here and prepares you for Projects 3–4.</div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P2 Challenge 01 · Intermediate · 45 min</div><div class="ex-title">Implement Silhouette score from scratch</div></div>
+            <span class="badge b-blue">Intermediate</span>
+          </div>
+          <div class="ex-body">Without using <code>sklearn.metrics.silhouette_score</code>, implement the silhouette calculation for your RFM clusters (20-point sample is fine). s(i) = (b(i) − a(i)) / max(a(i), b(i)). Verify your result matches sklearn. Explain: if a point has s = −0.3, which cluster should it probably belong to?</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>Evaluation → "Silhouette Score" section in Complete Reference</p></div>
+        </div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P2 Challenge 02 · Intermediate · 1 hr</div><div class="ex-title">Bootstrap stability tester</div></div>
+            <span class="badge b-blue">Intermediate</span>
+          </div>
+          <div class="ex-body">Write <code>stability_test(X, K, n_boot=20)</code> that resamples 80% of X n_boot times, fits K-Means each time, computes ARI between all pairs using Hungarian label matching, returns mean and std ARI. Test on your RFM data: are K=4 segments stable (mean ARI > 0.85)?</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>Evaluation → "Stability" section in Complete Reference + Exercises → "Coding 03 Bootstrap stability tester"</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ─── PROJECT 3 ─────────────────────────────────────────────────── -->
+<section class="section" id="p3">
+<div class="container">
+  <div class="section-eyebrow">Project 03 · Intermediate · 10–14 hours</div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-num-bg">03</div>
+      <div class="project-level">
+        <span class="badge b-blue">Intermediate</span>
+        <span class="badge b-coral">DBSCAN</span>
+        <span class="badge b-teal">HDBSCAN</span>
+        <span class="badge b-amber">Anomaly Detection</span>
+      </div>
+      <div class="project-title">Credit Card Fraud Anomaly Detection</div>
+      <p class="project-tagline">Use density-based clustering to detect fraudulent transactions. DBSCAN and HDBSCAN find outliers — points that don't belong to any dense cluster — without needing fraud labels.</p>
+      <div class="dataset-pill">
+        <span class="dataset-icon">📦</span>
+        <strong>Dataset:</strong>&nbsp;Kaggle Credit Card Fraud (284,807 transactions, 0.17% fraud) &nbsp;·&nbsp;
+        <a href="https://www.kaggle.com/datasets/mlg-ulb/creditcardfraud" target="_blank">Download here ↗</a>
+        &nbsp;·&nbsp; <a onclick="gotoS('datasets')" style="color:var(--accent);cursor:pointer">See all datasets ↑</a>
+      </div>
+    </div>
+    <div class="project-body">
+      <div class="tab-nav" id="p3-tabs">
+        <button class="tab-btn active" onclick="switchTab('p3-tabs','p3-about')">About</button>
+        <button class="tab-btn" onclick="switchTab('p3-tabs','p3-visual')">DBSCAN Illustrated</button>
+        <button class="tab-btn" onclick="switchTab('p3-tabs','p3-steps')">Step-by-step</button>
+        <button class="tab-btn" onclick="switchTab('p3-tabs','p3-code')">Key Code</button>
+        <button class="tab-btn" onclick="switchTab('p3-tabs','p3-challenges')">⚡ Challenges</button>
+      </div>
+
+      <div id="p3-about" class="tab-content active">
+        <div class="grid2">
+          <div>
+            <h4>Why density-based for fraud?</h4>
+            <p>K-Means assigns every point to a cluster. DBSCAN identifies points that don't fit any dense neighbourhood as <strong>noise (label = -1)</strong> — these are your fraud candidates. The algorithm requires no fraud labels, making it practical when labels are unavailable or expensive.</p>
+            <div class="ref-inline" style="margin-top:8px">📚 Ester et al. (1996) original DBSCAN paper — KDD Test of Time award. <a href="https://dl.acm.org/doi/10.5555/3001460.3001507" target="_blank">ACM ↗</a></div>
+          </div>
+          <div>
+            <h4>DBSCAN vs HDBSCAN for this task</h4>
+            <ul>
+              <li><strong>DBSCAN:</strong> Single epsilon — requires careful tuning. Uniform density assumption.</li>
+              <li><strong>HDBSCAN:</strong> Variable density clusters. More robust to transactions that cluster at different densities across time periods. <a class="cite" href="https://joss.theoj.org/papers/10.21105/joss.00205" target="_blank">📄 McInnes 2017</a></li>
+              <li>Compare noise rates: if HDBSCAN noise rate ≈ true fraud rate (0.17%), it is detecting the right outliers.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div id="p3-visual" class="tab-content">
+        <h4 style="margin-bottom:16px">DBSCAN concept — core and border points illustrated</h4>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" style="min-width:480px">
+            <!-- Cluster 1: Normal transactions -->
+            <circle cx="200" cy="130" r="55" fill="rgba(91,156,246,.07)" stroke="#5b9cf6" stroke-dasharray="4,3" stroke-width="1.5"/>
+            <circle cx="200" cy="130" r="25" fill="rgba(91,156,246,.12)" stroke="#5b9cf6" stroke-width="1" stroke-dasharray="none"/>
+            <!-- Core points cluster 1 -->
+            <circle cx="190" cy="120" r="6" fill="#5b9cf6"/>
+            <circle cx="210" cy="135" r="6" fill="#5b9cf6"/>
+            <circle cx="195" cy="145" r="6" fill="#5b9cf6"/>
+            <!-- Border points -->
+            <circle cx="240" cy="115" r="5" fill="#8b74f7"/>
+            <circle cx="160" cy="150" r="5" fill="#8b74f7"/>
+            <circle cx="215" cy="170" r="5" fill="#8b74f7"/>
+            <!-- Labels cluster 1 -->
+            <text x="200" y="200" fill="#5b9cf6" font-family="Inter" font-size="11" text-anchor="middle" font-weight="600">Normal Transactions</text>
+            <text x="200" y="215" fill="#606880" font-family="Inter" font-size="10" text-anchor="middle">(Dense cluster)</text>
+
+            <!-- Cluster 2 -->
+            <circle cx="470" cy="130" r="55" fill="rgba(91,156,246,.07)" stroke="#5b9cf6" stroke-dasharray="4,3" stroke-width="1.5"/>
+            <circle cx="470" cy="140" r="6" fill="#5b9cf6"/>
+            <circle cx="485" cy="120" r="6" fill="#5b9cf6"/>
+            <circle cx="455" cy="130" r="5" fill="#8b74f7"/>
+            <circle cx="510" cy="145" r="5" fill="#8b74f7"/>
+            <text x="470" y="200" fill="#5b9cf6" font-family="Inter" font-size="11" text-anchor="middle" font-weight="600">Normal Transactions</text>
+            <text x="470" y="215" fill="#606880" font-family="Inter" font-size="10" text-anchor="middle">(Dense cluster)</text>
+
+            <!-- Noise / Fraud points -->
+            <circle cx="80" cy="50" r="5" fill="#f97060"/>
+            <circle cx="340" cy="45" r="5" fill="#f97060"/>
+            <circle cx="600" cy="60" r="5" fill="#f97060"/>
+            <circle cx="350" cy="230" r="5" fill="#f97060"/>
+            <circle cx="90" cy="230" r="5" fill="#f97060"/>
+            <circle cx="630" cy="220" r="5" fill="#f97060"/>
+            <!-- Fraud labels -->
+            <text x="80" y="40" fill="#f97060" font-family="Inter" font-size="10" text-anchor="middle">NOISE</text>
+            <text x="340" y="35" fill="#f97060" font-family="Inter" font-size="10" text-anchor="middle">NOISE</text>
+            <text x="600" y="50" fill="#f97060" font-family="Inter" font-size="10" text-anchor="middle">NOISE</text>
+            <text x="340" y="247" fill="#f97060" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">= Fraud Candidates</text>
+
+            <!-- Legend -->
+            <circle cx="30" cy="265" r="5" fill="#5b9cf6"/>
+            <text x="42" y="269" fill="#a8b2cc" font-family="Inter" font-size="10">Core point (≥ minPts neighbours within ε)</text>
+            <circle cx="290" cy="265" r="4" fill="#8b74f7"/>
+            <text x="302" y="269" fill="#a8b2cc" font-family="Inter" font-size="10">Border point (within ε of core but not core)</text>
+            <circle cx="560" cy="265" r="4" fill="#f97060"/>
+            <text x="572" y="269" fill="#a8b2cc" font-family="Inter" font-size="10">Noise (label = −1)</text>
+          </svg>
+        </div>
+        <div class="alert alert-warn"><strong>The key insight:</strong> Fraud transactions are rare and isolated — they don't form dense neighbourhoods. DBSCAN labels them as noise (−1). Your evaluation: compare DBSCAN noise labels against the <code>Class</code> column (0=normal, 1=fraud). Precision and recall tell you how well noise correlates with actual fraud.</div>
+      </div>
+
+      <div id="p3-steps" class="tab-content">
+        <div class="pipeline">
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--coral)"></div><div class="pipe-title">Step 1: Subsample and EDA (30 min)</div><div class="pipe-body">Full 284k rows is slow for DBSCAN. Stratified sample: 5k normal + all 492 fraud. Check class imbalance. Plot Time and Amount distributions split by Class.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 2: Feature scaling (15 min)</div><div class="pipe-body">V1–V28 are already PCA-transformed. Scale Time and Amount with RobustScaler (outlier-robust for fraud data).</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 3: DBSCAN epsilon tuning (1 hr)</div><div class="pipe-body">Use k-distance graph (k=minPts, plot sorted k-nearest-neighbour distances). The "knee" in this plot is your epsilon. Run DBSCAN for 5 epsilon values around the knee. Track: noise fraction vs. known fraud rate (0.17%).</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 4: HDBSCAN comparison (1 hr)</div><div class="pipe-body">Run HDBSCAN with min_cluster_size=5. Compare noise labels with DBSCAN. Compute: precision (noise∩fraud / noise), recall (noise∩fraud / all_fraud) for both algorithms.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 5: Isolation Forest baseline (30 min)</div><div class="pipe-body">Fit IsolationForest(contamination=0.002) as a supervised-style baseline. Compare AUC-ROC: DBSCAN vs HDBSCAN vs Isolation Forest. Which detects fraud best unsupervised?</div></div>
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--teal)"></div><div class="pipe-title">Step 6: UMAP visualisation (30 min)</div><div class="pipe-body">UMAP(n_components=2, n_neighbors=30) for 2D view. Plot with colour = DBSCAN label. Overlay actual fraud labels to show alignment. <a class="cite" href="https://umap-learn.readthedocs.io" target="_blank">📄 UMAP docs</a></div></div>
+        </div>
+      </div>
+
+      <div id="p3-code" class="tab-content">
+        <div class="code-block">
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> DBSCAN
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> RobustScaler
+<span class="kw">import</span> hdbscan
+
+<span class="cm"># K-distance graph for epsilon tuning</span>
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> NearestNeighbors
+nbrs = NearestNeighbors(n_neighbors=<span class="num">5</span>).fit(X_scaled)
+distances, _ = nbrs.kneighbors(X_scaled)
+k_dist = np.sort(distances[:, -<span class="num">1</span>])[::-<span class="num">1</span>]
+<span class="cm"># Plot k_dist — the "knee" is your epsilon</span>
+
+<span class="cm"># DBSCAN</span>
+db = DBSCAN(eps=<span class="num">0.3</span>, min_samples=<span class="num">5</span>)
+labels_db = db.fit_predict(X_scaled)
+noise_mask = labels_db == -<span class="num">1</span>
+<span class="kw">print</span>(<span class="st">f"Noise fraction: {noise_mask.mean():.3f} | Fraud rate: {y.mean():.3f}"</span>)
+
+<span class="cm"># HDBSCAN — variable density, better for this dataset</span>
+clusterer = hdbscan.HDBSCAN(min_cluster_size=<span class="num">5</span>, min_samples=<span class="num">3</span>)
+labels_hdb = clusterer.fit_predict(X_scaled)
+
+<span class="cm"># Evaluate against ground truth (use only for validation, NOT training)</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> precision_score, recall_score
+pred_fraud = (labels_db == -<span class="num">1</span>).astype(<span class="num">int</span>)
+<span class="kw">print</span>(<span class="st">f"Precision: {precision_score(y, pred_fraud):.3f}"</span>)
+<span class="kw">print</span>(<span class="st">f"Recall:    {recall_score(y, pred_fraud):.3f}"</span>)
+</div>
+      
+      
+      <h4 style="margin-top:18px">K-distance graph for epsilon selection</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> NearestNeighbors
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="cm"># Step 1: Compute k-nearest neighbour distances</span>
+k = <span class="num">5</span>  <span class="cm"># = min_samples</span>
+nbrs = NearestNeighbors(n_neighbors=k).fit(X_scaled)
+distances, _ = nbrs.kneighbors(X_scaled)
+kth_dist = np.sort(distances[:, k-<span class="num">1</span>])[::-<span class="num">1</span>]  <span class="cm"># sorted descending</span>
+<span class="cm"># Step 2: Plot — the "knee" = good epsilon</span>
+plt.figure(figsize=(<span class="num">10</span>, <span class="num">4</span>))
+plt.plot(kth_dist)
+plt.axhline(y=<span class="num">0.5</span>, color=<span class="st">'r'</span>, linestyle=<span class="st">'--'</span>, label=<span class="st">'epsilon=0.5 (candidate)'</span>)
+plt.xlabel(<span class="st">'Points sorted by distance'</span>); plt.ylabel(<span class="st">'5th nearest neighbour distance'</span>)
+plt.title(<span class="st">'K-distance graph — knee = good epsilon'</span>); plt.legend()
+plt.savefig(<span class="st">'epsilon_selection.png'</span>, dpi=<span class="num">150</span>)
+
+<span class="cm"># Step 3: Evaluate anomaly detection quality</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> classification_report, average_precision_score
+noise_mask = (labels == -<span class="num">1</span>).astype(<span class="num">int</span>)  <span class="cm"># predict: noise = fraud</span>
+y_true = df[<span class="st">'Class'</span>].values  <span class="cm"># 1=fraud (only for evaluation)</span>
+print(classification_report(y_true, noise_mask, target_names=[<span class="st">'Legit'</span>,<span class="st">'Fraud'</span>]))
+print(f<span class="st">"AUPRC: {average_precision_score(y_true, noise_mask):.4f}"</span>)
+<span class="cm"># Compare: distance-to-centroid anomaly score</span>
+km = KMeans(n_clusters=<span class="num">8</span>).fit(X_scaled)
+anomaly_score = km.transform(X_scaled).min(axis=<span class="num">1</span>)
+print(f<span class="st">"K-Means AUPRC: {average_precision_score(y_true, anomaly_score):.4f}"</span>)</div>
+
+      <div class="alert alert-success" style="margin-top:18px">
+        <strong>Expected results for Project 3 (Fraud Detection):</strong> Noise fraction 0.3–3% on credit card data (these are anomaly candidates) · HDBSCAN usually finds 3–8 transaction behaviour clusters · Distance-to-centroid anomaly detector: expect precision 0.15–0.40 at 99th-percentile threshold (fraud is genuinely hard with unsupervised only). Most "fraud" in this dataset is in the noise points — but 70–80% of noise points are NOT fraud.
+      </div>
+      <div class="alert alert-warn" style="margin-top:10px">
+        <strong>Context on class imbalance:</strong> The credit card fraud dataset is 99.83% legitimate / 0.17% fraud. This is intentional — unsupervised methods should not know about labels during training. After clustering, use the labels ONLY for evaluation (NMI, ARI, precision/recall of the noise-as-fraud detector). Never use labels as features or for fitting. This is the real-world constraint unsupervised fraud detection works under.
+      </div>
+      <div class="alert alert-warn" style="margin-top:10px">
+        <strong>Common errors in P3:</strong>
+        <ul style="margin:6px 0 0;font-size:13px">
+          <li>Including the 'Time' and 'Amount' raw features without scaling — Amount has extreme outliers, Time is cyclical</li>
+          <li>Using StandardScaler instead of RobustScaler — fraud transactions have extreme values that distort means</li>
+          <li>Treating all noise points as fraud — noise fraction of 1% on 284k rows = 2,840 noise points, but only 492 are actual fraud</li>
+          <li>Evaluating with accuracy — a model predicting 100% legitimate gets 99.83% accuracy. Use precision, recall, AUPRC</li>
+        </ul>
+      </div>
+
+      </div>
+
+      <div id="p3-challenges" class="tab-content">
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P3 Challenge 01 · Intermediate · 1 hr</div><div class="ex-title">DBSCAN parameter sensitivity analysis</div></div>
+            <span class="badge b-blue">Intermediate</span>
+          </div>
+          <div class="ex-body">Generate synthetic data with <code>make_moons(n_samples=300, noise=0.1)</code>. Run DBSCAN with epsilon in [0.1, 0.2, 0.3, 0.5, 1.0] and min_samples in [3, 5, 10, 20]. Plot results in a 5×4 grid. For which combinations does DBSCAN correctly find 2 half-moon clusters? What happens at the extremes?</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>Algorithms → DBSCAN → "Parameter Selection" in Complete Reference</p></div>
+        </div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P3 Challenge 02 · Advanced · 2 hrs</div><div class="ex-title">When does K-Means fail? — Visual proof</div></div>
+            <span class="badge b-amber">Advanced</span>
+          </div>
+          <div class="ex-body">Generate: (a) two concentric rings, (b) two half-moons, (c) one elongated + one circular cluster. Run K-Means K=2 on each. Then run DBSCAN on each. Plot a 2×3 grid comparing outputs. Write a 200-word analysis: what geometric assumption does K-Means violate in each case?</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>K-Means → Pros &amp; Cons → "Spherical assumption weakness" in Complete Reference</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ─── PROJECT 4 ─────────────────────────────────────────────────── -->
+<section class="section" id="p4">
+<div class="container">
+  <div class="section-eyebrow">Project 04 · Advanced · 14–20 hours</div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-num-bg">04</div>
+      <div class="project-level">
+        <span class="badge b-amber">Advanced</span>
+        <span class="badge b-purple">NLP</span>
+        <span class="badge b-teal">Embeddings</span>
+        <span class="badge b-blue">HDBSCAN</span>
+      </div>
+      <div class="project-title">News Article Topic Discovery</div>
+      <p class="project-tagline">Build a state-of-the-art NLP topic clustering system: encode 120k articles with sentence-BERT, reduce to 5D with UMAP, cluster with HDBSCAN, and compare against BERTopic. The 2025 production NLP approach.</p>
+      <div class="dataset-pill">
+        <span class="dataset-icon">📦</span>
+        <strong>Dataset:</strong>&nbsp;AG News (120k articles, 4 ground-truth topics) &nbsp;·&nbsp;
+        <a href="https://huggingface.co/datasets/ag_news" target="_blank">HuggingFace ↗</a>
+        &nbsp;·&nbsp; <a onclick="gotoS('datasets')" style="color:var(--accent);cursor:pointer">See all datasets ↑</a>
+      </div>
+    </div>
+    <div class="project-body">
+      <div class="tab-nav" id="p4-tabs">
+        <button class="tab-btn active" onclick="switchTab('p4-tabs','p4-about')">About</button>
+        <button class="tab-btn" onclick="switchTab('p4-tabs','p4-visual')">Pipeline Visual</button>
+        <button class="tab-btn" onclick="switchTab('p4-tabs','p4-steps')">Step-by-step</button>
+        <button class="tab-btn" onclick="switchTab('p4-tabs','p4-code')">Key Code</button>
+        <button class="tab-btn" onclick="switchTab('p4-tabs','p4-challenges')">⚡ Challenges</button>
+      </div>
+
+      <div id="p4-about" class="tab-content active">
+        <div class="grid2">
+          <div>
+            <h4>Why the BERT → UMAP → HDBSCAN pipeline?</h4>
+            <p>Raw text → TF-IDF → K-Means worked in 2015. Today's standard is: sentence transformer embeddings (768D semantic space) → UMAP dimensionality reduction → HDBSCAN. This approach captures semantic meaning, not just word frequency.</p>
+            <div class="ref-inline" style="margin-top:8px">📚 Reimers & Gurevych (2019) Sentence-BERT paper — the embedding model this project uses. <a href="https://arxiv.org/abs/1908.10084" target="_blank">arXiv ↗</a></div>
+          </div>
+          <div>
+            <h4>BERTopic — the production library</h4>
+            <p>BERTopic wraps the BERT → UMAP → HDBSCAN pipeline with automatic topic labelling (c-TF-IDF), topic merging, and a clean API. Compare your manual pipeline against BERTopic's automated version.</p>
+            <div class="ref-inline" style="margin-top:8px">📚 Grootendorst (2022) BERTopic paper. <a href="https://arxiv.org/abs/2203.05794" target="_blank">arXiv ↗</a> | <a href="https://maartengr.github.io/BERTopic" target="_blank">Docs ↗</a></div>
+          </div>
+        </div>
+      </div>
+
+      <div id="p4-visual" class="tab-content">
+        <h4 style="margin-bottom:16px">The NLP clustering pipeline — step by step</h4>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 760 200" xmlns="http://www.w3.org/2000/svg" style="min-width:560px">
+            <defs>
+              <marker id="arr4" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+                <path d="M0,0 L0,6 L8,3 z" fill="#606880"/>
+              </marker>
+            </defs>
+            <!-- Step 1 -->
+            <rect x="10" y="70" width="120" height="60" rx="8" fill="rgba(245,185,66,.08)" stroke="#f5b942" stroke-width="1.5"/>
+            <text x="70" y="92" fill="#f5b942" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Text Input</text>
+            <text x="70" y="107" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle">120k articles</text>
+            <text x="70" y="120" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">raw strings</text>
+            <line x1="130" y1="100" x2="158" y2="100" stroke="#606880" stroke-width="1.5" marker-end="url(#arr4)"/>
+            <text x="144" y="94" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">encode</text>
+            <!-- Step 2 -->
+            <rect x="160" y="60" width="140" height="80" rx="8" fill="rgba(249,112,96,.08)" stroke="#f97060" stroke-width="1.5"/>
+            <text x="230" y="83" fill="#f97060" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Sentence-BERT</text>
+            <text x="230" y="98" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle">all-MiniLM-L6-v2</text>
+            <text x="230" y="111" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">768-dim embeddings</text>
+            <text x="230" y="124" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">semantic meaning</text>
+            <line x1="300" y1="100" x2="328" y2="100" stroke="#606880" stroke-width="1.5" marker-end="url(#arr4)"/>
+            <text x="314" y="94" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">reduce</text>
+            <!-- Step 3 -->
+            <rect x="330" y="65" width="120" height="70" rx="8" fill="rgba(91,156,246,.08)" stroke="#5b9cf6" stroke-width="1.5"/>
+            <text x="390" y="87" fill="#5b9cf6" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">UMAP</text>
+            <text x="390" y="102" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle">768D → 5D</text>
+            <text x="390" y="115" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">cosine metric</text>
+            <text x="390" y="128" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">n_neighbors=15</text>
+            <line x1="450" y1="100" x2="478" y2="100" stroke="#606880" stroke-width="1.5" marker-end="url(#arr4)"/>
+            <text x="464" y="94" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">cluster</text>
+            <!-- Step 4 -->
+            <rect x="480" y="65" width="120" height="70" rx="8" fill="rgba(38,212,162,.08)" stroke="#26d4a2" stroke-width="1.5"/>
+            <text x="540" y="87" fill="#26d4a2" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">HDBSCAN</text>
+            <text x="540" y="102" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle">min_cluster_size=50</text>
+            <text x="540" y="115" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">variable density</text>
+            <text x="540" y="128" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">outlier noise removal</text>
+            <line x1="600" y1="100" x2="628" y2="100" stroke="#606880" stroke-width="1.5" marker-end="url(#arr4)"/>
+            <!-- Step 5 -->
+            <rect x="630" y="65" width="120" height="70" rx="8" fill="rgba(139,116,247,.08)" stroke="#8b74f7" stroke-width="1.5"/>
+            <text x="690" y="87" fill="#8b74f7" font-family="Inter" font-size="11" font-weight="600" text-anchor="middle">Topics</text>
+            <text x="690" y="102" fill="#a8b2cc" font-family="Inter" font-size="9" text-anchor="middle">Top keywords</text>
+            <text x="690" y="115" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">NMI vs ground truth</text>
+            <text x="690" y="128" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">BERTopic comparison</text>
+            <!-- Row 2 labels -->
+            <text x="70" y="158" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">~45 min on CPU</text>
+            <text x="230" y="158" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">Batch 64, use GPU if avail.</text>
+            <text x="390" y="158" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">Fit on train only</text>
+            <text x="540" y="158" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">Don't use on 768D directly</text>
+          </svg>
+        </div>
+        <div class="alert alert-warn"><strong>Critical:</strong> Never run HDBSCAN directly on 768D embeddings. The curse of dimensionality makes all distances nearly equal in 768D. UMAP first reduces to 5D preserving local semantic structure. <a class="cite" href="https://arxiv.org/abs/1802.03426" target="_blank">📄 McInnes et al. 2018 UMAP paper</a></div>
+      </div>
+
+      <div id="p4-steps" class="tab-content">
+        <div class="pipeline">
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--amber)"></div><div class="pipe-title">Step 1: Setup and embedding generation (2 hrs)</div><div class="pipe-body">Install sentence-transformers. Load AG News. Generate embeddings with <code>SentenceTransformer('all-MiniLM-L6-v2')</code>. Save embeddings to disk — this is your most time-consuming step. Use batch_size=64, GPU if available.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 2: UMAP dimensionality reduction (30 min)</div><div class="pipe-body">Reduce 768D → 5D with <code>UMAP(n_components=5, metric='cosine', n_neighbors=15)</code>. Fit on training data only. Save the fitted UMAP transform — you will need it to process new articles without refitting.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 3: HDBSCAN clustering (30 min)</div><div class="pipe-body">Cluster 5D UMAP output with <code>HDBSCAN(min_cluster_size=50)</code>. Check: how many topics found? What fraction labelled noise? Expected: 8–15 coherent topics, 10–20% noise.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 4: Topic labelling (1 hr)</div><div class="pipe-body">For each cluster, compute c-TF-IDF (class-based TF-IDF): extract top 10 keywords per cluster from article texts. Name each topic based on keywords. Validate against AG News ground truth using NMI.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 5: BERTopic comparison (1 hr)</div><div class="pipe-body">Run <code>BERTopic()</code> on same data. Compare: number of topics found, NMI, top keywords, noise fraction. BERTopic essentially automates your Step 2–4 pipeline with additional topic merging.</div></div>
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--teal)"></div><div class="pipe-title">Step 6: UMAP 2D visualisation (30 min)</div><div class="pipe-body">Separately fit UMAP(n_components=2) for visualisation. Plot 2D scatter coloured by cluster. This is your showcase visual — shows semantic clusters in 2D space.</div></div>
+        </div>
+      </div>
+
+      <div id="p4-code" class="tab-content">
+        <div class="code-block">
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+<span class="kw">import</span> umap, hdbscan, numpy <span class="kw">as</span> np
+<span class="kw">from</span> datasets <span class="kw">import</span> load_dataset
+
+<span class="cm"># 1. Load dataset</span>
+ds = load_dataset(<span class="st">"ag_news"</span>, split=<span class="st">"train[:20000]"</span>)  <span class="cm"># start with 20k</span>
+texts = ds[<span class="st">"text"</span>]
+
+<span class="cm"># 2. Generate sentence-BERT embeddings</span>
+model = SentenceTransformer(<span class="st">'all-MiniLM-L6-v2'</span>)
+embeddings = model.encode(texts, batch_size=<span class="num">64</span>, show_progress_bar=<span class="num">True</span>)
+np.save(<span class="st">'embeddings.npy'</span>, embeddings)  <span class="cm"># save — takes 10 min on CPU</span>
+
+<span class="cm"># 3. UMAP: 768D → 5D for clustering</span>
+reducer = umap.UMAP(n_components=<span class="num">5</span>, metric=<span class="st">'cosine'</span>, n_neighbors=<span class="num">15</span>,
+                    min_dist=<span class="num">0.0</span>, random_state=<span class="num">42</span>)
+X_5d = reducer.fit_transform(embeddings)
+
+<span class="cm"># 4. HDBSCAN clustering</span>
+clusterer = hdbscan.HDBSCAN(min_cluster_size=<span class="num">50</span>, min_samples=<span class="num">10</span>,
+                             metric=<span class="st">'euclidean'</span>, prediction_data=<span class="num">True</span>)
+labels = clusterer.fit_predict(X_5d)
+<span class="kw">print</span>(<span class="st">f"Topics found: {labels.max()+1} | Noise: {(labels==-1).mean():.1%}"</span>)
+
+<span class="cm"># 5. Compare with BERTopic</span>
+<span class="kw">from</span> bertopic <span class="kw">import</span> BERTopic
+topic_model = BERTopic(language=<span class="st">"english"</span>, calculate_probabilities=<span class="num">True</span>)
+topics, probs = topic_model.fit_transform(texts)
+topic_model.visualize_topics()  <span class="cm"># interactive plot</span>
+</div>
+      
+      
+      <h4 style="margin-top:18px">BERTopic topic extraction (the key deliverable)</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="kw">from</span> bertopic <span class="kw">import</span> BERTopic
+<span class="kw">from</span> umap <span class="kw">import</span> UMAP
+<span class="kw">import</span> hdbscan
+
+<span class="cm"># Configure UMAP and HDBSCAN for BERTopic</span>
+umap_model = UMAP(n_components=<span class="num">5</span>, n_neighbors=<span class="num">15</span>, min_dist=<span class="num">0.0</span>,
+                  metric=<span class="st">'cosine'</span>, random_state=<span class="num">42</span>)
+hdbscan_model = hdbscan.HDBSCAN(min_cluster_size=<span class="num">100</span>, min_samples=<span class="num">5</span>,
+                                  prediction_data=True)
+topic_model = BERTopic(
+    umap_model=umap_model,
+    hdbscan_model=hdbscan_model,
+    top_n_words=<span class="num">10</span>, verbose=True
+)
+<span class="cm"># Fit on pre-computed embeddings (saves re-encoding time)</span>
+topics, probs = topic_model.fit_transform(texts, embeddings=embeddings)
+<span class="cm"># Get topic info</span>
+topic_info = topic_model.get_topic_info()
+print(topic_info[topic_info[<span class="st">'Topic'</span>] &gt;= <span class="num">0</span>].head(<span class="num">10</span>))
+<span class="cm"># Get representative keywords per topic</span>
+<span class="kw">for</span> topic_id <span class="kw">in</span> topic_info[<span class="st">'Topic'</span>][topic_info[<span class="st">'Topic'</span>] &gt;= <span class="num">0</span>][:5]:
+    words = topic_model.get_topic(topic_id)
+    print(f<span class="st">"Topic {topic_id}: {[w for w,_ in words[:5]]}"</span>)
+<span class="cm"># Evaluate against AG News ground truth</span>
+<span class="kw">from</span> sklearn.metrics.cluster <span class="kw">import</span> normalized_mutual_info_score
+nmi = normalized_mutual_info_score(labels_true, topics)
+print(f<span class="st">"NMI with true labels: {nmi:.3f}"</span>)  <span class="cm"># expect 0.35-0.65</span></div>
+
+      <div class="alert alert-success" style="margin-top:18px">
+        <strong>Expected results for Project 4 (NLP):</strong> AG News has 4 ground-truth categories (World, Sports, Business, Sci/Tech). HDBSCAN on 20k articles should find 4–12 clusters. NMI with true labels: 0.35–0.65 (unsupervised, so lower than supervised is expected). World and Sports typically separate cleanest. Business and Sci/Tech often overlap due to Tech Business stories.
+      </div>
+      <div class="alert alert-warn" style="margin-top:10px">
+        <strong>Common errors in P4:</strong>
+        <ul style="margin:6px 0 0;font-size:13px">
+          <li>Clustering raw BERT embeddings (768D) without UMAP — curse of dimensionality, all silhouettes near 0</li>
+          <li>Using UMAP n_components=2 for clustering (vs 2 for visualisation) — 2D loses too much structure</li>
+          <li>Using metric='euclidean' in UMAP — use metric='cosine' for text embeddings, then 'euclidean' in HDBSCAN on UMAP output</li>
+          <li>Setting min_cluster_size too small (&lt;20) — creates hundreds of micro-clusters</li>
+          <li>Not caching embeddings — sentence-BERT encoding 20k articles takes 3–8 minutes; without caching you repeat this every run</li>
+        </ul>
+      </div>
+
+      </div>
+
+      <div id="p4-challenges" class="tab-content">
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P4 Challenge 01 · Advanced · 1 hr</div><div class="ex-title">Curse of dimensionality — empirical proof</div></div>
+            <span class="badge b-amber">Advanced</span>
+          </div>
+          <div class="ex-body">Generate uniformly distributed data in 2, 5, 10, 50, 500 dimensions. For each: compute ratio max/min pairwise Euclidean distance and coefficient of variation (std/mean) of all pairwise distances. Observe how distances concentrate. Write 150 words on what this means for HDBSCAN directly on 768D and why UMAP pre-reduction is essential.</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>Evaluation → "Curse of dimensionality" section in Complete Reference</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ─── PROJECT 5 ─────────────────────────────────────────────────── -->
+<section class="section" id="p5">
+<div class="container">
+  <div class="section-eyebrow">Project 05 · Expert · 20–30 hours</div>
+  <div class="project-card">
+    <div class="project-header">
+      <div class="project-num-bg">05</div>
+      <div class="project-level">
+        <span class="badge b-coral">Expert</span>
+        <span class="badge b-amber">MLOps</span>
+        <span class="badge b-blue">FastAPI</span>
+        <span class="badge b-teal">Drift Monitoring</span>
+      </div>
+      <div class="project-title">End-to-End MLOps Clustering System</div>
+      <p class="project-tagline">Build a complete production clustering system: training pipeline, REST API serving, MLflow experiment tracking, and Evidently drift monitoring. Geospatial demand clustering on NYC Taxi data.</p>
+      <div class="dataset-pill">
+        <span class="dataset-icon">📦</span>
+        <strong>Dataset:</strong>&nbsp;NYC TLC Taxi Trips (1M+ rows, geospatial) &nbsp;·&nbsp;
+        <a href="https://www.nyc.gov/site/tlc/about/tlc-trip-record-data.page" target="_blank">NYC Open Data ↗</a>
+        &nbsp;·&nbsp; <a onclick="gotoS('datasets')" style="color:var(--accent);cursor:pointer">See all datasets ↑</a>
+      </div>
+    </div>
+    <div class="project-body">
+      <div class="tab-nav" id="p5-tabs">
+        <button class="tab-btn active" onclick="switchTab('p5-tabs','p5-about')">About</button>
+        <button class="tab-btn" onclick="switchTab('p5-tabs','p5-arch')">System Architecture</button>
+        <button class="tab-btn" onclick="switchTab('p5-tabs','p5-steps')">Step-by-step</button>
+        <button class="tab-btn" onclick="switchTab('p5-tabs','p5-code')">Key Code</button>
+        <button class="tab-btn" onclick="switchTab('p5-tabs','p5-deliverables')">Deliverables</button>
+        <button class="tab-btn" onclick="switchTab('p5-tabs','p5-challenges')">⚡ Challenges</button>
+      </div>
+
+      <div id="p5-about" class="tab-content active">
+        <p>This is your portfolio centrepiece. Projects 1–4 prove you can cluster; Project 5 proves you can productionise clustering. The system you build here mirrors what real ML teams at Uber, Lyft, and Airbnb have in production for demand forecasting and zone-based pricing.</p>
+        <div class="grid2" style="margin-top:12px">
+          <div class="card-sm"><h4>Training pipeline skills</h4><ul><li>Haversine distance metric for geospatial data</li><li>DBSCAN with Haversine for spatial cluster detection</li><li>MLflow experiment tracking and model registry</li><li>Hungarian algorithm for cluster label continuity across retraining</li></ul></div>
+          <div class="card-sm"><h4>Deployment + monitoring skills</h4><ul><li>FastAPI serving with &lt;10ms latency requirement</li><li>Evidently for feature drift detection (PSI per feature)</li><li>Chi-square test on cluster size distributions</li><li>Auto-retrain trigger when drift thresholds breach</li></ul></div>
+        </div>
+        <div class="ref-inline" style="margin-top:12px">📚 Evidently documentation: <a href="https://www.evidentlyai.com/blog/ml-monitoring-data-drift-detection-vs-statistical-process-control" target="_blank">Drift detection vs statistical process control ↗</a></div>
+      </div>
+
+      <div id="p5-arch" class="tab-content">
+        <h4 style="margin-bottom:16px">System architecture — 3-layer design</h4>
+        <div class="chart-wrap">
+          <svg viewBox="0 0 700 320" xmlns="http://www.w3.org/2000/svg" style="min-width:500px">
+            <!-- Layer 1: Training -->
+            <rect x="10" y="10" width="680" height="80" rx="8" fill="rgba(91,156,246,.05)" stroke="#5b9cf6" stroke-width="1"/>
+            <text x="30" y="30" fill="#5b9cf6" font-family="Inter" font-size="11" font-weight="600">LAYER 1: TRAINING PIPELINE (Monthly Airflow DAG)</text>
+            <rect x="25" y="38" width="100" height="40" rx="6" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1"/>
+            <text x="75" y="55" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Raw NYC</text>
+            <text x="75" y="68" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Taxi Data</text>
+            <path d="M125,58 L148,58" stroke="#606880" stroke-width="1" marker-end="url(#arr4)"/>
+            <rect x="150" y="38" width="110" height="40" rx="6" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1"/>
+            <text x="205" y="55" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">Feature Eng</text>
+            <text x="205" y="68" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">Haversine prep</text>
+            <path d="M260,58 L283,58" stroke="#606880" stroke-width="1" marker-end="url(#arr4)"/>
+            <rect x="285" y="38" width="100" height="40" rx="6" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1"/>
+            <text x="335" y="55" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">DBSCAN +</text>
+            <text x="335" y="68" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">K-Means fit</text>
+            <path d="M385,58 L408,58" stroke="#606880" stroke-width="1" marker-end="url(#arr4)"/>
+            <rect x="410" y="38" width="110" height="40" rx="6" fill="rgba(139,116,247,.1)" stroke="#8b74f7" stroke-width="1"/>
+            <text x="465" y="55" fill="#8b74f7" font-family="Inter" font-size="10" text-anchor="middle">MLflow</text>
+            <text x="465" y="68" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">Model Registry</text>
+            <path d="M520,58 L543,58" stroke="#606880" stroke-width="1" marker-end="url(#arr4)"/>
+            <rect x="545" y="38" width="130" height="40" rx="6" fill="rgba(77,196,131,.08)" stroke="#4dc483" stroke-width="1"/>
+            <text x="610" y="55" fill="#4dc483" font-family="Inter" font-size="10" text-anchor="middle">model_bundle.pkl</text>
+            <text x="610" y="68" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">→ S3 artifact store</text>
+
+            <!-- Arrow down -->
+            <path d="M610,118 L610,145" stroke="#5b9cf6" stroke-width="1.5" marker-end="url(#arr4)"/>
+            <text x="618" y="136" fill="#5b9cf6" font-family="Inter" font-size="9">load</text>
+
+            <!-- Layer 2: Serving -->
+            <rect x="10" y="148" width="680" height="80" rx="8" fill="rgba(77,196,131,.04)" stroke="#4dc483" stroke-width="1"/>
+            <text x="30" y="167" fill="#4dc483" font-family="Inter" font-size="11" font-weight="600">LAYER 2: SERVING (FastAPI · Docker · &lt;10ms latency)</text>
+            <rect x="25" y="175" width="140" height="40" rx="6" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1"/>
+            <text x="95" y="192" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">POST /v1/predict</text>
+            <text x="95" y="205" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">{lat, lng, hour, day}</text>
+            <path d="M165,195 L188,195" stroke="#606880" stroke-width="1" marker-end="url(#arr4)"/>
+            <rect x="190" y="175" width="130" height="40" rx="6" fill="rgba(255,255,255,.04)" stroke="#606880" stroke-width="1"/>
+            <text x="255" y="192" fill="#a8b2cc" font-family="Inter" font-size="10" text-anchor="middle">scale → argmin</text>
+            <text x="255" y="205" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">cdist(X, centroids)</text>
+            <path d="M320,195 L343,195" stroke="#606880" stroke-width="1" marker-end="url(#arr4)"/>
+            <rect x="345" y="175" width="150" height="40" rx="6" fill="rgba(77,196,131,.1)" stroke="#4dc483" stroke-width="1"/>
+            <text x="420" y="192" fill="#4dc483" font-family="Inter" font-size="10" text-anchor="middle">JSON response</text>
+            <text x="420" y="205" fill="#606880" font-family="Inter" font-size="9" text-anchor="middle">{cluster_id, zone_name, dist}</text>
+
+            <!-- Arrow down -->
+            <path d="M350,228 L350,252" stroke="#f5b942" stroke-width="1.5" marker-end="url(#arr4)"/>
+            <text x="358" y="244" fill="#f5b942" font-family="Inter" font-size="9">monitor</text>
+
+            <!-- Layer 3: Monitoring -->
+            <rect x="10" y="255" width="680" height="55" rx="8" fill="rgba(245,185,66,.04)" stroke="#f5b942" stroke-width="1"/>
+            <text x="30" y="272" fill="#f5b942" font-family="Inter" font-size="11" font-weight="600">LAYER 3: MONITORING (Weekly Airflow · Evidently)</text>
+            <text x="30" y="290" fill="#a8b2cc" font-family="Inter" font-size="10">PSI per feature &gt;0.2 → alert</text>
+            <text x="230" y="290" fill="#a8b2cc" font-family="Inter" font-size="10">Chi-square cluster sizes → alert</text>
+            <text x="470" y="290" fill="#a8b2cc" font-family="Inter" font-size="10">Silhouette drop → retrain trigger</text>
+          </svg>
+        </div>
+        <div class="alert alert-success" style="margin-top:8px"><strong>Real-world analogy:</strong> This architecture mirrors what Uber Eats uses for restaurant zone clustering, and what Airbnb uses for pricing zone detection. The Hungarian label matching ensures cluster IDs stay consistent across monthly retraining — critical when your CRM system stores cluster IDs as customer attributes.</div>
+      </div>
+
+      <div id="p5-steps" class="tab-content">
+        <div class="pipeline">
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--coral)"></div><div class="pipe-title">Step 1: Data loading and geo-feature engineering (1 hr)</div><div class="pipe-body">Download Jan 2023 NYC TLC parquet file. Sample 100k rows. Engineer: hour_of_day, day_of_week, pickup_lat, pickup_lng. For geospatial DBSCAN, convert lat/lng to radians — Haversine metric requires radians.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 2: Spatial DBSCAN for zone detection (1 hr)</div><div class="pipe-body"><code>DBSCAN(eps=0.5/6371, min_samples=50, metric='haversine')</code> where eps in km divided by Earth's radius. Identify demand hotspots. Plot on Folium map with colour-coded clusters.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 3: MLflow experiment tracking (1 hr)</div><div class="pipe-body">Wrap training in <code>mlflow.start_run()</code>. Log: K, Silhouette, CH, DB, n_features, runtime. Register best model. Compare 3–5 experiments. This is what senior ML engineers do that junior ones don't.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 4: FastAPI serving endpoint (2 hrs)</div><div class="pipe-body">Build <code>POST /v1/predict</code> endpoint. Load centroid array once at startup (<code>@app.on_event("startup")</code>). Request: features → scale → <code>argmin(cdist)</code> → return JSON. Benchmark: <code>ab -n 1000 -c 10</code>. Target: p99 &lt; 10ms.</div></div>
+          <div class="pipe-item"><div class="pipe-dot"></div><div class="pipe-title">Step 5: Drift monitoring with Evidently (2 hrs)</div><div class="pipe-body">Simulate Feb data by shifting pickup lat by 0.01 degrees (representing seasonal drift). Run Evidently DataDriftReport: Jan vs Feb. Check PSI per feature. Set alert threshold: PSI &gt; 0.2 → retrain flag.</div></div>
+          <div class="pipe-item"><div class="pipe-dot" style="border-color:var(--teal)"></div><div class="pipe-title">Step 6: Hungarian label matching (1 hr)</div><div class="pipe-body">Fit new model on Feb data. Centroids shift. Use <code>linear_sum_assignment(euclidean_distances(new_centroids, old_centroids))</code> to map new cluster IDs to old ones. Essential for CRM systems that store cluster IDs.</div></div>
+        </div>
+      </div>
+
+      <div id="p5-code" class="tab-content">
+        <div class="code-block">
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> DBSCAN
+<span class="kw">from</span> scipy.optimize <span class="kw">import</span> linear_sum_assignment
+<span class="kw">from</span> sklearn.metrics.pairwise <span class="kw">import</span> euclidean_distances
+<span class="kw">import</span> mlflow, fastapi, joblib, numpy <span class="kw">as</span> np
+
+<span class="cm"># Geospatial DBSCAN — Haversine distance</span>
+coords_rad = np.radians(df[[<span class="st">'pickup_latitude'</span>, <span class="st">'pickup_longitude'</span>]].values)
+db_geo = DBSCAN(eps=<span class="num">0.5</span>/<span class="num">6371</span>, min_samples=<span class="num">50</span>, metric=<span class="st">'haversine'</span>, n_jobs=-<span class="num">1</span>)
+zone_labels = db_geo.fit_predict(coords_rad)
+
+<span class="cm"># MLflow tracking</span>
+<span class="kw">with</span> mlflow.start_run():
+    mlflow.log_params({<span class="st">'K'</span>: K, <span class="st">'init'</span>: <span class="st">'k-means++'</span>, <span class="st">'n_init'</span>: <span class="num">10</span>})
+    km.fit(X_scaled)
+    mlflow.log_metrics({<span class="st">'silhouette'</span>: sil, <span class="st">'ch_score'</span>: ch})
+    mlflow.sklearn.log_model(bundle, <span class="st">"model_bundle"</span>)
+
+<span class="cm"># FastAPI serving</span>
+app = fastapi.FastAPI()
+bundle = joblib.load(<span class="st">"model_bundle.pkl"</span>)
+
+<span class="kw">@app</span>.post(<span class="st">"/v1/predict"</span>)
+<span class="kw">def</span> predict(data: dict):
+    X = bundle[<span class="st">"scaler"</span>].transform([[data[f] <span class="kw">for</span> f <span class="kw">in</span> bundle[<span class="st">"features"</span>]]])
+    cluster_id = int(bundle[<span class="st">"model"</span>].predict(X)[<span class="num">0</span>])
+    dist = float(np.min(np.linalg.norm(X - bundle[<span class="st">"model"</span>].cluster_centers_, axis=<span class="num">1</span>)))
+    <span class="kw">return</span> {<span class="st">"cluster_id"</span>: cluster_id, <span class="st">"zone_name"</span>: bundle[<span class="st">"labels"</span>][cluster_id], <span class="st">"distance"</span>: dist}
+
+<span class="cm"># Hungarian label matching for retrain continuity</span>
+dist_matrix = euclidean_distances(new_km.cluster_centers_, old_km.cluster_centers_)
+new_idx, old_idx = linear_sum_assignment(dist_matrix)
+mapping = {new: old <span class="kw">for</span> new, old <span class="kw">in</span> zip(new_idx, old_idx)}
+</div>
+      
+      
+      <h4 style="margin-top:18px">MLflow experiment tracking — complete pattern</h4>
+      <div class="code-block">
+<button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<span class="kw">import</span> mlflow, mlflow.sklearn
+mlflow.set_tracking_uri(<span class="st">"http://localhost:5000"</span>)
+mlflow.set_experiment(<span class="st">"nyc-taxi-zone-clustering"</span>)
+<span class="kw">with</span> mlflow.start_run(run_name=f<span class="st">"eps{eps}_min{min_s}"</span>):
+    db = DBSCAN(eps=eps/EARTH_RADIUS_KM, min_samples=min_s,
+                algorithm=<span class="st">'ball_tree'</span>, metric=<span class="st">'haversine'</span>)
+    labels = db.fit_predict(X_rad)
+    n_clusters = labels.max() + <span class="num">1</span>
+    noise_frac = (labels == -<span class="num">1</span>).mean()
+    sil = silhouette_score(X_scaled, labels, sample_size=<span class="num">10000</span>)
+    mlflow.log_params({<span class="st">"eps_km"</span>: eps, <span class="st">"min_samples"</span>: min_s})
+    mlflow.log_metrics({<span class="st">"n_clusters"</span>: n_clusters, <span class="st">"noise_frac"</span>: noise_frac,
+                        <span class="st">"silhouette"</span>: sil})
+    mlflow.sklearn.log_model(db, <span class="st">"dbscan_model"</span>)
+    print(f<span class="st">"eps={eps}km, min_s={min_s} → {n_clusters} zones, noise={noise_frac:.1%}, sil={sil:.3f}"</span>)
+
+<span class="cm"># FastAPI serving endpoint — load once at startup</span>
+<span class="kw">from</span> fastapi <span class="kw">import</span> FastAPI
+<span class="kw">from</span> pydantic <span class="kw">import</span> BaseModel
+<span class="kw">import</span> joblib, numpy <span class="kw">as</span> np
+app = FastAPI()
+bundle = joblib.load(<span class="st">"taxi_zone_model.pkl"</span>)  <span class="cm"># load ONCE at startup</span>
+<span class="kw">class</span> Coord(BaseModel):
+    lat: float; lon: float
+<span class="kw">@app</span>.post(<span class="st">"/v1/zone"</span>)
+<span class="kw">def</span> get_zone(c: Coord):
+    <span class="cm"># Find nearest cluster centroid (DBSCAN has no predict)</span>
+    point = np.radians([[c.lat, c.lon]])
+    dists = np.linalg.norm(bundle[<span class="st">"centroids"</span>] - point, axis=<span class="num">1</span>)
+    zone_id = <span class="fn">int</span>(np.argmin(dists))
+    zone_name = bundle[<span class="st">"zone_names"</span>].get(zone_id, f<span class="st">"Zone {zone_id}"</span>)
+    dist_km = float(np.min(dists) * <span class="num">6371</span>)
+    <span class="kw">return</span> {<span class="st">"zone_id"</span>: zone_id, <span class="st">"zone_name"</span>: zone_name, <span class="st">"dist_km"</span>: round(dist_km, <span class="num">2</span>)}</div>
+
+      <div class="alert alert-success" style="margin-top:18px">
+        <strong>Expected results for Project 5 (MLOps):</strong> NYC Taxi: expect 6–12 geographic zones from DBSCAN (JFK, LaGuardia, Midtown, Downtown, etc.) · Production silhouette should be 0.50–0.70 after preprocessing · MLflow experiment shows clear K selection comparison · FastAPI p95 latency &lt;10ms for coordinate lookup · Drift monitor detects shift between January and July taxi patterns (seasonal demand zones).
+      </div>
+      <div class="alert alert-warn" style="margin-top:10px">
+        <strong>Common errors in P5:</strong>
+        <ul style="margin:6px 0 0;font-size:13px">
+          <li>Using Euclidean distance on lat/lon instead of Haversine — epsilon in degrees is not epsilon in km</li>
+          <li>Not converting coordinates to radians before DBSCAN with Haversine metric</li>
+          <li>Setting epsilon too large (covers all of NYC) or too small (everything is noise)</li>
+          <li>Logging model artifact after hyperparameter search rather than for each run — MLflow needs a run per experiment</li>
+          <li>Exposing raw cluster IDs in the API without a name mapping — the client receives "2" not "JFK Airport Zone"</li>
+          <li>Loading model artifact inside the FastAPI route handler — should load once at startup, not per-request</li>
+        </ul>
+      </div>
+
+      </div>
+
+      <div id="p5-deliverables" class="tab-content">
+        <div class="deliverable-grid">
+          <div class="deliverable"><div class="d-icon">🗄️</div><div class="d-title">GitHub Repository</div><div class="d-body">Clean code, README with architecture diagram, Docker setup, requirements.txt.</div></div>
+          <div class="deliverable"><div class="d-icon">🚀</div><div class="d-title">FastAPI Service</div><div class="d-body">Working /predict endpoint. Tested and latency benchmarked (&lt;10ms p99).</div></div>
+          <div class="deliverable"><div class="d-icon">📊</div><div class="d-title">MLflow Dashboard</div><div class="d-body">Screenshot of experiment comparison. Best model registered and tagged v1.0.</div></div>
+          <div class="deliverable"><div class="d-icon">📈</div><div class="d-title">Drift Report</div><div class="d-body">Evidently HTML report: Jan vs Feb data, PSI per feature, retrain recommendation.</div></div>
+          <div class="deliverable"><div class="d-icon">🗺️</div><div class="d-title">Folium Map</div><div class="d-body">Interactive NYC map with geospatial cluster hotspots colour-coded.</div></div>
+        </div>
+      </div>
+
+      <div id="p5-challenges" class="tab-content">
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P5 Challenge 01 · Expert · 4 hrs</div><div class="ex-title">Production monitoring system</div></div>
+            <span class="badge b-coral">Expert</span>
+          </div>
+          <div class="ex-body">Build a complete drift monitoring system: (1) Fit K-Means on Jan data as baseline. (2) Simulate Feb, Mar by progressively shifting one cluster. (3) Weekly: compute PSI per feature, chi-square on cluster size proportions, silhouette on 5k sample. (4) Plot monitoring dashboard with all metrics and alert thresholds. (5) Implement auto-retrain trigger when 2+ metrics breach simultaneously.</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>Deployment → "Drift Detection" + "Retrain Triggers" in Complete Reference</p></div>
+        </div>
+        <div class="ex-block">
+          <div class="ex-header">
+            <div><div class="ex-meta">P5 Challenge 02 · Expert · 3 hrs</div><div class="ex-title">Design a 50M customer real-time system</div></div>
+            <span class="badge b-coral">Expert</span>
+          </div>
+          <div class="ex-body">Design (and optionally implement) a clustering system for 50M customers requiring real-time cluster IDs in under 10ms. Consider: batch scoring to Redis, centroid-only serving for new users, nightly refit pipeline. Write a 1-page system design doc covering training, serving, monitoring, and failure modes.</div>
+          <div class="ex-project-link"><span>📖 Reference:</span><p>Q&amp;A → System Design → "Design a clustering system for 50M customers" in Complete Reference</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ─── EXERCISES ─────────────────────────────────────────────────── -->
+<section class="section" id="exercises">
+<div class="container">
+  <div class="section-eyebrow">Practice</div>
+  <div class="section-title">Standalone Exercises & Challenges</div>
+  <p class="section-sub">These exercises sit between projects or alongside them. Each is tagged to the project and theory section it reinforces. No solutions provided — the struggle is the learning.</p>
+
+  <h3 style="margin-bottom:14px">Conceptual exercises</h3>
+  <div class="ex-block">
+    <div class="ex-header">
+      <div><div class="ex-meta">Exercise 01 · Beginner · 20 min</div><div class="ex-title">Draw the K-Means algorithm from memory</div></div>
+      <span class="badge b-green">→ Project 1</span>
+    </div>
+    <div class="ex-body">Without any reference, draw a diagram showing: initial centroid placement (K-Means++ logic), assignment step, update step, convergence. Annotate with the WCSS formula. Explain convergence in 3 sentences.</div>
+    <div class="ex-hint">💡 Think about why WCSS can never increase between iterations — each step is an exact analytical optimum for its sub-problem.</div>
+    <div class="ex-project-link"><span>📖</span><p>Theory reference: <a href="clustering_complete_reference_v2.html#kmeans" style="color:var(--accent)">Complete Reference → K-Means → Algorithm tab</a></p></div>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-header">
+      <div><div class="ex-meta">Exercise 02 · Beginner · 30 min</div><div class="ex-title">Why does scaling matter? — Numerical proof</div></div>
+      <span class="badge b-green">→ Project 1</span>
+    </div>
+    <div class="ex-body">A = (Age: 25, Salary: 50,000), B = (Age: 30, Salary: 80,000), Centroid C = (Age: 27, Salary: 60,000). Calculate Euclidean distance A→C and B→C without scaling. Manually apply StandardScaler (compute mean and std of each feature using A and B) and recalculate. Which customer changes cluster assignment after scaling and why?</div>
+    <div class="ex-hint">💡 Salary range ≈ 30,000; Age range ≈ 5. The salary difference drowns the age difference 6000× before scaling.</div>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-header">
+      <div><div class="ex-meta">Exercise 03 · Intermediate · 45 min</div><div class="ex-title">Implement silhouette score from scratch</div></div>
+      <span class="badge b-blue">→ Project 2</span>
+    </div>
+    <div class="ex-body">Implement silhouette score without sklearn for a 20-point, 2-cluster sample. Formula: s(i) = (b(i) − a(i)) / max(a(i), b(i)). Verify against sklearn. Explain: if a point has s = −0.3, geometrically what does that mean?</div>
+    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#evaluation" style="color:var(--accent)">Complete Reference → Evaluation → Silhouette</a></p></div>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-header">
+      <div><div class="ex-meta">Exercise 04 · Intermediate · 1 hr</div><div class="ex-title">DBSCAN parameter sensitivity grid</div></div>
+      <span class="badge b-blue">→ Project 3</span>
+    </div>
+    <div class="ex-body">Generate <code>make_moons(n_samples=300, noise=0.1)</code>. Run DBSCAN with ε in [0.1, 0.2, 0.3, 0.5, 1.0] × min_samples in [3, 5, 10, 20]. Plot a 5×4 grid. For which combinations does DBSCAN correctly find 2 clusters? What happens at extremes?</div>
+    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#alternates" style="color:var(--accent)">Complete Reference → Algorithms → DBSCAN parameter selection</a></p></div>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-header">
+      <div><div class="ex-meta">Exercise 05 · Advanced · 1.5 hrs</div><div class="ex-title">Implement cluster label matching — Hungarian algorithm</div></div>
+      <span class="badge b-amber">→ Project 5</span>
+    </div>
+    <div class="ex-body">Generate 3-cluster data. Fit K-Means with random_state=1 and random_state=2 — cluster IDs will differ between runs. Use <code>scipy.optimize.linear_sum_assignment</code> on the distance matrix between centroid sets to match labels across runs. Verify: same data points in same "logical" cluster both runs after matching.</div>
+    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#deployment" style="color:var(--accent)">Complete Reference → Deployment → "Hungarian label matching"</a></p></div>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-header">
+      <div><div class="ex-meta">Exercise 06 · Advanced · 2 hrs</div><div class="ex-title">When does K-Means fail? — Visual + written proof</div></div>
+      <span class="badge b-amber">→ Projects 1, 3</span>
+    </div>
+    <div class="ex-body">Generate: (a) concentric rings, (b) half-moons, (c) elongated + circular. Run K-Means K=2 on each. Then run DBSCAN. Plot a 2×3 grid. Write 200 words: what geometric assumption does K-Means violate in each case? Why does DBSCAN succeed?</div>
+    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#kmeans" style="color:var(--accent)">Complete Reference → K-Means → Pros &amp; Cons → "Spherical assumption"</a></p></div>
+  </div>
+
+  <h3 style="margin-top:32px;margin-bottom:14px">Timed mini-challenges</h3>
+  <div class="grid2">
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-meta">Challenge 01 · 30 min</div><div class="ex-title">Bootstrap stability tester</div></div><span class="badge b-blue">→ Project 2</span></div>
+      <div class="ex-body">Write <code>stability_test(X, K, n_boot=20)</code>: resample 80%, fit K-Means, compute ARI between all pairs. Return mean±std ARI. Test on iris dataset. Are K=3 clusters stable (mean ARI &gt;0.9)?</div>
+    </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-meta">Challenge 02 · 45 min</div><div class="ex-title">Cluster profiler function</div></div><span class="badge b-blue">→ Projects 1, 2</span></div>
+      <div class="ex-body">Write <code>profile_clusters(df, cluster_col, feature_cols)</code> producing a styled pandas DataFrame: mean, std, min, max per feature per cluster, plus size and % of total. Use <code>df.style.background_gradient()</code>.</div>
+    </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-meta">Challenge 03 · 1 hr</div><div class="ex-title">Multi-metric K selector</div></div><span class="badge b-blue">→ Project 1</span></div>
+      <div class="ex-body">Write <code>select_k(X, k_range=range(2,15))</code> computing WCSS, Silhouette, CH, DB, plotting all 4 in 2×2 subplots, printing recommended K from each. Test on three synthetic datasets. Do all metrics agree?</div>
+    </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-meta">Challenge 04 · 2 hrs</div><div class="ex-title">K-Means from scratch</div></div><span class="badge b-blue">→ Project 1</span></div>
+      <div class="ex-body">Implement full K-Means with K-Means++ init using only numpy. Verify against sklearn on iris dataset. Plot WCSS per iteration. Compare your iteration count vs <code>km.n_iter_</code>. Handle empty cluster edge case.</div>
+    </div>
+  </div>
+</div>
+</section>
+
+<!-- ─── PUBLISH GUIDE ─────────────────────────────────────────────── -->
+<section class="section" id="publish">
+<div class="container">
+  <div class="section-eyebrow">Publishing</div>
+  <div class="section-title">How to Publish Your Projects</div>
+  <p class="section-sub">A great project that nobody sees is half a project. Here is exactly how to get maximum visibility on Kaggle and LinkedIn.</p>
+  <div class="grid2">
+    <div>
+      <h3>Kaggle notebook checklist</h3>
+      <ul class="checklist">
+        <li>Title: "[Project Name] — Complete Analysis with [Algorithm]"</li>
+        <li>First cell: markdown with project overview, dataset link, key findings (3 bullets)</li>
+        <li>Every code cell has a markdown explanation above it</li>
+        <li>All plots: titles, labelled axes, legends</li>
+        <li>"Key Takeaways" section at end in plain language</li>
+        <li>Tags: clustering, machine-learning, python, scikit-learn + domain tags</li>
+        <li>All cells run cleanly before publishing — no error cells</li>
+      </ul>
+    </div>
+    <div>
+      <h3>GitHub repo checklist</h3>
+      <ul class="checklist">
+        <li>README.md: description, dataset link, how to run, results summary</li>
+        <li>requirements.txt or environment.yml</li>
+        <li>.gitignore: hide data files, model artifacts, credentials</li>
+        <li>Notebook (.ipynb) + clean Python scripts (.py)</li>
+        <li>Results folder: saved plots, metrics CSV</li>
+        <li>MIT LICENSE for portfolio projects</li>
+        <li>One screenshot or GIF of best visualisation in README</li>
+      </ul>
+    </div>
+  </div>
+  <h3 style="margin-top:24px;margin-bottom:12px">LinkedIn post templates</h3>
+  <div class="publish-card">
+    <div class="publish-title">📊 Projects 1 & 2 (Beginner/Intermediate)</div>
+    <div class="code-block" style="color:#c9d1d9;white-space:pre-wrap;font-size:12px">🎯 Just completed a customer segmentation project using K-Means clustering!
+
+Here's what I did:
+→ Analysed [X] customer records from [dataset]
+→ Engineered [features] to capture customer behaviour
+→ Discovered [K] distinct customer segments (Silhouette: [score])
+
+🔍 Key insight: ["Your most interesting finding — specific numbers!"]
+
+💡 Business impact: ["What action this enables — be specific"]
+
+Full notebook: [Kaggle link] | Code: [GitHub link]
+
+#DataScience #MachineLearning #Clustering #Python #CustomerSegmentation</div>
+  </div>
+  <div class="publish-card">
+    <div class="publish-title">🚀 Projects 4 & 5 (Advanced/Expert)</div>
+    <div class="code-block" style="color:#c9d1d9;white-space:pre-wrap;font-size:12px">⚡ Built a production-grade [clustering system / NLP topic discovery system].
+
+The challenge: [State the problem clearly — specific numbers]
+
+The solution:
+1️⃣ [Key technical step — e.g. BERT embeddings → UMAP(5D) → HDBSCAN]
+2️⃣ [Result — e.g. 12 coherent news topics, NMI=0.78 vs ground truth]
+3️⃣ [MLOps — e.g. FastAPI endpoint + Evidently drift monitoring]
+
+📈 Results: [Silhouette, NMI, ARI, latency — concrete numbers always]
+
+🔧 Stack: Python · scikit-learn · HDBSCAN · MLflow · FastAPI
+
+GitHub: [link] | Kaggle: [link]
+
+#MLOps #NLP #DataScience #MachineLearning</div>
+  </div>
+</div>
+</section>
+
+<!-- ─── WHAT'S NEXT ─────────────────────────────────────────────────── -->
+<section class="section" id="whats-next">
+<div class="container">
+  <div class="section-eyebrow">After These Projects</div>
+  <div class="section-title">What's Next</div>
+  <p class="section-sub">If you've completed all 5 projects, here is what I would add to make this the most complete ML clustering portfolio on the internet.</p>
+
+  <div class="bonus-banner">
+    <h3>What I would build next 💡</h3>
+    <p style="color:var(--text2);font-size:14px;max-width:640px;margin:0 auto">These additions transform a good clustering portfolio into a resource people bookmark, share, and reference for years.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card"><h4>1. A "Clustering Mistakes" collection</h4><p>Document 10 real mistakes from the projects — wrong scaling, refitting scaler on test, choosing K without domain knowledge. "What I got wrong about clustering" style posts get massive LinkedIn engagement.</p></div>
+    <div class="card"><h4>2. Algorithm speed benchmarks</h4><p>Time each algorithm on 1k, 10k, 100k, 1M rows. Plot: algorithm vs dataset size vs time. Most tutorials skip this — it is uniquely valuable and gets bookmarked. <a class="cite" href="https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation" target="_blank">📄 sklearn perf guide</a></p></div>
+    <div class="card"><h4>3. Interactive algorithm decision tool</h4><p>A web-based flowchart like the one on the Datasets page above — but with more questions. "Do you know K?", "Are clusters spherical?", "Do you need predict()?" → recommendation. Would be the most-shared asset from this guide.</p></div>
+    <div class="card"><h4>4. Deep Clustering section</h4><p>DEC (Xie et al. 2016), contrastive clustering, BERTopic beyond basics. These are the 2024–2025 frontier. <a class="cite" href="https://arxiv.org/abs/1511.06335" target="_blank">📄 DEC paper 2016</a> Most clustering guides completely ignore deep learning clustering.</p></div>
+    <div class="card"><h4>5. Streaming / real-time mini-project</h4><p>MiniBatchKMeans.partial_fit on a simulated Kafka stream or a loop over batches. Show how centroids drift as new data arrives. Very few tutorials cover this and it is highly relevant for production.</p></div>
+    <div class="card"><h4>6. Interview prep section</h4><p>20 clustering questions with answers at 3 levels: definition (junior DS), trade-off (senior DS), system design (staff). The Complete Reference Q&A section already covers this — link it here prominently.</p></div>
+  </div>
+
+  <h3 style="margin-top:24px">Learning path after completing these projects</h3>
+  <div class="timeline" style="margin-top:16px">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Month 1: Complete Projects 1–3</div><div class="tl-body">Foundations solid. Can explain K-Means, DBSCAN, HDBSCAN, evaluation metrics, data preparation. Publish all three on Kaggle. First LinkedIn post.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Month 2: Projects 4–5 + Deep algorithm study</div><div class="tl-body">Advanced clustering with NLP + MLOps. Study GMM deeply (Bishop Chapter 9). Implement GMM from scratch using EM. Understand variational Bayes for automatic K selection.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Month 3: Deep clustering + community contribution</div><div class="tl-body">Read DEC paper (Xie et al., 2016). Implement contrastive clustering on a small image dataset. Write a Medium article on one clustering topic. Contribute to a Kaggle competition with clustering component.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Month 4+: Specialise</div><div class="tl-body">Pick the domain most relevant to you: NLP (BERTopic), Geospatial (DBSCAN + Haversine), Time-series (DTW distance clustering), Recommender Systems (user/item embedding clustering). Go deep in one area.</div></div>
+  </div>
+  <div class="alert alert-success" style="margin-top:20px"><strong>Final note:</strong> The most important thing after all projects is to apply clustering to a problem you actually care about — your own industry, your own data. That is when learning becomes real and the project becomes worth talking about.</div>
+</div>
+</section>
+
+<footer style="padding:40px 0;border-top:1px solid var(--border);text-align:center">
+  <div class="container">
+    <p style="font-size:14px;color:var(--text3)">Clustering Projects Portfolio Track · 5 Projects · Beginner to Expert · 2025</p>
+    <p style="font-size:13px;color:var(--text3);margin-top:6px">K-Means · DBSCAN · HDBSCAN · GMM · NLP Clustering · MLOps · Drift Monitoring</p>
+    <p style="font-size:13px;color:var(--text3);margin-top:6px">Companion: <a href="clustering_complete_reference_v2.html" style="color:var(--accent);text-decoration:none">Complete Reference Guide →</a></p>
+  </div>
+</footer>
+
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+<script>
+function gotoS(id){
+  const el=document.getElementById(id);
+  if(el){const y=el.getBoundingClientRect().top+window.scrollY-70;window.scrollTo({top:y,behavior:'smooth'});}
+}
+function switchTab(navId,contentId){
+  const nav=document.getElementById(navId);if(!nav)return;
+  const parent=nav.closest('.project-body,.section');
+  if(!parent)return;
+  nav.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  parent.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  const btn=Array.from(nav.querySelectorAll('.tab-btn')).find(b=>(b.getAttribute('onclick')||'').includes(contentId));
+  if(btn)btn.classList.add('active');
+  const content=document.getElementById(contentId);
+  if(content)content.classList.add('active');
+}
+function toggleTheme(){
+  const html=document.documentElement;
+  const isDark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme',isDark?'light':'dark');
+  document.querySelector('.theme-btn').textContent=isDark?'🌙 Dark':'☀ Light';
+}
+const sids=['overview','datasets','p1','p2','p3','p4','p5','exercises','publish','whats-next'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
+  document.querySelectorAll('.nav-link').forEach(l=>{
+    const onclick=l.getAttribute('onclick')||'';
+    l.classList.toggle('active',onclick.includes("'"+cur+"'"));
+  });
+  document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
+});
+</script>
+</body>
+</html>
