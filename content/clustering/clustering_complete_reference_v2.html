@@ -155,6 +155,39 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 .metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
 .metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
 .metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+
+/* ===== RESPONSIVE-HARDENING v1 :: desktop + mobile parity (added) ===== */
+.toc{display:none}
+@media(min-width:1250px){.toc{display:block}}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
+.table-scroll .compare-table{margin-bottom:0}
+@media(max-width:900px){.compare-table{min-width:580px}}
+@media(max-width:760px){
+  .container{padding:0 1.1rem}
+  .section{padding:44px 0}
+  .hero{padding:54px 0 38px}
+  nav{padding:0 1rem}
+  .nav-brand{font-size:16px;margin-right:1rem}
+  .nav-links{padding-right:82px}
+  .theme-toggle{top:9px;right:9px;padding:5px 10px;font-size:12px}
+  .hero-sub{font-size:15.5px}
+  .section-sub{font-size:14.5px}
+  .viz-container{padding:14px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .viz-svg{min-width:600px}
+  .code-block{font-size:12px;padding:15px 14px}
+  .qa-q{font-size:14px;padding:13px 14px}
+  .qa-a{padding:14px}
+  .card{padding:18px 16px}
+  .metric .val{font-size:20px}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+@media(max-width:430px){
+  .container{padding:0 .9rem}
+  .viz-svg{min-width:520px}
+  .hero h1{font-size:30px}
+}
+@media(hover:none){.card:hover,.qa-q:hover,.ref-card:hover,.usecase-card:hover,.ex-block:hover{border-color:var(--border)}}
+/* ===== end responsive-hardening ===== */
 </style>
 </head>
 <body><button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
@@ -168,6 +201,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="nav-link" onclick="gotoS('pipeline')">Pipeline</div>
     <div class="nav-link" onclick="gotoS('alternates')">Algorithms</div>
     <div class="nav-link" onclick="gotoS('usecases')">Use Cases</div>
+    <div class="nav-link" onclick="gotoS('embeddings')">Embeddings</div>
     <div class="nav-link" onclick="gotoS('advanced')">Advanced</div>
     <div class="nav-link" onclick="gotoS('exercises')">Exercises</div>
     <div class="nav-link" onclick="gotoS('qa')">Q&amp;A</div>
@@ -176,21 +210,21 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 </nav>
 <div class="hero">
   <div class="container">
-    <div class="hero-eyebrow">Complete Reference · Beginner to Expert · 2025</div>
+    <div class="hero-eyebrow">Complete Reference · Beginner to Expert · 2026</div>
     <h1>The Complete Guide to<br><em>Clustering in ML/AI</em></h1>
-    <p class="hero-sub">Theory, mathematics, visual explainers, implementation, evaluation, real-world use cases, deployment patterns, exercises, and 80+ Q&amp;As — with dark/light themes and clickable references throughout.</p>
+    <p class="hero-sub">Theory, mathematics, visual explainers, implementation, evaluation, real-world use cases, deployment patterns, exercises, and 80 Q&amp;As — with dark/light themes and clickable references throughout.</p>
     <div class="hero-tags">
       <span class="hero-tag">K-Means</span><span class="hero-tag">DBSCAN</span><span class="hero-tag">GMM</span>
       <span class="hero-tag">HDBSCAN</span><span class="hero-tag">Hierarchical</span><span class="hero-tag">Spectral</span>
-      <span class="hero-tag">Deep Clustering</span><span class="hero-tag">MLOps</span><span class="hero-tag">80+ Q&amp;As</span>
+      <span class="hero-tag">Deep Clustering</span><span class="hero-tag">MLOps</span><span class="hero-tag">80 Q&amp;As</span>
     </div>
   
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:20px">
       <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">📖 ~6 hrs complete read</span>
       <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">🎯 12 sections</span>
-      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">❓ 63 Q&amp;As</span>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">❓ 80 Q&amp;As</span>
       <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">💻 18 exercises</span>
-      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">📚 19 references</span>
+      <span style="font-family:var(--font-mono);font-size:11px;color:var(--text3);padding:5px 14px;border:1px solid var(--border);border-radius:20px">📚 24 references</span>
     </div>
 </div>
 </div>
@@ -222,13 +256,15 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
   <div class="toc-link" onclick="gotoS('algo-compare')">Chooser table</div>
   <div class="toc-section">Real World</div>
   <div class="toc-link" onclick="gotoS('usecases')">Use cases</div>
+  <div class="toc-section">Modern Stack</div>
+  <div class="toc-link" onclick="gotoS('embeddings')">Embedding clustering</div>
   <div class="toc-section">Advanced</div>
   <div class="toc-link" onclick="gotoS('advanced')">Deep clustering</div>
   <div class="toc-link" onclick="gotoS('adv-embed')">Embeddings</div>
   <div class="toc-link" onclick="gotoS('adv-anomaly')">Anomaly detection</div>
   <div class="toc-section">Practice</div>
   <div class="toc-link" onclick="gotoS('exercises')">Exercises</div>
-  <div class="toc-link" onclick="gotoS('qa')">Q&amp;A (80+)</div>
+  <div class="toc-link" onclick="gotoS('qa')">Q&amp;A (80)</div>
   <div class="toc-link" onclick="gotoS('refs')">References</div>
 </aside>
 <div style="overflow:hidden">
@@ -1105,11 +1141,80 @@ labels = sc.fit_predict(X_scaled)
 </section>
 
 <!-- ADVANCED -->
+<section class="section" id="embeddings">
+<div class="container">
+  <div class="section-eyebrow">Modern Stack · 12 min read</div>
+  <div class="section-title">Clustering on Embeddings — the Modern Stack</div>
+  <p class="section-sub">For text, images, users, and logs in 2026 you almost never cluster raw features — you embed first, then cluster the dense vectors. This is the dominant applied pipeline, and it has its own rules.</p>
+
+  <p>Unstructured data has no useful numeric columns to feed K-Means directly. The modern approach turns each item into a dense semantic vector with a pretrained encoder (a sentence-transformer for text, a vision encoder for images), then clusters those vectors. Items that <em>mean</em> similar things land near each other, so the clustering operates on meaning rather than surface form. The canonical pipeline is four stages: <strong>embed → reduce → cluster → interpret</strong>.</p>
+
+  <div class="viz-container">
+    <div class="viz-label">The embed → reduce → cluster → label pipeline</div>
+    <svg viewBox="0 0 680 120" class="viz-svg" style="max-height:120px">
+      <defs><marker id="emb-ah" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+      <g font-family="monospace" font-size="9">
+      <rect x="6" y="42" width="128" height="40" rx="8" fill="var(--bg2)" stroke="var(--accent)"/><text x="70" y="60" fill="var(--text)" text-anchor="middle">1 · Embed</text><text x="70" y="74" fill="var(--text3)" text-anchor="middle">SBERT / vision enc.</text>
+      <line x1="134" y1="62" x2="160" y2="62" stroke="var(--text3)" marker-end="url(#emb-ah)"/>
+      <rect x="162" y="42" width="128" height="40" rx="8" fill="var(--bg2)" stroke="var(--teal)"/><text x="226" y="60" fill="var(--text)" text-anchor="middle">2 · Reduce</text><text x="226" y="74" fill="var(--text3)" text-anchor="middle">UMAP (cosine)</text>
+      <line x1="290" y1="62" x2="316" y2="62" stroke="var(--text3)" marker-end="url(#emb-ah)"/>
+      <rect x="318" y="42" width="128" height="40" rx="8" fill="var(--bg2)" stroke="var(--accent2)"/><text x="382" y="60" fill="var(--text)" text-anchor="middle">3 · Cluster</text><text x="382" y="74" fill="var(--text3)" text-anchor="middle">HDBSCAN (auto-k)</text>
+      <line x1="446" y1="62" x2="472" y2="62" stroke="var(--text3)" marker-end="url(#emb-ah)"/>
+      <rect x="474" y="42" width="134" height="40" rx="8" fill="var(--bg2)" stroke="var(--amber)"/><text x="541" y="60" fill="var(--text)" text-anchor="middle">4 · Interpret</text><text x="541" y="74" fill="var(--text3)" text-anchor="middle">c-TF-IDF / exemplars</text>
+      <line x1="608" y1="62" x2="634" y2="62" stroke="var(--text3)" marker-end="url(#emb-ah)"/>
+      <text x="652" y="65" fill="var(--green)" text-anchor="middle">🏷️</text>
+      </g>
+    </svg>
+  </div>
+
+  <h3>Why reduce dimensions before density clustering</h3>
+  <p>Modern embeddings are high-dimensional (384–1536 D). Density-based methods like HDBSCAN suffer the <strong>curse of dimensionality</strong> — in high dimensions distances concentrate and "density" loses meaning, so clusters smear together. Reducing to ~5–15 dimensions with <strong>UMAP</strong> first (preserving local <em>and</em> some global structure, using the <code>cosine</code> metric for normalised embeddings) makes density meaningful again. Crucially, reduce to a working dimensionality for <em>clustering</em> (5–15D), which is different from the 2D you use only for <em>plotting</em> — never cluster in the 2D you made for a picture.</p>
+
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Modern text-clustering pipeline: embed -&gt; reduce -&gt; cluster</span>
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+<span class="kw">import</span> umap
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> HDBSCAN   <span class="cm"># built into sklearn &gt;= 1.3</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># 1) embed: text -&gt; dense semantic vectors (384-D for MiniLM)</span>
+embedder = SentenceTransformer(<span class="st">"all-MiniLM-L6-v2"</span>)
+emb = embedder.encode(docs, normalize_embeddings=<span class="kw">True</span>)   <span class="cm"># cosine-ready</span>
+
+<span class="cm"># 2) reduce BEFORE density clustering (curse of dimensionality)</span>
+reducer = umap.UMAP(n_neighbors=<span class="num">15</span>, n_components=<span class="num">5</span>,
+                    min_dist=<span class="num">0.0</span>, metric=<span class="st">"cosine"</span>, random_state=<span class="num">42</span>)
+red = reducer.fit_transform(emb)
+
+<span class="cm"># 3) cluster: HDBSCAN picks the number of clusters and marks noise as -1</span>
+labels = HDBSCAN(min_cluster_size=<span class="num">50</span>, metric=<span class="st">"euclidean"</span>).fit_predict(red)
+print(np.unique(labels))   <span class="cm"># e.g. [-1 0 1 2 ...]; -1 = outliers/noise</span></div>
+
+  <h3>BERTopic — the batteries-included version</h3>
+  <p><strong>BERTopic</strong> wires this exact pipeline together (sentence-transformer → UMAP → HDBSCAN → <strong>c-TF-IDF</strong> for topic words) and is the de-facto 2026 default for topic discovery on text. It is modular — you can swap K-Means for HDBSCAN, PCA for UMAP, or pass precomputed embeddings (even image embeddings with text captions for labels).</p>
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="kw">from</span> bertopic <span class="kw">import</span> BERTopic
+<span class="kw">from</span> sentence_transformers <span class="kw">import</span> SentenceTransformer
+<span class="kw">from</span> umap <span class="kw">import</span> UMAP
+<span class="kw">from</span> hdbscan <span class="kw">import</span> HDBSCAN
+
+topic_model = BERTopic(
+    embedding_model=SentenceTransformer(<span class="st">"all-MiniLM-L6-v2"</span>),
+    umap_model=UMAP(n_neighbors=<span class="num">15</span>, n_components=<span class="num">5</span>, min_dist=<span class="num">0.0</span>, metric=<span class="st">"cosine"</span>),
+    hdbscan_model=HDBSCAN(min_cluster_size=<span class="num">50</span>, metric=<span class="st">"euclidean"</span>, prediction_data=<span class="kw">True</span>),
+    calculate_probabilities=<span class="kw">True</span>,
+)
+topics, probs = topic_model.fit_transform(docs)   <span class="cm"># auto-labels via c-TF-IDF</span>
+topic_model.get_topic_info().head()               <span class="cm"># topic id, size, top words</span></div>
+
+  <div class="alert alert-warn"><strong>Embedding-clustering pitfalls.</strong> (1) <strong>Normalise embeddings and use cosine</strong> — raw Euclidean on un-normalised vectors clusters by magnitude, not meaning. (2) <strong>Don't cluster the 2D plot</strong> — 2D UMAP is for the human eye only; cluster a 5–15D reduction. (3) <strong>UMAP is stochastic</strong> — fix <code>random_state</code> for reproducibility and never over-read exact distances in the projection. (4) <strong>Pick the embedding model deliberately</strong> — bigger isn't always better; consult the MTEB leaderboard and match the domain/language. (5) <strong>Mind the noise label −1</strong> — HDBSCAN refusing to force outliers into clusters is a feature; report the noise fraction and decide whether to assign or quarantine it.</p></div>
+
+  <p>Real implementations: <a class="cite" href="https://www.sbert.net/" target="_blank">sentence-transformers ↗</a> · <a class="cite" href="https://umap-learn.readthedocs.io/" target="_blank">UMAP ↗</a> · <a class="cite" href="https://hdbscan.readthedocs.io/" target="_blank">HDBSCAN ↗</a> · <a class="cite" href="https://maartengr.github.io/BERTopic/" target="_blank">BERTopic ↗</a> · <a class="cite" href="https://huggingface.co/spaces/mteb/leaderboard" target="_blank">MTEB leaderboard ↗</a>. Build the full version in <a class="cite" href="clustering_projects_guide_v2.html#p4" target="_blank">Project 4 — News Article Topic Discovery ↗</a>, and see the conceptual angle in the <a class="cite" onclick="gotoS('advanced')">Advanced → Embedding Clustering</a> tab.</p>
+</div>
+</section>
 <section class="section" id="advanced">
 <div class="container">
   <div class="section-eyebrow">Advanced Topics · 25 min read</div>
   <div class="section-title">Advanced Clustering</div>
-  <p class="section-sub">Deep clustering, embedding-space clustering, anomaly detection patterns, and production-scale techniques — the 2024–2025 frontier.</p>
+  <p class="section-sub">Deep clustering, embedding-space clustering, anomaly detection patterns, and production-scale techniques — the 2025–2026 frontier.</p>
   <div class="tab-nav" id="adv-tabs">
     <button class="tab-btn active" onclick="switchTab('adv-tabs','adv-deep')">Deep Clustering</button>
     <button class="tab-btn" onclick="switchTab('adv-tabs','adv-embed')">Embedding Clustering</button>
@@ -1119,7 +1224,7 @@ labels = sc.fit_predict(X_scaled)
     <button class="tab-btn" onclick="switchTab('adv-tabs','adv-feateng')">Feature Engineering</button>
   </div>
   <div id="adv-deep" class="tab-content active">
-    <h3>Deep Clustering — the 2024–2025 frontier</h3>
+    <h3>Deep Clustering — the 2025–2026 frontier</h3>
     <p>Deep clustering jointly learns a representation and a clustering assignment end-to-end using neural networks. Traditional clustering separates representation learning from the clustering step — deep clustering does both simultaneously.</p>
     <div class="grid2">
       <div class="card"><h4>DEC — Deep Embedded Clustering</h4><p>Autoencoder learns compressed representations, then jointly optimises reconstruction loss + KL divergence between soft cluster assignments and a sharpened target. Result: representation is specifically shaped for clustering. <a class="cite" href="https://arxiv.org/abs/1511.06335" target="_blank">📄 Xie et al. ICML 2016</a></p></div>
@@ -1300,6 +1405,11 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
       <div class="ex-header"><div><div class="ex-num">Conceptual 06 · Advanced</div><div class="ex-title">Curse of dimensionality — empirical proof</div></div><span class="badge b-amber">Advanced</span></div>
       <div class="ex-body">Generate uniformly distributed data in 2, 5, 10, 50, 500 dimensions. For each: compute ratio of max/min pairwise Euclidean distance, and coefficient of variation of all pairwise distances. Observe how distances concentrate. Write 150 words: what does this mean for K-Means in 500 dimensions? What is the practical fix?</div>
     </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-num">Conceptual 07 · Advanced</div><div class="ex-title">Why UMAP-then-HDBSCAN beats K-Means on embeddings</div></div><span class="badge b-amber">Advanced</span></div>
+      <div class="ex-body">Take 2,000 sentence embeddings (384-D). Cluster three ways: (a) K-Means directly on 384-D, (b) K-Means on 5-D UMAP, (c) HDBSCAN on 5-D UMAP. Compare silhouette, number of clusters found, and the noise fraction for (c). Write 150 words explaining why direct K-Means underperforms and when you would still prefer it.</div>
+      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p4" target="_blank">→ Applied in: Project 4 (topic discovery)</a>
+    </div>
   </div>
   <div id="ex-coding" class="tab-content">
     <div class="ex-block">
@@ -1327,6 +1437,16 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
       <div class="ex-body">Build a complete production pipeline on UCI Online Retail: (1) Full EDA → RFM → outlier removal → scaling → K selection → training. (2) Log everything to MLflow: params, metrics, artifact. (3) Register best model. (4) FastAPI /v1/predict endpoint. (5) Write 20 golden test rows with expected cluster assignments that run on every deployment to catch regressions.</div>
       <a class="ex-project-link" href="clustering_projects_guide_v2.html#p5" target="_blank">→ This IS Project 5 in miniature form</a>
     </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-num">Coding 06 · 1.5 hrs · Advanced</div><div class="ex-title">BERTopic from its parts</div></div><span class="badge b-amber">Advanced</span></div>
+      <div class="ex-body">Reproduce BERTopic manually: SentenceTransformer embeddings → UMAP(5-D, cosine) → HDBSCAN → c-TF-IDF for the top words per cluster. Compare your topics to the actual BERTopic library output on the same corpus. Report agreement (ARI on the overlapping documents).</div>
+      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p4" target="_blank">→ Applied in: Project 4</a>
+    </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-num">Coding 07 · 1 hr · Advanced</div><div class="ex-title">Assigning new points when the model has no predict()</div></div><span class="badge b-amber">Advanced</span></div>
+      <div class="ex-body">HDBSCAN has no native predict for arbitrary new points. Build two approaches: (a) <code>approximate_predict</code> with <code>prediction_data=True</code>, and (b) a 1-NN classifier trained on the clustered points that labels new arrivals. Benchmark agreement and latency. When does each break?</div>
+      <a class="ex-project-link" href="clustering_complete_reference_v2.html#embeddings" target="_blank">→ Reinforces: Modern embedding stack</a>
+    </div>
   </div>
   <div id="ex-design" class="tab-content">
     <div class="ex-block">
@@ -1341,14 +1461,19 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
       <div class="ex-header"><div><div class="ex-num">Design 03 · Expert</div><div class="ex-title">Zero-downtime model update</div></div><span class="badge b-coral">Expert</span></div>
       <div class="ex-body">A new K-Means model must replace the production model without any customer receiving a different cluster name during the transition. Design: (a) shadow deployment, (b) Hungarian label matching strategy, (c) gradual traffic shifting (1% → 10% → 100%), (d) rollback mechanism, (e) success metrics for the cutover decision.</div>
     </div>
+    <div class="ex-block">
+      <div class="ex-header"><div><div class="ex-num">Design 04 · Expert</div><div class="ex-title">Choose the embedding model for a multilingual catalogue</div></div><span class="badge b-coral">Expert</span></div>
+      <div class="ex-body">You must cluster 20M product titles across 8 languages, refreshed daily, with a fixed GPU budget. Design the selection: which embedding model (size vs MTEB score vs multilingual support), how you validate it for <em>clustering</em> (not retrieval), how you cache embeddings across daily runs, and the fallback when a new language appears. Name the two biggest cost drivers.</div>
+      <a class="ex-project-link" href="clustering_complete_reference_v2.html#embeddings" target="_blank">→ Reinforces: Modern embedding stack</a>
+    </div>
   </div>
 </div>
 </section>
 <!-- Q&A -->
 <section class="section" id="qa">
 <div class="container">
-  <div class="section-eyebrow">Interview Prep · 63 Q&amp;As</div>
-  <div class="section-title">80+ Q&amp;As</div>
+  <div class="section-eyebrow">Interview Prep · 80 Q&amp;As</div>
+  <div class="section-title">80 Q&amp;As</div>
   <p class="section-sub">From beginner definitions to expert system design — every clustering question asked in data science interviews at FAANG, quant finance, and ML engineering roles.</p>
   <div class="qa-filter">
     <button class="qa-filter-btn active" onclick="filterQA(event,'all')">All</button>
@@ -1481,7 +1606,7 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
 
   <div class="qa-item" data-cat="math"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What is BIC and why is it better than AIC for GMM model selection?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Both BIC (Bayesian Information Criterion) and AIC (Akaike Information Criterion) balance model fit against complexity. AIC = −2 log L + 2p. BIC = −2 log L + p log n. Where L = likelihood, p = number of parameters, n = number of data points. For GMM with K components and d-dimensional full covariance: p = K(d(d+1)/2 + d + 1) − 1. The penalty term: AIC penalises each parameter equally (coefficient 2). BIC penalises each parameter by log(n) — which grows with dataset size. Why BIC is preferred for GMM K selection: BIC is consistent — as n → ∞, BIC selects the true model with probability 1 (if the true model is in the candidate set). AIC is not consistent and tends to overfit — it selects too many components for large n. For typical ML datasets (n &gt; 1000), log(n) &gt; 2, so BIC penalises complexity more than AIC. BIC tends to select simpler models (fewer K). In practice: plot BIC vs K for K=1,...,20. Pick the K at the "elbow" or global minimum. For some datasets, BIC is not perfectly V-shaped — it decreases then levels off. In this case, prefer the "knee" (where improvement marginalises) rather than the global minimum. Code: bics = [GaussianMixture(n_components=k).fit(X).bic(X) for k in range(1,20)].</p></div></div>
 
-  <div class="qa-item" data-cat="basics"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">When clustering text, should I use TF-IDF + K-Means or sentence embeddings + HDBSCAN?</span><div class="qa-meta"><span class="qa-difficulty diff-intermediate">Intermediate</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Both are valid but for different scenarios. TF-IDF + K-Means: classic approach. TF-IDF creates sparse high-dimensional vectors (vocab size ~ 10k–100k dimensions). Apply TruncatedSVD (LSA) to reduce to ~100 dimensions. Then K-Means. Advantages: fast, scales to millions of documents, works with any language without a pretrained model. Disadvantages: no semantic understanding — "car" and "automobile" are completely different words. K must be specified. Fails on short texts. Sentence embeddings + HDBSCAN: modern approach. Dense 384–768 dimensional vectors from sentence-transformers. Apply UMAP to 5D. Then HDBSCAN. Advantages: semantic understanding — "car" and "automobile" cluster together. No K needed. Handles short texts. Disadvantages: slower, requires GPU for large datasets, needs language-appropriate embedding model. Rule of thumb: TF-IDF + K-Means when: documents are long (articles, reviews), vocabulary matters more than semantics, you need speed at scale (&gt;1M docs), or you're working with highly technical/domain-specific language where general pretrained models don't capture the vocabulary well. Sentence embeddings + HDBSCAN when: documents are short (tweets, product titles), semantic meaning matters (paraphrases should cluster), you have GPU available, or you're doing modern NLP where SOTA results are expected. In 2024–2025, the embedding approach is the production standard for most NLP clustering tasks.</p></div></div>
+  <div class="qa-item" data-cat="basics"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">When clustering text, should I use TF-IDF + K-Means or sentence embeddings + HDBSCAN?</span><div class="qa-meta"><span class="qa-difficulty diff-intermediate">Intermediate</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Both are valid but for different scenarios. TF-IDF + K-Means: classic approach. TF-IDF creates sparse high-dimensional vectors (vocab size ~ 10k–100k dimensions). Apply TruncatedSVD (LSA) to reduce to ~100 dimensions. Then K-Means. Advantages: fast, scales to millions of documents, works with any language without a pretrained model. Disadvantages: no semantic understanding — "car" and "automobile" are completely different words. K must be specified. Fails on short texts. Sentence embeddings + HDBSCAN: modern approach. Dense 384–768 dimensional vectors from sentence-transformers. Apply UMAP to 5D. Then HDBSCAN. Advantages: semantic understanding — "car" and "automobile" cluster together. No K needed. Handles short texts. Disadvantages: slower, requires GPU for large datasets, needs language-appropriate embedding model. Rule of thumb: TF-IDF + K-Means when: documents are long (articles, reviews), vocabulary matters more than semantics, you need speed at scale (&gt;1M docs), or you're working with highly technical/domain-specific language where general pretrained models don't capture the vocabulary well. Sentence embeddings + HDBSCAN when: documents are short (tweets, product titles), semantic meaning matters (paraphrases should cluster), you have GPU available, or you're doing modern NLP where SOTA results are expected. In 2025–2026, the embedding approach is the production standard for most NLP clustering tasks.</p></div></div>
 
   <div class="qa-item" data-cat="production"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What are the computational costs of different clustering algorithms at scale?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Practical cost comparison for n=1M rows, d=50 features, K=10: K-Means (sklearn): ~30 seconds on CPU (n_init=10). 10–50× faster with MiniBatchKMeans. ~0.5 seconds with Faiss on GPU. DBSCAN (sklearn, ball tree): ~3 minutes with spatial indexing for eps=0.5, min_samples=5. Ball tree degrades to O(n²) for large eps. HDBSCAN (hdbscan library): ~2–5 minutes. Faster with boruvka algorithm. Agglomerative: not viable for n=1M — O(n² log n) time, O(n²) memory. Use BIRCH pre-clustering (O(n)) then agglomerate on ~1000 BIRCH centroids. Spectral: not viable for n=1M — O(n²) similarity matrix. Use Nyström approximation for n up to 100k. Faiss K-Means (GPU): ~3 seconds for n=1M, d=128, K=1000. Scales to n=1B. The scaling cliff: K-Means stays viable to n=100M with MiniBatchKMeans or Faiss. DBSCAN/HDBSCAN hit a wall around n=1M for d&gt;10. Everything else is restricted to n&lt;100k. Memory: K-Means requires X in RAM (n×d floats). DBSCAN requires the distance matrix for naïve implementation (n² floats = 4TB for n=1M). Ball tree uses O(n log n) but still keeps X in RAM. Planning tip: for n&gt;10M, K-Means (MiniBatch or Faiss) is the only practical option unless you have a specialised distributed implementation.</p></div></div>
 
@@ -1491,12 +1616,30 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
 
   <div class="qa-item" data-cat="math"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What is the Lloyd-Max algorithm and its relationship to K-Means?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Lloyd's algorithm (Stuart Lloyd, 1957) was developed for signal quantization — representing a continuous signal with discrete levels to minimise quantisation error. The algorithm: (1) Choose K quantisation levels (codebook). (2) Assign each signal value to its nearest level (Voronoi partition). (3) Update each level to be the mean of assigned values (centroid update). (4) Repeat until convergence. This is identical to K-Means — the signal quantisation and clustering problems have the same mathematical structure. Lloyd's algorithm + K-Means++ initialisation = modern sklearn KMeans. The Max part of Lloyd-Max: when the data distribution is known (unlike clustering where it is unknown), the optimal update in step 3 is not the arithmetic mean but the centroid of the distribution within each Voronoi region (compander design). For unknown distributions (clustering), the empirical mean is the best estimate. Historical note: Lloyd discovered the algorithm in 1957 but didn't publish until 1982. MacQueen independently published K-Means in 1967. The connection between quantisation and clustering was unified by Linde, Buzo, and Gray in 1980 (LBG algorithm for vector quantisation = batch K-Means). Modern K-Means is the intersection of three independently developed traditions: statistical clustering (MacQueen), signal processing (Lloyd), and information theory (LBG).</p></div></div>
 
+
+  <div class="qa-item" data-cat="basics"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What is HDBSCAN and how does it differ from DBSCAN?</span><div class="qa-meta"><span class="qa-difficulty diff-beginner">Beginner</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>HDBSCAN is the hierarchical successor to DBSCAN. DBSCAN needs a single global density radius (eps), so it fails when clusters have different densities. HDBSCAN instead builds a hierarchy across all density levels and extracts the most stable clusters, so it handles varying density and only needs an intuitive min_cluster_size. It also gives soft membership probabilities and explicitly labels outliers as −1. It is the default density method in 2026 and ships inside scikit-learn (sklearn.cluster.HDBSCAN) since 1.3.</p></div></div>
+  <div class="qa-item" data-cat="basics"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What is the difference between hard and soft clustering?</span><div class="qa-meta"><span class="qa-difficulty diff-beginner">Beginner</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Hard clustering assigns each point to exactly one cluster (K-Means, DBSCAN). Soft (fuzzy) clustering gives each point a probability or degree of membership in every cluster — Gaussian Mixture Models are the classic example, returning P(cluster | point). Soft assignments are valuable when points genuinely sit between groups (a customer who is half "bargain hunter," half "loyalist"), and when you want to threshold confidence or flag ambiguous points for review rather than forcing a label.</p></div></div>
+  <div class="qa-item" data-cat="basics"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What is BERTopic and when would you use it?</span><div class="qa-meta"><span class="qa-difficulty diff-intermediate">Intermediate</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>BERTopic is a topic-modelling pipeline that clusters transformer embeddings: sentence-transformer embeddings → UMAP dimensionality reduction → HDBSCAN clustering → c-TF-IDF to extract the words that distinguish each cluster. Use it for discovering themes in large unlabelled text corpora (support tickets, reviews, news) where you don't know the topics in advance and want human-readable labels automatically. It's modular, so you can swap any component, and it has become the standard modern alternative to LDA.</p></div></div>
+  <div class="qa-item" data-cat="math"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">How does a Gaussian Mixture Model differ from K-Means mathematically?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>K-Means is the hard-assignment, equal-spherical-covariance special case of a GMM. A GMM models data as a mixture of K Gaussians, each with a mean, a full covariance matrix, and a mixing weight, fitted by Expectation-Maximisation: the E-step computes each point's responsibility (soft posterior) for each component; the M-step updates means, covariances, and weights from those responsibilities. Because it learns covariance, a GMM can capture elliptical and differently-sized/oriented clusters that K-Means (which assumes isotropic, equal-radius blobs and assigns hard) cannot. The cost is more parameters and sensitivity to initialisation and covariance regularisation.</p></div></div>
+  <div class="qa-item" data-cat="math"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">Why does spectral clustering work on non-convex shapes?</span><div class="qa-meta"><span class="qa-difficulty diff-expert">Expert</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Spectral clustering reframes clustering as graph partitioning. You build a similarity graph (e.g. k-NN or RBF affinity), form the graph Laplacian L = D − W, and take the eigenvectors of its smallest non-zero eigenvalues. Those eigenvectors embed the points into a space where connected, same-manifold points become close <em>linearly</em> — so running K-Means there separates clusters that were tangled (rings, moons) in the original space. Intuitively it approximates a normalised graph cut (minimising connections severed between groups), which respects connectivity rather than Euclidean compactness. The cost is the eigendecomposition (≈O(n³) naively), so it doesn't scale to millions without approximation.</p></div></div>
+  <div class="qa-item" data-cat="math"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">What does UMAP preserve, and how is it different from t-SNE for a clustering pipeline?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>UMAP models the data as a fuzzy topological structure and optimises a low-dimensional layout to match it, preserving local neighbourhoods and more global structure than t-SNE, while being far faster and supporting a reusable transform for new points. For clustering this matters: UMAP to ~5–15 dimensions produces a space where density-based methods work well, whereas t-SNE is tuned for 2D visualisation, doesn't preserve global distances, has no stable transform, and should not be clustered on. Rule: UMAP (moderate dims) for the clustering step; t-SNE/UMAP-2D only for the picture.</p></div></div>
+  <div class="qa-item" data-cat="math"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">Silhouette, Davies-Bouldin, Calinski-Harabász — what does each actually measure, and why do they disagree?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Silhouette compares each point's mean intra-cluster distance to its nearest other-cluster distance (per-point, in [−1,1]) — it captures separation and cohesion but is O(n²) and biased toward convex, equal-density clusters. Calinski-Harabász is the ratio of between- to within-cluster dispersion (variance-based, fast, higher=better) and tends to favour more, tighter clusters. Davies-Bouldin averages each cluster's worst-case similarity to another (lower=better) and is cheap but also assumes convexity. They disagree because they encode different geometric definitions of "good," and especially because all three implicitly assume spherical clusters — on elongated or density-varying data they can all mislead. Report several and treat disagreement as a signal to inspect the clusters, not to average the scores.</p></div></div>
+  <div class="qa-item" data-cat="gotcha"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">I clustered raw 768-D BERT embeddings with K-Means and got mush. Why?</span><div class="qa-meta"><span class="qa-difficulty diff-intermediate">Intermediate</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Two reasons. First, the curse of dimensionality: in 768 dimensions Euclidean distances concentrate (everything is roughly equidistant), so K-Means has almost no contrast to exploit. Second, raw transformer embeddings are best compared by cosine, not Euclidean, and they're not isotropic. The fix is the standard modern pipeline: normalise the embeddings, reduce to ~5–15 dimensions with UMAP (cosine metric), then cluster (HDBSCAN or K-Means) in that reduced space. Clustering the reduced, normalised representation typically transforms "mush" into clean, interpretable groups.</p></div></div>
+  <div class="qa-item" data-cat="gotcha"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">Should I use cosine or Euclidean distance for embeddings?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>For semantic embeddings, cosine — you care about direction (meaning), not magnitude (which often encodes length or frequency artefacts). The clean trick: L2-normalise the vectors once, after which Euclidean distance becomes monotonic with cosine distance, so you can feed them to Euclidean-only tools (like sklearn HDBSCAN) and still get cosine behaviour. If you skip normalisation and use Euclidean, you'll cluster by vector magnitude — long documents grouping with long documents regardless of topic.</p></div></div>
+  <div class="qa-item" data-cat="gotcha"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">My 2D UMAP plot shows clean blobs but the clusters are bad. What happened?</span><div class="qa-meta"><span class="qa-difficulty diff-intermediate">Intermediate</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>You trusted the picture. A 2D UMAP projection throws away most of the structure to fit a screen — apparent gaps and blobs are partly artefacts of the layout, and distances between blobs are not meaningful. If you then cluster on those 2D coordinates, you're clustering an illustration. Cluster on a higher-dimensional reduction (5–15D) or the (normalised) embeddings, and use the 2D plot only to sanity-check and communicate — never as the clustering input or as proof the clusters are real. Validate with metrics and exemplar inspection instead.</p></div></div>
+  <div class="qa-item" data-cat="production"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">HDBSCAN has no predict() — how do you assign new points in production?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Three patterns. (1) Fit with prediction_data=True and use approximate_predict() for new points — fast and consistent with the trained hierarchy, but only valid while the model isn't stale. (2) Train a cheap supervised classifier (k-NN or logistic regression) on the clustered points and use it to label new arrivals — robust and trivially servable. (3) For embedding pipelines, store cluster centroids/exemplars and assign by nearest centroid in the reduced space. Whichever you pick, periodically re-cluster offline (new structure won't appear from assignment alone) and watch the growing fraction of points that fall into "noise."</p></div></div>
+  <div class="qa-item" data-cat="production"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">How do you scale K-Means to hundreds of millions of points?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Don't run vanilla Lloyd's on the full set. Use MiniBatchKMeans (updates centroids on small random batches — near-identical quality at a fraction of the cost), or a library built for scale such as FAISS, whose k-means runs on GPU and handles billions of vectors. Other levers: reduce dimensionality first (PCA/UMAP), subsample to fit centroids then assign the rest in one pass, and distribute with Spark MLlib. For assignment-serving, precompute and cache each entity's cluster in a key-value store (Redis) and only run real-time inference for genuinely new entities.</p></div></div>
+  <div class="qa-item" data-cat="production"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">How do you monitor a clustering model for drift in production?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Clusters have no ground-truth label, so you monitor proxies: (1) population stability index (PSI) per input feature vs the training distribution; (2) cluster-size distribution shift (chi-square vs baseline) — a segment ballooning or collapsing is a red flag; (3) mean distance of new points to their assigned centroid (rising = points fitting worse); (4) silhouette on a periodic sample; (5) for density methods, the noise (−1) fraction trending up. Trigger a retrain when two or more breach thresholds, and on retrain use Hungarian matching to keep cluster IDs stable for downstream systems.</p></div></div>
+  <div class="qa-item" data-cat="design"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">Design a system to topic-cluster 100M documents and keep it fresh.</span><div class="qa-meta"><span class="qa-difficulty diff-expert">Expert</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Offline: batch-embed documents with a sentence-transformer (GPU, cache embeddings keyed by content hash so you never re-embed), fit UMAP + HDBSCAN on a representative sample (full 100M won't fit density clustering), and persist the reducer, the cluster exemplars/centroids, and c-TF-IDF topic words. Online: new documents are embedded, UMAP-transformed, and assigned by approximate_predict or nearest-centroid in seconds. Run full re-clustering weekly to surface emerging topics; detect new topics as growing noise pockets; merge near-duplicate topics by centroid cosine similarity. Failure modes to call out: embedding-model drift, the sample not representing rare topics, and ID instability across retrains (fix with Hungarian matching).</p></div></div>
+  <div class="qa-item" data-cat="design"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">How do you choose an embedding model for a clustering task?</span><div class="qa-meta"><span class="qa-difficulty diff-advanced">Advanced</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Start from the MTEB leaderboard but filter for clustering/STS tasks and your language(s), not just the top overall score. Balance four things: quality (does it separate <em>your</em> domain — validate on a small labelled sample with ARI/NMI), dimensionality (smaller vectors cluster and store cheaper), latency/cost (a 384-D MiniLM is often enough and far cheaper than a 1024-D model), and licensing/hosting. Crucially, validate for <em>clustering</em> behaviour, not retrieval — a model great at search ranking isn't automatically great at forming compact, separable groups. Cache embeddings so the choice is a one-time cost per document.</p></div></div>
+  <div class="qa-item" data-cat="design"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">How do you turn raw clusters into business segments at scale?</span><div class="qa-meta"><span class="qa-difficulty diff-intermediate">Intermediate</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>Treat naming and validation as a pipeline, not a one-off. For each cluster compute distinctive features via standardised mean difference ((cluster_mean − global_mean)/global_std) and surface the top 3; auto-draft a name from those plus representative exemplars, then have a domain expert confirm. Enforce a minimum actionable size (e.g. ≥5% of the base) and merge clusters whose profiles are statistically indistinguishable. Persist a stable mapping from cluster ID to business name (Hungarian-matched across retrains) so dashboards and campaigns don't silently scramble when the model updates. Track size, trajectory, and value per segment, not silhouette.</p></div></div>
+  <div class="qa-item" data-cat="design"><div class="qa-q" onclick="toggleQA(this)"><span class="qa-q-text">When is clustering the wrong tool entirely?</span><div class="qa-meta"><span class="qa-difficulty diff-expert">Expert</span><span class="qa-arrow">▾</span></div></div><div class="qa-a"><p>When you already know the target groups (use classification), when the "segments" are defined by a single known variable (just threshold/bin it), when you need per-point explanations a stakeholder will trust (clusters are descriptive, not causal), or when the data has no real group structure — clustering will always return clusters, even in uniform noise, which is a classic trap. It's also the wrong tool when the decision needs a continuous score (rank/regress instead) or when stability matters more than discovery and the data shifts weekly. The discipline is to ask "what decision changes based on the cluster?" before clustering; if nothing does, don't.</p></div></div>
 </div>
 </section>
 <!-- REFERENCES -->
 <section class="section" id="refs">
 <div class="container">
-  <div class="section-eyebrow">Further Reading · 19 sources</div>
+  <div class="section-eyebrow">Further Reading · 24 sources</div>
   <div class="section-title">References — All Clickable</div>
   <p class="section-sub">Curated from foundational to frontier. Every citation links to the source. Papers link to PDFs where freely available.</p>
 
@@ -1514,10 +1657,10 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
     <div class="ref-num">04</div><div><div class="ref-title">Unsupervised Deep Embedding for Clustering (DEC) — Xie, Girshick, Farhadi (2016)</div><div class="ref-meta">ICML 2016 · Foundational deep clustering paper. Start here before exploring neural clustering methods.</div><span class="ref-tag">paper · deep clustering · free</span></div>
   </a>
   <a class="ref-card" href="https://arxiv.org/abs/2009.09687" target="_blank">
-    <div class="ref-num">05</div><div><div class="ref-title">Contrastive Clustering — Li, Hu et al. (2021)</div><div class="ref-meta">AAAI 2021 · State-of-the-art contrastive approach. Active research frontier in 2025.</div><span class="ref-tag">paper · 2025 frontier · free</span></div>
+    <div class="ref-num">05</div><div><div class="ref-title">Contrastive Clustering — Li, Hu et al. (2021)</div><div class="ref-meta">AAAI 2021 · State-of-the-art contrastive approach. Active research frontier in 2026.</div><span class="ref-tag">paper · 2026 frontier · free</span></div>
   </a>
   <a class="ref-card" href="https://arxiv.org/abs/2206.07579" target="_blank">
-    <div class="ref-num">06</div><div><div class="ref-title">Deep Clustering: A Comprehensive Survey — Ren et al. (2024)</div><div class="ref-meta">IEEE TNNLS 2024 · Most comprehensive recent survey including 2024–2025 frontier coverage.</div><span class="ref-tag">survey · 2024 frontier · free</span></div>
+    <div class="ref-num">06</div><div><div class="ref-title">Deep Clustering: A Comprehensive Survey — Ren et al. (2024)</div><div class="ref-meta">IEEE TNNLS 2024 · Most comprehensive recent survey covering modern deep-clustering methods.</div><span class="ref-tag">survey · 2024 frontier · free</span></div>
   </a>
 
   <h3 style="margin-top:20px">Books</h3>
@@ -1564,14 +1707,31 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
   <a class="ref-card" href="https://developers.google.com/machine-learning/clustering" target="_blank">
     <div class="ref-num">19</div><div><div class="ref-title">Google ML Crash Course — Clustering</div><div class="ref-meta">Free course with exercises. Good reinforcement of fundamentals alongside the portfolio projects. Takes ~3 hours.</div><span class="ref-tag">course · free</span></div>
   </a>
+  <h3 style="margin-top:20px">Embeddings &amp; Modern Stack</h3>
+  <a class="ref-card" href="https://www.sbert.net/" target="_blank">
+    <div class="ref-num">20</div><div><div class="ref-title">Sentence-Transformers (SBERT) — official docs</div><div class="ref-meta">The standard library for text/image embeddings used as the front of every modern clustering pipeline. Model cards, pooling, normalisation.</div><span class="ref-tag">docs · embeddings</span></div>
+  </a>
+  <a class="ref-card" href="https://umap-learn.readthedocs.io/" target="_blank">
+    <div class="ref-num">21</div><div><div class="ref-title">UMAP — Uniform Manifold Approximation &amp; Projection</div><div class="ref-meta">Dimensionality reduction before density clustering; parameters (n_neighbors, min_dist, metric) and the reusable transform.</div><span class="ref-tag">docs · dim-reduction</span></div>
+  </a>
+  <a class="ref-card" href="https://hdbscan.readthedocs.io/" target="_blank">
+    <div class="ref-num">22</div><div><div class="ref-title">HDBSCAN — docs (also in sklearn.cluster since 1.3)</div><div class="ref-meta">Hierarchical density clustering: varying density, automatic cluster count, soft membership, explicit noise, approximate_predict for new points.</div><span class="ref-tag">docs · density</span></div>
+  </a>
+  <a class="ref-card" href="https://maartengr.github.io/BERTopic/" target="_blank">
+    <div class="ref-num">23</div><div><div class="ref-title">BERTopic — modular topic modelling</div><div class="ref-meta">The 2026 default for text topic discovery: embed → UMAP → HDBSCAN → c-TF-IDF. Best-practices and algorithm pages are excellent.</div><span class="ref-tag">docs · topic modelling</span></div>
+  </a>
+  <a class="ref-card" href="https://huggingface.co/spaces/mteb/leaderboard" target="_blank">
+    <div class="ref-num">24</div><div><div class="ref-title">MTEB — Massive Text Embedding Benchmark leaderboard</div><div class="ref-meta">Compare embedding models by task (incl. clustering) and language before choosing one for a pipeline. Don't pick on overall score alone.</div><span class="ref-tag">benchmark</span></div>
+  </a>
 </div>
 </section>
 
 <footer style="padding:40px 0;border-top:1px solid var(--border);text-align:center">
   <div class="container">
-    <p style="font-size:13px;color:var(--text3)">Clustering Complete Reference · Beginner to Expert · 2025</p>
-    <p style="font-size:12px;color:var(--text3);margin-top:6px">K-Means · DBSCAN · GMM · HDBSCAN · Hierarchical · Spectral · Deep Clustering · MLOps · 80+ Q&amp;As</p>
+    <p style="font-size:13px;color:var(--text3)">Clustering Complete Reference · Beginner to Expert · 2026</p>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">K-Means · DBSCAN · GMM · HDBSCAN · Hierarchical · Spectral · Deep Clustering · MLOps · 80 Q&amp;As</p>
     <p style="font-size:12px;color:var(--text3);margin-top:6px">Companion: <a href="clustering_projects_guide_v2.html" style="color:var(--accent);text-decoration:none">5 Portfolio Projects Guide →</a></p>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">New here? Start with the gentle <a href="clustering_intuition_guide.html" style="color:var(--accent2);text-decoration:none">🧒 Intuition Guide →</a></p>
   </div>
 </footer>
 </div></div>
@@ -1582,7 +1742,7 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
 function toggleTheme(){const d=document.documentElement,b=document.getElementById('theme-btn');if(d.getAttribute('data-theme')==='dark'){d.setAttribute('data-theme','light');b.textContent='☀️ Light';localStorage.setItem('theme','light');}else{d.setAttribute('data-theme','dark');b.textContent='🌙 Dark';localStorage.setItem('theme','dark');}}
 (function(){const t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');document.getElementById('theme-btn').textContent='☀️ Light';}})();
 function gotoS(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
-const sids=['intro','kmeans','evaluation','pitfalls','pipeline','alternates','usecases','advanced','exercises','qa','refs'];
+const sids=['intro','kmeans','evaluation','pitfalls','pipeline','alternates','usecases','embeddings','advanced','exercises','qa','refs'];
 window.addEventListener('scroll',()=>{
   let cur='';
   sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
@@ -1613,5 +1773,8 @@ function copyCode(btn){
   const text=Array.from(block.childNodes).filter(n=>n.nodeType===3||n.tagName!=='BUTTON').map(n=>n.textContent||'').join('');
   navigator.clipboard.writeText(text.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});
 }
+
+/* responsive-hardening: make wide comparison tables horizontally scrollable on small screens */
+(function(){try{document.querySelectorAll('table.compare-table').forEach(function(t){if(t.parentElement&&t.parentElement.classList.contains('table-scroll'))return;var w=document.createElement('div');w.className='table-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t);});}catch(e){}})();
 </script>
 </body></html>

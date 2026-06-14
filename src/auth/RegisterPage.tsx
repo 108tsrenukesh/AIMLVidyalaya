@@ -39,7 +39,7 @@ export default function RegisterPage({ onRegister }: { onRegister: (user: User) 
     return (
       <div className="auth-page">
         <div className="auth-card recovery-card">
-          <div className="auth-logo">V</div>
+          <img src="/logo.svg" alt="Vidyalaya" className="auth-logo" />
           <h1>Save your recovery codes</h1>
           <p className="auth-subtitle">
             Store these codes somewhere safe. Each code can be used once to reset your password.

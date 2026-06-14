@@ -9,7 +9,7 @@ export default function ContentViewer() {
   const [currentFile, setCurrentFile] = useState<string>(file || '')
   const [htmlContent, setHtmlContent] = useState('')
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [sidebarOpen, setSidebarOpen] = useState(true)
 
   useEffect(() => {
     getContentLibrary().then(setTopics)
@@ -43,7 +43,7 @@ export default function ContentViewer() {
         {sidebarOpen ? '✕' : '☰'}
       </button>
 
-      <aside className={`viewer-sidebar ${sidebarOpen ? 'open' : ''}`}>
+      <aside className={`viewer-sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
         <div className="sidebar-header">
           <h3 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
             ← {getTopicLabel(topic || '')}
@@ -59,7 +59,6 @@ export default function ContentViewer() {
                 className={`sidebar-link ${isActive ? 'active' : ''}`}
                 onClick={() => {
                   navigate(`/content/${topic}/${fileName}`)
-                  setSidebarOpen(false)
                 }}
               >
                 {f.name}

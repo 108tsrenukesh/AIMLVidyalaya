@@ -159,10 +159,39 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 .metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
 .metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
 .metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+
+/* ===== RESPONSIVE / MOBILE LAYER (retrofit: desktop unchanged, mobile hardened) ===== */
+.toc-toggle,.toc-backdrop{display:none}
+.viz-zoom-modal{display:none}
+@media(max-width:1249px){
+  .toc{position:fixed;top:0;left:0;z-index:300;width:82%;max-width:300px;height:100%;background:var(--bg2);border-right:1px solid var(--border2);box-shadow:var(--shadow);padding:62px 0 28px;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(-100%);transition:transform .25s ease}
+  .toc.open{transform:translateX(0)}
+  .toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 20px 4px;letter-spacing:.08em;text-transform:uppercase}
+  .toc-link{display:block;font-size:15px;color:var(--text2);padding:11px 20px;cursor:pointer;border-left:2px solid transparent}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
+  .toc-toggle{display:flex;align-items:center;justify-content:center;position:fixed;bottom:26px;left:20px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+  .toc-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250}
+  .toc-backdrop.open{display:block}
+  .container{padding:0 1.1rem}
+  nav{padding:0 1rem}
+  .section{padding:46px 0}
+  .hero{padding:62px 0 46px}
+  .compare-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13.5px}
+  .code-block{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:14px 14px}
+  .viz-container,.viz-svg{cursor:zoom-in}
+  .qa-q{padding:15px 16px}
+  .tab-btn{padding:11px 15px}
+}
+.viz-zoom-modal.open{display:flex;position:fixed;inset:0;z-index:400;background:rgba(8,10,16,.95);align-items:flex-start;justify-content:flex-start;padding:56px 12px 12px;overflow:auto;-webkit-overflow-scrolling:touch}
+.viz-zoom-modal .zoom-inner{min-width:560px;width:150%;max-width:none;margin:auto}
+.viz-zoom-modal .zoom-inner svg{width:100%;height:auto}
+.viz-zoom-close{position:fixed;top:12px;right:14px;z-index:401;width:42px;height:42px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
 <button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<button class="toc-toggle" onclick="toggleTOC()" id="toc-toggle" aria-label="Open contents">☰</button>
+<div class="toc-backdrop" id="toc-backdrop" onclick="toggleTOC()"></div>
 <style>
 /* ---- Visual Primer additions: climb pedagogy + animations ---- */
 .climb-meter{display:flex;align-items:center;gap:8px;margin-bottom:18px;flex-wrap:wrap}
@@ -660,7 +689,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 <script>
 const sids=['start','whatis','neuron','activation','forward','loss','gradient','backprop','training','next'];
 function toggleTheme(){const h=document.documentElement;const t=h.getAttribute('data-theme')==='dark'?'light':'dark';h.setAttribute('data-theme',t);document.getElementById('theme-btn').textContent=t==='dark'?'🌙 Dark':'☀️ Light';}
-function gotoS(id){const el=document.getElementById(id);if(el){const y=el.getBoundingClientRect().top+window.pageYOffset-60;window.scrollTo({top:y,behavior:'smooth'});}}
+function gotoS(id){const el=document.getElementById(id);if(el){const y=el.getBoundingClientRect().top+window.pageYOffset-60;window.scrollTo({top:y,behavior:'smooth'});}closeTOC();}
 const navLinks=document.querySelectorAll('.nav-link');
 const tocLinks=document.querySelectorAll('.toc-link');
 function spy(){
@@ -671,6 +700,22 @@ function spy(){
   document.getElementById('top-btn').classList.toggle('visible',window.pageYOffset>500);
 }
 window.addEventListener('scroll',spy);window.addEventListener('load',spy);
+
+function toggleTOC(){var t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(!t)return;var open=t.classList.toggle('open');if(b)b.classList.toggle('open',open);}
+function closeTOC(){var t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(t)t.classList.remove('open');if(b)b.classList.remove('open');}
+(function(){
+  if(!window.matchMedia||!window.matchMedia('(max-width:1249px)').matches)return;
+  function openZoom(svg){
+    var m=document.createElement('div');m.className='viz-zoom-modal open';
+    var inner=document.createElement('div');inner.className='zoom-inner';inner.innerHTML=svg.outerHTML;
+    var close=document.createElement('button');close.className='viz-zoom-close';close.textContent='\u2715';close.setAttribute('aria-label','Close');
+    var dismiss=function(){document.body.removeChild(m);};
+    m.addEventListener('click',function(e){if(e.target===m)dismiss();});
+    close.addEventListener('click',dismiss);
+    m.appendChild(close);m.appendChild(inner);document.body.appendChild(m);
+  }
+  document.querySelectorAll('.viz-container').forEach(function(c){var svg=c.querySelector('svg');if(!svg)return;c.addEventListener('click',function(){openZoom(svg);});});
+})();
 </script>
 </body>
 </html>

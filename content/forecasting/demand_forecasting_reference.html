@@ -155,6 +155,42 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 .metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
 .metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
 .metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+
+/* ===== RESPONSIVE-HARDENING v1 :: desktop + mobile parity (added) ===== */
+.toc{display:none}
+@media(min-width:1250px){.toc{display:block}}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
+.table-scroll .compare-table{margin-bottom:0}
+.depth{flex-wrap:wrap}
+.viz-container,.illus{max-width:100%}
+@media(max-width:900px){.compare-table{min-width:580px}}
+@media(max-width:760px){
+  .container{padding:0 1.1rem}
+  .section{padding:44px 0}
+  .hero{padding:54px 0 38px}
+  nav{padding:0 1rem}
+  .nav-brand{font-size:16px;margin-right:1rem}
+  .nav-links{padding-right:82px}
+  .theme-toggle{top:9px;right:9px;padding:5px 10px;font-size:12px}
+  .hero-sub{font-size:15.5px}
+  .section-sub{font-size:14.5px}
+  .viz-container{padding:14px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .illus{padding:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .viz-svg{min-width:600px}
+  .code-block{font-size:12px;padding:15px 14px}
+  .qa-q{font-size:14px;padding:13px 14px}
+  .qa-a{padding:14px}
+  .card{padding:18px 16px}
+  .metric .val{font-size:20px}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+@media(max-width:430px){
+  .container{padding:0 .9rem}
+  .viz-svg{min-width:520px}
+  .hero h1{font-size:30px}
+}
+@media(hover:none){.card:hover,.qa-q:hover,.ref-card:hover,.usecase-card:hover,.ex-block:hover{border-color:var(--border)}}
+/* ===== end responsive-hardening ===== */
 </style>
 </head>
 <body>
@@ -1400,5 +1436,8 @@ function copyCode(btn){
   const text=Array.from(block.childNodes).filter(n=>n.nodeType===3||n.tagName!=='BUTTON').map(n=>n.textContent||'').join('');
   navigator.clipboard.writeText(text.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});
 }
+
+/* responsive-hardening: make wide comparison tables horizontally scrollable on small screens */
+(function(){try{document.querySelectorAll('table.compare-table').forEach(function(t){if(t.parentElement&&t.parentElement.classList.contains('table-scroll'))return;var w=document.createElement('div');w.className='table-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t);});}catch(e){}})();
 </script>
 </body></html>

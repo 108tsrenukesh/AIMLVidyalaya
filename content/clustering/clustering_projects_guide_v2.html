@@ -272,6 +272,39 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,156,246,.1
   box-shadow:0 4px 16px rgba(91,156,246,.4)}
 #top-btn.visible{opacity:1}
 #top-btn:hover{transform:translateY(-2px)}
+
+/* ===== RESPONSIVE-HARDENING v1 :: desktop + mobile parity (added) ===== */
+.toc{display:none}
+@media(min-width:1250px){.toc{display:block}}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
+.table-scroll .compare-table{margin-bottom:0}
+@media(max-width:900px){.compare-table{min-width:580px}}
+@media(max-width:760px){
+  .container{padding:0 1.1rem}
+  .section{padding:44px 0}
+  .hero{padding:54px 0 38px}
+  nav{padding:0 1rem}
+  .nav-brand{font-size:16px;margin-right:1rem}
+  .nav-links{padding-right:82px}
+  .theme-toggle{top:9px;right:9px;padding:5px 10px;font-size:12px}
+  .hero-sub{font-size:15.5px}
+  .section-sub{font-size:14.5px}
+  .viz-container{padding:14px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .viz-svg{min-width:600px}
+  .code-block{font-size:12px;padding:15px 14px}
+  .qa-q{font-size:14px;padding:13px 14px}
+  .qa-a{padding:14px}
+  .card{padding:18px 16px}
+  .metric .val{font-size:20px}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+@media(max-width:430px){
+  .container{padding:0 .9rem}
+  .viz-svg{min-width:520px}
+  .hero h1{font-size:30px}
+}
+@media(hover:none){.card:hover,.qa-q:hover,.ref-card:hover,.usecase-card:hover,.ex-block:hover{border-color:var(--border)}}
+/* ===== end responsive-hardening ===== */
 </style>
 </head>
 <body>
@@ -300,7 +333,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,156,246,.1
 <!-- ─── HERO ─────────────────────────────────────────────────────── -->
 <div class="hero">
   <div class="container">
-    <div class="hero-eyebrow">Portfolio Projects · Clustering Mastery Track · 2025</div>
+    <div class="hero-eyebrow">Portfolio Projects · Clustering Mastery Track · 2026</div>
     <h1>5 Projects to Master<br><em>Clustering</em></h1>
     <p class="hero-sub">From beginner to expert — real datasets, production-grade code, publishable notebooks. Each project links directly to its exercises and challenges below.</p>
     <div class="hero-chips">
@@ -1926,7 +1959,7 @@ GitHub: [link] | Kaggle: [link]
     <div class="card"><h4>1. A "Clustering Mistakes" collection</h4><p>Document 10 real mistakes from the projects — wrong scaling, refitting scaler on test, choosing K without domain knowledge. "What I got wrong about clustering" style posts get massive LinkedIn engagement.</p></div>
     <div class="card"><h4>2. Algorithm speed benchmarks</h4><p>Time each algorithm on 1k, 10k, 100k, 1M rows. Plot: algorithm vs dataset size vs time. Most tutorials skip this — it is uniquely valuable and gets bookmarked. <a class="cite" href="https://scikit-learn.org/stable/modules/clustering.html#clustering-performance-evaluation" target="_blank">📄 sklearn perf guide</a></p></div>
     <div class="card"><h4>3. Interactive algorithm decision tool</h4><p>A web-based flowchart like the one on the Datasets page above — but with more questions. "Do you know K?", "Are clusters spherical?", "Do you need predict()?" → recommendation. Would be the most-shared asset from this guide.</p></div>
-    <div class="card"><h4>4. Deep Clustering section</h4><p>DEC (Xie et al. 2016), contrastive clustering, BERTopic beyond basics. These are the 2024–2025 frontier. <a class="cite" href="https://arxiv.org/abs/1511.06335" target="_blank">📄 DEC paper 2016</a> Most clustering guides completely ignore deep learning clustering.</p></div>
+    <div class="card"><h4>4. Deep Clustering section</h4><p>DEC (Xie et al. 2016), contrastive clustering, BERTopic beyond basics. These are the 2025–2026 frontier. <a class="cite" href="https://arxiv.org/abs/1511.06335" target="_blank">📄 DEC paper 2016</a> Most clustering guides completely ignore deep learning clustering.</p></div>
     <div class="card"><h4>5. Streaming / real-time mini-project</h4><p>MiniBatchKMeans.partial_fit on a simulated Kafka stream or a loop over batches. Show how centroids drift as new data arrives. Very few tutorials cover this and it is highly relevant for production.</p></div>
     <div class="card"><h4>6. Interview prep section</h4><p>20 clustering questions with answers at 3 levels: definition (junior DS), trade-off (senior DS), system design (staff). The Complete Reference Q&A section already covers this — link it here prominently.</p></div>
   </div>
@@ -1944,9 +1977,10 @@ GitHub: [link] | Kaggle: [link]
 
 <footer style="padding:40px 0;border-top:1px solid var(--border);text-align:center">
   <div class="container">
-    <p style="font-size:14px;color:var(--text3)">Clustering Projects Portfolio Track · 5 Projects · Beginner to Expert · 2025</p>
+    <p style="font-size:14px;color:var(--text3)">Clustering Projects Portfolio Track · 5 Projects · Beginner to Expert · 2026</p>
     <p style="font-size:13px;color:var(--text3);margin-top:6px">K-Means · DBSCAN · HDBSCAN · GMM · NLP Clustering · MLOps · Drift Monitoring</p>
     <p style="font-size:13px;color:var(--text3);margin-top:6px">Companion: <a href="clustering_complete_reference_v2.html" style="color:var(--accent);text-decoration:none">Complete Reference Guide →</a></p>
+    <p style="font-size:13px;color:var(--text3);margin-top:6px">New here? Start with the gentle <a href="clustering_intuition_guide.html" style="color:var(--accent2);text-decoration:none">🧒 Intuition Guide →</a></p>
   </div>
 </footer>
 
@@ -1984,6 +2018,9 @@ window.addEventListener('scroll',()=>{
   });
   document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
 });
+
+/* responsive-hardening: make wide comparison tables horizontally scrollable on small screens */
+(function(){try{document.querySelectorAll('table.compare-table').forEach(function(t){if(t.parentElement&&t.parentElement.classList.contains('table-scroll'))return;var w=document.createElement('div');w.className='table-scroll';t.parentNode.insertBefore(w,t);w.appendChild(t);});}catch(e){}})();
 </script>
 </body>
 </html>

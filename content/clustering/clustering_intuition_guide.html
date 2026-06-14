@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clustering — From Age 10 to PhD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222840;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f2f8;--text2:#b0bace;--text3:#6b7594;--accent:#5b8dee;--accent2:#8b6cf7;--teal:#30d4a8;--coral:#f96e4f;--amber:#f5a623;--green:#4cca78;--red:#e05c5c;--pink:#e86cad;--font-display:'Fraunces',serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;--radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.32)}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#fff;--bg3:#eef1f8;--bg4:#e0e6f0;--border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);--text:#111827;--text2:#374151;--text3:#6b7280;--accent:#2563eb;--accent2:#7c3aed;--teal:#0d9488;--coral:#dc4e2a;--amber:#d97706;--green:#16a34a;--red:#dc2626;--pink:#db2777;--shadow:0 4px 24px rgba(0,0,0,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:200;background:var(--bg3);border:1px solid var(--border2);border-radius:24px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:var(--font-body);color:var(--text2);font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:var(--shadow)}
+.theme-toggle:hover{color:var(--text);border-color:var(--accent)}
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:54px;backdrop-filter:blur(12px)}
+.nav-brand{font-family:var(--font-display);font-size:19px;color:var(--text);margin-right:2rem;white-space:nowrap;font-weight:600}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:54px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.03em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.hero{padding:84px 0 64px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(91,141,238,.10) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,62px);line-height:1.07;color:var(--text);margin-bottom:18px;font-weight:300}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:600}
+.hero-sub{font-size:17px;color:var(--text2);max-width:660px;margin:0 auto 32px;line-height:1.65}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap}
+.hero-tag{font-family:var(--font-mono);font-size:11px;padding:5px 13px;border:1px solid var(--border2);border-radius:20px;color:var(--text3)}
+.container{max-width:1120px;margin:0 auto;padding:0 2rem}
+.section{padding:64px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);color:var(--text);margin-bottom:14px;line-height:1.15;font-weight:300}
+.section-sub{font-size:15px;color:var(--text2);max-width:720px;margin-bottom:36px;line-height:1.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.badge{display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:500;padding:3px 9px;border-radius:20px;margin-right:5px;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.b-blue{background:rgba(91,141,238,.15);color:#7aabff;border:1px solid rgba(91,141,238,.25)}
+.b-teal{background:rgba(48,212,168,.12);color:#30d4a8;border:1px solid rgba(48,212,168,.2)}
+.b-coral{background:rgba(249,110,79,.12);color:#f96e4f;border:1px solid rgba(249,110,79,.2)}
+.b-green{background:rgba(76,202,120,.12);color:#4cca78;border:1px solid rgba(76,202,120,.2)}
+.b-amber{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2)}
+.b-purple{background:rgba(139,108,247,.12);color:#b09aff;border:1px solid rgba(139,108,247,.2)}
+.b-red{background:rgba(224,92,92,.12);color:#e05c5c;border:1px solid rgba(224,92,92,.2)}
+[data-theme="light"] .b-blue{background:rgba(37,99,235,.10);color:#1d4ed8;border-color:rgba(37,99,235,.25)}
+[data-theme="light"] .b-teal{background:rgba(13,148,136,.10);color:#0f766e;border-color:rgba(13,148,136,.25)}
+[data-theme="light"] .b-green{background:rgba(22,163,74,.10);color:#15803d;border-color:rgba(22,163,74,.25)}
+[data-theme="light"] .b-amber{background:rgba(217,119,6,.10);color:#b45309;border-color:rgba(217,119,6,.25)}
+[data-theme="light"] .b-purple{background:rgba(124,58,237,.10);color:#6d28d9;border-color:rgba(124,58,237,.25)}
+h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:7px}
+h5{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+p{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:20px;line-height:1.75}
+li{margin-bottom:6px}strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1);color:var(--accent);padding:2px 6px;border-radius:4px}
+.code-block{background:#0a0d14;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;font-family:var(--font-mono);font-size:12.5px;color:#c9d1d9;overflow-x:auto;margin:14px 0;line-height:1.7;position:relative}
+[data-theme="light"] .code-block{background:#1e2330;color:#e2e8f5}
+.code-block .kw{color:#ff7b72}.code-block .fn{color:#d2a8ff}.code-block .st{color:#a5d6ff}.code-block .cm{color:#5d6580;font-style:italic}.code-block .num{color:#f2cc60}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--bg4);color:var(--text3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.7;border-left:3px solid}
+.alert-info{background:rgba(91,141,238,.07);border-color:var(--accent)}
+.alert-warn{background:rgba(245,166,35,.07);border-color:var(--amber)}
+.alert-success{background:rgba(76,202,120,.07);border-color:var(--green)}
+.alert-danger{background:rgba(224,92,92,.07);border-color:var(--red)}
+.pipeline{position:relative;padding-left:36px}
+.pipeline::before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2));opacity:.3}
+.pipe-item{position:relative;margin-bottom:20px}
+.pipe-dot{position:absolute;left:-29px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--bg4);border:2px solid var(--accent)}
+.pipe-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.pipe-body{font-size:14px;color:var(--text2);line-height:1.65}
+.formula{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:var(--font-mono);font-size:14px;color:var(--teal);text-align:center;margin:14px 0;overflow-x:auto}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-size:13px;font-weight:500;color:var(--text3);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s,border-color .2s;font-family:var(--font-body)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.algo-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:24px;transition:border-color .2s}
+.algo-card:hover{border-color:var(--border2)}
+.algo-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px}
+.algo-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:var(--font-mono);flex-shrink:0}
+.algo-body{padding:20px 24px}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.compare-table th{background:var(--bg3);color:var(--text2);font-weight:500;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:14px}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:700px){.pros-cons{grid-template-columns:1fr}}
+.qa-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.qa-filter-btn{font-size:12px;font-family:var(--font-mono);padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .2s}
+.qa-filter-btn:hover,.qa-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.qa-q{padding:14px 18px;font-size:15px;font-weight:500;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:var(--bg3);line-height:1.45}
+.qa-q:hover{background:var(--bg4)}
+.qa-q-text{flex:1}
+.qa-meta{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.qa-arrow{font-size:12px;color:var(--text3);transition:transform .2s}
+.qa-item.open .qa-arrow{transform:rotate(180deg)}
+.qa-a{padding:16px 18px;font-size:14px;color:var(--text2);line-height:1.72;border-top:1px solid var(--border);display:none;background:var(--bg2)}
+.qa-a p{font-size:14px;margin-bottom:8px}
+.qa-item.open .qa-a{display:block}
+.qa-difficulty{font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.diff-beginner{background:rgba(76,202,120,.15);color:#4cca78}
+.diff-intermediate{background:rgba(91,141,238,.15);color:#6ea8fe}
+.diff-advanced{background:rgba(245,166,35,.15);color:#f5a623}
+.diff-expert{background:rgba(249,110,79,.15);color:#f96e4f}
+.usecase-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;transition:border-color .2s}
+.usecase-card:hover{border-color:var(--border2)}
+.usecase-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.usecase-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.usecase-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px}
+.usecase-industry{font-size:11px;font-family:var(--font-mono);color:var(--text3)}
+.usecase-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.usecase-body{grid-template-columns:1fr}}
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:14px;transition:border-color .2s}
+.ex-block:hover{border-color:var(--border2)}
+.ex-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ex-num{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.ex-title{font-size:16px;font-weight:600;color:var(--text);margin:4px 0 8px}
+.ex-body{font-size:14px;color:var(--text2);line-height:1.7}
+.ex-hint{font-size:13px;color:var(--text3);margin-top:10px;font-style:italic;padding:9px 12px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--amber)}
+.ex-project-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:7px 14px;background:rgba(91,141,238,.10);border:1px solid rgba(91,141,238,.25);border-radius:8px;font-size:13px;color:var(--accent);cursor:pointer;transition:all .2s;text-decoration:none;font-weight:500}
+.ex-project-link:hover{background:rgba(91,141,238,.18)}
+.ref-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;text-decoration:none}
+.ref-card:hover{border-color:var(--accent)}
+.ref-num{font-family:var(--font-mono);font-size:11px;color:var(--text3);min-width:26px;padding-top:2px}
+.ref-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ref-meta{font-size:12px;color:var(--text3);line-height:1.5}
+.ref-tag{font-size:10px;font-family:var(--font-mono);color:var(--accent);background:rgba(91,141,238,.1);padding:2px 7px;border-radius:10px;display:inline-block;margin-top:5px}
+.deploy-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.deploy-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-26px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tl-body{font-size:14px;color:var(--text2);line-height:1.6}
+#top-btn{position:fixed;bottom:26px;right:26px;background:var(--accent);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(91,141,238,.4)}
+#top-btn.visible{opacity:1}
+@media(min-width:1250px){.main-layout{display:grid;grid-template-columns:210px 1fr}.toc{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:20px 0;border-right:1px solid var(--border);scrollbar-width:thin}.toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 18px 4px;letter-spacing:.08em;text-transform:uppercase}.toc-link{display:block;font-size:13px;color:var(--text3);padding:5px 18px;cursor:pointer;transition:color .15s;border-left:2px solid transparent}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--accent);border-left-color:var(--accent)}}
+.cite{color:var(--accent);font-size:12px;text-decoration:none;font-family:var(--font-mono);padding:2px 7px;background:rgba(91,141,238,.1);border-radius:4px;display:inline-block;margin-top:4px}
+.cite:hover{background:rgba(91,141,238,.2)}
+.viz-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0}
+.viz-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.viz-svg{width:100%;overflow:visible}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
+.metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+
+/* ===== RESPONSIVE-HARDENING v1 :: desktop + mobile parity (added) ===== */
+.toc{display:none}
+@media(min-width:1250px){.toc{display:block}}
+.table-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:14px 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
+.table-scroll .compare-table{margin-bottom:0}
+@media(max-width:900px){.compare-table{min-width:580px}}
+@media(max-width:760px){
+  .container{padding:0 1.1rem}
+  .section{padding:44px 0}
+  .hero{padding:54px 0 38px}
+  nav{padding:0 1rem}
+  .nav-brand{font-size:16px;margin-right:1rem}
+  .nav-links{padding-right:82px}
+  .theme-toggle{top:9px;right:9px;padding:5px 10px;font-size:12px}
+  .hero-sub{font-size:15.5px}
+  .section-sub{font-size:14.5px}
+  .viz-container{padding:14px 12px;overflow-x:auto;-webkit-overflow-scrolling:touch}
+  .viz-svg{min-width:600px}
+  .code-block{font-size:12px;padding:15px 14px}
+  .qa-q{font-size:14px;padding:13px 14px}
+  .qa-a{padding:14px}
+  .card{padding:18px 16px}
+  .metric .val{font-size:20px}
+  .compare-table th,.compare-table td{padding:10px 12px}
+}
+@media(max-width:430px){
+  .container{padding:0 .9rem}
+  .viz-svg{min-width:520px}
+  .hero h1{font-size:30px}
+}
+@media(hover:none){.card:hover,.qa-q:hover,.ref-card:hover,.usecase-card:hover,.ex-block:hover{border-color:var(--border)}}
+/* ===== end responsive-hardening ===== */
+
+.ladder{margin:18px 0;border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
+.rung{display:flex;gap:14px;padding:16px 18px;border-left:4px solid;align-items:flex-start}
+.rung+.rung{border-top:1px solid var(--border)}
+.rung-kid{border-left-color:var(--green);background:rgba(76,202,120,.06)}
+.rung-real{border-left-color:var(--accent);background:rgba(91,141,238,.06)}
+.rung-sci{border-left-color:var(--accent2);background:rgba(139,108,247,.06)}
+.rung-emoji{font-size:26px;line-height:1.1;flex-shrink:0;width:34px;text-align:center}
+.rung-body{flex:1}
+.rung-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.08em;text-transform:uppercase;margin-bottom:4px;display:block;font-weight:600}
+.rung-kid .rung-tag{color:var(--green)}
+.rung-real .rung-tag{color:var(--accent)}
+.rung-sci .rung-tag{color:var(--accent2)}
+.rung-body p{margin-bottom:6px}.rung-body p:last-child{margin-bottom:0}
+.fun{color:var(--text3);font-size:13.5px;font-style:italic;margin:8px 0 0;padding:8px 12px;border-radius:6px;background:var(--bg3);border-left:2px solid var(--amber)}
+.depth{display:flex;gap:7px;align-items:center;flex-wrap:wrap;font-family:var(--font-mono);font-size:10px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:10px}
+.depth .dot{width:8px;height:8px;border-radius:50%;background:var(--bg4)}
+.depth .dot.on{background:var(--accent2)}
+.deeper{display:inline-flex;align-items:center;gap:7px;margin-top:14px;padding:8px 15px;background:rgba(139,108,247,.10);border:1px solid rgba(139,108,247,.28);border-radius:8px;font-size:13px;color:var(--accent2);text-decoration:none;font-weight:500}
+.deeper:hover{background:rgba(139,108,247,.18)}
+.illus{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px 18px;margin:14px 0;max-width:100%}
+.illus-cap{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.08em;text-transform:uppercase;margin-bottom:10px}
+@media(max-width:760px){.illus{padding:12px;overflow-x:auto;-webkit-overflow-scrolling:touch}}
+@media (prefers-reduced-motion: no-preference){
+ .anim-draw{stroke-dasharray:900;stroke-dashoffset:900;animation:draw 2.6s ease forwards}
+ @keyframes draw{to{stroke-dashoffset:0}}
+ .anim-float{animation:floaty 3.2s ease-in-out infinite}
+ @keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+ .anim-rise{transform-origin:bottom;animation:rise 1s ease forwards}
+ @keyframes rise{from{transform:scaleY(0.03)}to{transform:scaleY(1)}}
+ .anim-pulse{animation:pulsey 2.6s ease-in-out infinite}
+ @keyframes pulsey{0%,100%{opacity:.35}50%{opacity:1}}
+ .anim-pop{opacity:0;animation:popp .6s ease forwards}
+ @keyframes popp{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:scale(1)}}
+}
+</style>
+</head>
+<body><button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<nav>
+  <div class="nav-brand">Clustering · Start Here</div>
+  <div class="nav-links">
+    <div class="nav-link" onclick="gotoS('what')">What is it</div>
+    <div class="nav-link" onclick="gotoS('howfar')">Closeness</div>
+    <div class="nav-link" onclick="gotoS('kmeans')">K-Means</div>
+    <div class="nav-link" onclick="gotoS('howmany')">How many</div>
+    <div class="nav-link" onclick="gotoS('shapes')">Funny shapes</div>
+    <div class="nav-link" onclick="gotoS('loners')">Loners</div>
+    <div class="nav-link" onclick="gotoS('goodbad')">Good or bad</div>
+    <div class="nav-link" onclick="gotoS('words')">Words &amp; pictures</div>
+    <div class="nav-link" onclick="gotoS('toolbox')">The toolbox</div>
+    <div class="nav-link" onclick="gotoS('recap')">Recap</div>
+  </div>
+</nav>
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">The Intuition Guide · age 10 → PhD · start here</div>
+    <h1>Clustering,<br>explained <em>like you're 10</em> first</h1>
+    <p class="hero-sub">Every idea here starts as a story a child could follow, grows into something you'd recognise from a real business, and only then turns into the proper science. Same destination as the heavy reference — gentler climb.</p>
+    <div class="illus" style="max-width:760px;margin:30px auto 0;text-align:left">
+      <div class="illus-cap">The climb · we go up these three steps for every single idea</div>
+      <svg viewBox="0 0 680 200" class="viz-svg" style="max-height:200px">
+        <defs><marker id="hclimb" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--accent2)"/></marker></defs>
+        <rect class="anim-rise" x="60" y="140" width="160" height="40" rx="6" fill="var(--green)" opacity="0.18" stroke="var(--green)"/>
+        <rect class="anim-rise" x="250" y="100" width="160" height="80" rx="6" fill="var(--accent)" opacity="0.16" stroke="var(--accent)" style="animation-delay:.25s"/>
+        <rect class="anim-rise" x="440" y="50" width="180" height="130" rx="6" fill="var(--accent2)" opacity="0.16" stroke="var(--accent2)" style="animation-delay:.5s"/>
+        <text x="140" y="166" font-size="30" text-anchor="middle">🧒</text>
+        <text x="330" y="128" font-size="30" text-anchor="middle">🧑‍💼</text>
+        <text x="530" y="80" font-size="30" text-anchor="middle">🎓</text>
+        <text x="140" y="194" font-size="11" fill="var(--green)" text-anchor="middle" font-family="monospace">LIKE YOU'RE 10</text>
+        <text x="330" y="194" font-size="11" fill="var(--accent)" text-anchor="middle" font-family="monospace">IN THE REAL WORLD</text>
+        <text x="530" y="194" font-size="11" fill="var(--accent2)" text-anchor="middle" font-family="monospace">THE ACTUAL SCIENCE</text>
+        <path class="anim-draw" d="M70,150 C200,150 250,70 350,60 C460,50 470,40 600,40" fill="none" stroke="var(--accent2)" stroke-width="2" marker-end="url(#hclimb)" opacity="0.8"/>
+        <text x="300" y="28" font-size="11" fill="var(--text3)" font-family="monospace">complexity →</text>
+      </svg>
+    </div>
+    <div class="hero-tags" style="margin-top:24px">
+      <span class="hero-tag">🧒 stories first</span>
+      <span class="hero-tag">🛒 then real examples</span>
+      <span class="hero-tag">🎓 then the real math</span>
+      <span class="hero-tag">😄 a few bad jokes</span>
+    </div>
+  </div>
+</div>
+<div class="main-layout">
+<aside class="toc" id="toc">
+  <div class="toc-section">The journey</div>
+  <div class="toc-link" onclick="gotoS('what')">1 · What even is it?</div>
+  <div class="toc-link" onclick="gotoS('howfar')">2 · "Close" needs a ruler</div>
+  <div class="toc-link" onclick="gotoS('kmeans')">3 · The K-Means dance</div>
+  <div class="toc-link" onclick="gotoS('howmany')">4 · How many groups?</div>
+  <div class="toc-link" onclick="gotoS('shapes')">5 · When blobs go weird</div>
+  <div class="toc-link" onclick="gotoS('loners')">6 · The loners (outliers)</div>
+  <div class="toc-link" onclick="gotoS('goodbad')">7 · Are these groups any good?</div>
+  <div class="toc-link" onclick="gotoS('words')">8 · Clustering words &amp; pictures</div>
+  <div class="toc-link" onclick="gotoS('toolbox')">9 · The whole toolbox</div>
+  <div class="toc-link" onclick="gotoS('recap')">10 · The whole staircase</div>
+  <div class="toc-section">Go deeper</div>
+  <div class="toc-link" onclick="window.open('clustering_complete_reference_v2.html','_blank')">📘 The Reference</div>
+  <div class="toc-link" onclick="window.open('clustering_projects_guide_v2.html','_blank')">🛠️ The Projects</div>
+</aside>
+<div style="overflow:hidden">
+
+<section class="section" id="how" style="padding-top:40px;padding-bottom:24px">
+<div class="container">
+  <div class="alert alert-info" style="margin-bottom:0"><strong>How to read this guide.</strong> Every section below has the same three steps — 🧒 the kid version, 🛒 the real-world version, 🎓 the scientist version. Read only the green box if you just want the gist. Climb all three if you want to actually <em>get</em> it. A purple "go deeper" button at the end of each takes you to the full math in the Reference.</div>
+</div>
+</section>
+<section class="section" id="what">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 1</div>
+  <div class="section-title">What even <em>is</em> clustering?</div>
+  <div class="illus">
+    <div class="illus-cap">A messy pile of toys → tidy groups, with nobody telling you the groups</div>
+    <svg viewBox="0 0 680 160" class="viz-svg" style="max-height:160px">
+      <g>
+        <text x="60" y="20" font-size="10" fill="var(--text3)" font-family="monospace">before: one big jumble</text>
+        <g>
+          <circle class="anim-pop" cx="50" cy="60" r="9" fill="var(--accent)" style="animation-delay:.05s"/>
+          <circle class="anim-pop" cx="120" cy="110" r="9" fill="var(--coral)" style="animation-delay:.1s"/>
+          <circle class="anim-pop" cx="70" cy="120" r="9" fill="var(--teal)" style="animation-delay:.15s"/>
+          <circle class="anim-pop" cx="150" cy="55" r="9" fill="var(--accent)" style="animation-delay:.2s"/>
+          <circle class="anim-pop" cx="100" cy="80" r="9" fill="var(--coral)" style="animation-delay:.25s"/>
+          <circle class="anim-pop" cx="40" cy="100" r="9" fill="var(--teal)" style="animation-delay:.3s"/>
+        </g>
+        <text x="300" y="85" font-size="26">→</text>
+        <text x="430" y="20" font-size="10" fill="var(--text3)" font-family="monospace">after: groups that just... belong together</text>
+        <ellipse cx="420" cy="55" rx="48" ry="30" fill="var(--accent)" opacity="0.12" stroke="var(--accent)"/>
+        <circle cx="405" cy="50" r="9" fill="var(--accent)"/><circle cx="435" cy="62" r="9" fill="var(--accent)"/><circle cx="420" cy="45" r="9" fill="var(--accent)"/>
+        <ellipse cx="560" cy="60" rx="42" ry="26" fill="var(--coral)" opacity="0.12" stroke="var(--coral)"/>
+        <circle cx="548" cy="55" r="9" fill="var(--coral)"/><circle cx="575" cy="65" r="9" fill="var(--coral)"/>
+        <ellipse cx="480" cy="120" rx="46" ry="28" fill="var(--teal)" opacity="0.12" stroke="var(--teal)"/>
+        <circle cx="466" cy="115" r="9" fill="var(--teal)"/><circle cx="495" cy="125" r="9" fill="var(--teal)"/>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>Imagine you tip a giant box of LEGO on the floor. Nobody tells you the rules, but you naturally start making piles — all the wheels here, all the red bricks there, all the little people over there. That's clustering: finding the natural piles in a mess, when <em>no one gave you the labels</em>. You just notice "these go together."</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>A shop has a million customers and no idea who they are. Clustering finds the natural "piles": the big-spending loyalists, the once-a-year bargain hunters, the brand-new browsers. Nobody labelled them — the patterns in their behaviour did. The shop then treats each pile differently (different offers, different messages).</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>Clustering is <strong>unsupervised learning</strong>: grouping data by intrinsic similarity with <em>no labels</em>. This is the key difference from classification (which is supervised — you train on known answers). Because there's no ground truth, you can't score it with accuracy; you judge groups by how tight and well-separated they are, and by whether they're <em>useful</em>.</p></div></div>
+  </div>
+  <p class="fun">😄 Classification is a teacher handing you sorted boxes and saying "put new toys in the right one." Clustering is being dumped in a messy room and told "make some sense of this" — with no boxes and no teacher.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#intro" target="_blank">Go deeper → the real definition &amp; when to cluster ↗</a>
+</div>
+</section>
+
+<section class="section" id="howfar">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 2</div>
+  <div class="section-title">"Close together" needs a <em>ruler</em></div>
+  <div class="illus">
+    <div class="illus-cap">A computer can't "see" closeness — you have to define it with numbers</div>
+    <svg viewBox="0 0 680 150" class="viz-svg" style="max-height:150px">
+      <g font-family="monospace" font-size="10">
+        <circle cx="120" cy="80" r="10" fill="var(--accent)"/><text x="120" y="110" fill="var(--text2)" text-anchor="middle">you</text>
+        <circle cx="240" cy="55" r="10" fill="var(--teal)"/><text x="240" y="40" fill="var(--text2)" text-anchor="middle">friend A</text>
+        <circle cx="200" cy="120" r="10" fill="var(--coral)"/><text x="200" y="140" fill="var(--text2)" text-anchor="middle">friend B</text>
+        <line x1="130" y1="76" x2="232" y2="59" stroke="var(--teal)" stroke-dasharray="4 3"/><text x="185" y="60" fill="var(--teal)">near</text>
+        <line x1="128" y1="88" x2="192" y2="116" stroke="var(--coral)" stroke-dasharray="4 3"/><text x="150" y="112" fill="var(--coral)">far</text>
+        <text x="430" y="60" fill="var(--text3)">distance = √( (Δx)² + (Δy)² )</text>
+        <text x="430" y="84" fill="var(--text3)">small number → similar</text>
+        <text x="430" y="104" fill="var(--text3)">big number → different</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>To make piles of "things that go together," you first need to decide what "close" means. Two dogs are close because they're both furry, four-legged, and bark. A dog and a sofa are far apart. A computer can't <em>feel</em> this — so we turn everything into numbers and measure the gap between them, like measuring steps between two spots on a map. Small gap = alike. Big gap = different.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>Each customer becomes a row of numbers: age, how often they buy, how much they spend. "Similar customers" are the ones whose number-rows are close. Huge catch: if "spend" is in rupees (0–50,000) and "visits" is 0–20, spend will <em>completely dominate</em> the distance and visits will be ignored. So you first rescale every number to a fair range — otherwise you're secretly grouping by money alone.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>You represent each item as a <strong>feature vector</strong> and measure similarity with a <strong>distance metric</strong> — usually Euclidean (straight-line), sometimes cosine (angle, for text/embeddings). Because distance is scale-sensitive, you must <strong>standardise</strong> features first (z-score / min-max). Skipping scaling is the single most common clustering mistake, and in very high dimensions distances stop being meaningful at all — the "curse of dimensionality."</p></div></div>
+  </div>
+  <p class="fun">😄 Forgetting to scale your features is like judging "who's most similar" by net worth alone. Technically a number. Wildly misses the point.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#data-prep" target="_blank">Go deeper → distance metrics &amp; why scaling matters ↗</a>
+</div>
+</section>
+
+<section class="section" id="kmeans">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 3</div>
+  <div class="section-title">The K-Means <em>dance</em></div>
+  <div class="illus">
+    <div class="illus-cap">Two steps repeated: claim your nearest points → move to their middle → repeat</div>
+    <svg viewBox="0 0 680 150" class="viz-svg" style="max-height:150px">
+      <g font-family="monospace" font-size="9">
+        <rect x="20" y="40" width="150" height="70" rx="8" fill="var(--bg2)" stroke="var(--accent)"/>
+        <text x="95" y="58" fill="var(--text)" text-anchor="middle">1 · drop K flags</text>
+        <text x="60" y="85" font-size="16">🚩</text><text x="120" y="95" font-size="16">🚩</text>
+        <text x="200" y="80" font-size="20">→</text>
+        <rect x="230" y="40" width="170" height="70" rx="8" fill="var(--bg2)" stroke="var(--teal)"/>
+        <text x="315" y="58" fill="var(--text)" text-anchor="middle">2 · each point joins</text>
+        <text x="315" y="72" fill="var(--text3)" text-anchor="middle">its nearest flag</text>
+        <circle cx="270" cy="92" r="5" fill="var(--accent)"/><circle cx="288" cy="98" r="5" fill="var(--accent)"/><circle cx="350" cy="95" r="5" fill="var(--coral)"/><circle cx="368" cy="90" r="5" fill="var(--coral)"/>
+        <text x="430" y="80" font-size="20">→</text>
+        <rect x="460" y="40" width="180" height="70" rx="8" fill="var(--bg2)" stroke="var(--accent2)"/>
+        <text x="550" y="58" fill="var(--text)" text-anchor="middle">3 · flag walks to the</text>
+        <text x="550" y="72" fill="var(--text3)" text-anchor="middle">middle of its crowd</text>
+        <text x="520" y="98" font-size="14">🚩</text><path d="M512,95 l-14,4" stroke="var(--accent2)" marker-end=""/>
+        <path class="anim-draw" d="M620,118 C500,140 250,140 95,118" fill="none" stroke="var(--text3)" stroke-dasharray="5 4"/>
+        <text x="360" y="138" fill="var(--text3)" text-anchor="middle">repeat until the flags stop moving</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>Pick how many groups you want — say 3. Drop 3 flags randomly on the playground. Every kid runs to their <em>nearest</em> flag. Now each flag walks to the exact middle of the kids who picked it. Kids look again — some now have a closer flag, so they switch. Flags re-centre. Repeat. Very quickly the flags stop moving and you've got 3 neat groups. That's it — that's the whole trick.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>Those flags are "the average customer" of each segment. The dance settles into, say, "average big spender," "average bargain hunter," "average newbie." It's fast and works on millions of customers, which is why it's the workhorse of customer segmentation. Two honest catches: you must <em>tell</em> it how many groups (the 3), and where you drop the flags at the start can change the answer — so you run it several times and keep the tidiest result.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>K-Means</strong>: alternate an <em>assignment</em> step (each point → nearest centroid) and an <em>update</em> step (centroid → mean of its points), minimising within-cluster sum of squares (WCSS). It's guaranteed to converge but only to a <em>local</em> optimum, so you use <strong>K-Means++</strong> initialisation and several restarts (<code>n_init</code>). You must pre-specify K, and it assumes roughly round, similar-size clusters.</p></div></div>
+  </div>
+  <p class="fun">😄 K-Means is musical chairs where the chairs also keep sneaking toward the biggest cluster of players. The music stops when everyone's comfy and no chair wants to move.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#kmeans" target="_blank">Go deeper → the K-Means algorithm, math &amp; code ↗</a>
+</div>
+</section>
+<section class="section" id="howmany">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 4</div>
+  <div class="section-title">How many groups should there even <em>be</em>?</div>
+  <div class="illus">
+    <div class="illus-cap">Adding groups always "helps" a little — look for where the help suddenly drops off (the elbow)</div>
+    <svg viewBox="0 0 680 160" class="viz-svg" style="max-height:160px">
+      <g font-family="monospace" font-size="10">
+        <line x1="60" y1="130" x2="640" y2="130" stroke="var(--border2)"/><line x1="60" y1="20" x2="60" y2="130" stroke="var(--border2)"/>
+        <text x="350" y="152" fill="var(--text3)" text-anchor="middle">number of groups (K) →</text>
+        <text x="30" y="75" fill="var(--text3)" transform="rotate(-90 30 75)">messiness</text>
+        <path class="anim-draw" d="M90,40 C140,80 170,105 210,112 C320,126 460,128 620,129" fill="none" stroke="var(--accent)" stroke-width="2"/>
+        <circle cx="210" cy="112" r="7" fill="var(--accent2)"/><text x="225" y="100" fill="var(--accent2)">the elbow → pick here</text>
+        <text x="120" y="40" fill="var(--text3)">too few</text>
+        <text x="560" y="120" fill="var(--text3)">too many</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>How many piles is "right"? One giant pile is useless. A separate pile for every single toy is also useless. The sweet spot is in between. Trick: as you allow more piles, each pile gets neater — but at some point one extra pile barely helps. That "barely helps now" point is your answer. It's like packing a suitcase: a few more bags help a lot, but past a point you're just carrying empty bags.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>The "best" number of customer segments isn't only a maths question — it's a business one. The marketing team can run maybe 4–6 different campaigns, not 50. So you find the statistically reasonable range, then pick the number you can actually <em>act</em> on. A segment too small to bother emailing isn't a real segment.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>Choosing K: the <strong>Elbow method</strong> (plot WCSS vs K, pick the bend), the <strong>silhouette score</strong> (how tight-and-separated, peak is best), the <strong>gap statistic</strong>, and <em>business constraints</em>. These often disagree — that disagreement is information. Density methods (DBSCAN/HDBSCAN) dodge the question by finding K themselves.</p></div></div>
+  </div>
+  <p class="fun">😄 The "optimal K" is whatever number makes the maths happy AND your colleague stop asking "but what do we actually <em>do</em> with cluster #11?"</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#k-selection" target="_blank">Go deeper → elbow, silhouette &amp; choosing K ↗</a>
+</div>
+</section>
+
+<section class="section" id="shapes">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 5</div>
+  <div class="section-title">When the blobs go <em>weird</em></div>
+  <div class="illus">
+    <div class="illus-cap">K-Means can only cut straight lines — so it slices curvy groups in half</div>
+    <svg viewBox="0 0 680 160" class="viz-svg" style="max-height:160px">
+      <g font-family="monospace" font-size="10">
+        <text x="170" y="20" fill="var(--coral)" text-anchor="middle">✗ K-Means on two rings</text>
+        <path d="M70,120 A70,55 0 0 1 270,120" fill="none" stroke="var(--text3)" stroke-width="6" opacity="0.5"/>
+        <path d="M110,135 A45,32 0 0 0 230,135" fill="none" stroke="var(--text3)" stroke-width="6" opacity="0.5"/>
+        <line x1="170" y1="40" x2="170" y2="140" stroke="var(--coral)" stroke-width="2" stroke-dasharray="5 4"/>
+        <text x="170" y="155" fill="var(--coral)" text-anchor="middle">cuts straight down — wrong!</text>
+        <text x="510" y="20" fill="var(--green)" text-anchor="middle">✓ density method</text>
+        <path class="anim-draw" d="M410,120 A70,55 0 0 1 610,120" fill="none" stroke="var(--accent)" stroke-width="6"/>
+        <path class="anim-draw" d="M450,135 A45,32 0 0 0 570,135" fill="none" stroke="var(--teal)" stroke-width="6"/>
+        <text x="510" y="155" fill="var(--green)" text-anchor="middle">follows the actual shapes</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>The flag trick (K-Means) secretly only knows how to draw <em>straight</em> fences between groups. So if your groups are shaped like two bananas hugging, or rings inside rings, the straight fence chops them the wrong way. You need a different helper — one that walks <em>along</em> the crowd, hopping from neighbour to neighbour, so it can trace curvy shapes.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>Real data is often curvy: GPS points along winding roads, sensor readings that loop, fraud patterns that snake through normal activity. For these you use a method that grows clusters by <em>density</em> — "keep adding points as long as there are neighbours nearby." It happily follows a crescent or a ring, and it doesn't need you to guess the number of groups.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>K-Means produces <strong>convex (Voronoi) boundaries</strong> — straight hyperplanes — so it fails on non-convex shapes. <strong>DBSCAN/HDBSCAN</strong> grow clusters by connecting dense neighbourhoods, finding arbitrary shapes and the number of clusters automatically; <strong>spectral clustering</strong> reshapes the data via a graph so tangled shapes become separable. Different geometry, different tool.</p></div></div>
+  </div>
+  <p class="fun">😄 Asking K-Means to cluster two interlocking rings is like asking someone who only cuts in straight lines to carve a spiral. Technically they'll cut something. You won't like it.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#alternates" target="_blank">Go deeper → DBSCAN, HDBSCAN, spectral &amp; the chooser ↗</a>
+</div>
+</section>
+
+<section class="section" id="loners">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 6</div>
+  <div class="section-title">The <em>loners</em> who don't fit any group</div>
+  <div class="illus">
+    <div class="illus-cap">Some points belong to no crowd — forcing them in ruins the groups</div>
+    <svg viewBox="0 0 680 150" class="viz-svg" style="max-height:150px">
+      <g>
+        <ellipse cx="170" cy="80" rx="80" ry="46" fill="var(--accent)" opacity="0.10" stroke="var(--accent)"/>
+        <circle cx="150" cy="70" r="7" fill="var(--accent)"/><circle cx="185" cy="85" r="7" fill="var(--accent)"/><circle cx="160" cy="95" r="7" fill="var(--accent)"/><circle cx="195" cy="65" r="7" fill="var(--accent)"/><circle cx="135" cy="88" r="7" fill="var(--accent)"/>
+        <circle class="anim-pulse" cx="470" cy="45" r="9" fill="var(--coral)"/><text x="470" y="32" font-size="10" fill="var(--coral)" font-family="monospace" text-anchor="middle">loner 🤔</text>
+        <circle class="anim-pulse" cx="600" cy="115" r="9" fill="var(--coral)"/>
+        <text x="470" y="100" font-size="10" fill="var(--text3)" font-family="monospace">a good method says:</text>
+        <text x="470" y="116" font-size="10" fill="var(--text3)" font-family="monospace">"this one belongs to nobody (−1)"</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>When you sort the LEGO, you'll find a weird single piece that isn't a wheel, a brick, or a person — maybe a sticker or a stray marble. Jamming it into the "bricks" pile just because you <em>have</em> to is silly. A smart sorter says "this one's a loner, leave it aside." Spotting the odd-one-out is often the <em>most</em> interesting thing you find.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>The loners are frequently the whole point: the credit-card transaction that fits no normal pattern (fraud), the machine sensor reading unlike any other (about to fail), the patient whose results match no typical group. K-Means is forced to dump every loner into <em>some</em> cluster, which both hides the anomaly and pollutes the group. Density methods can label them "noise" instead — and that label is gold.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Outliers / anomalies.</strong> K-Means has no concept of noise — every point gets a cluster, so outliers drag centroids around. <strong>DBSCAN/HDBSCAN</strong> label points that belong to no dense region as <strong>−1 (noise)</strong>, which doubles as unsupervised <strong>anomaly detection</strong>. Always report the noise fraction and decide whether to quarantine or assign it.</p></div></div>
+  </div>
+  <p class="fun">😄 K-Means is the host who insists every guest join a table, even the one who wandered in from the wedding next door. DBSCAN lets them stand awkwardly by the snacks — which is honestly the right call.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#adv-anomaly" target="_blank">Go deeper → outliers &amp; anomaly detection ↗</a>
+</div>
+</section>
+<section class="section" id="goodbad">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 7</div>
+  <div class="section-title">Are these groups any <em>good</em>?</div>
+  <div class="illus">
+    <div class="illus-cap">Good groups: tight inside, far apart from each other</div>
+    <svg viewBox="0 0 680 150" class="viz-svg" style="max-height:150px">
+      <g font-family="monospace" font-size="10">
+        <text x="160" y="22" fill="var(--green)" text-anchor="middle">✓ good — tight &amp; far apart</text>
+        <circle cx="110" cy="80" r="22" fill="var(--accent)" opacity="0.5"/><circle cx="220" cy="85" r="22" fill="var(--teal)" opacity="0.5"/>
+        <line x1="132" y1="80" x2="198" y2="84" stroke="var(--text3)"/><text x="165" y="74" fill="var(--text3)" text-anchor="middle">big gap</text>
+        <text x="520" y="22" fill="var(--coral)" text-anchor="middle">✗ bad — fuzzy &amp; overlapping</text>
+        <circle cx="500" cy="80" r="34" fill="var(--accent)" opacity="0.4"/><circle cx="545" cy="85" r="34" fill="var(--coral)" opacity="0.4"/>
+        <text x="522" y="135" fill="var(--coral)" text-anchor="middle">where does one end?</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>How do you know your piles are good piles? Two simple tests. (1) Everything in a pile should be <em>really</em> similar to its pile-mates (tight). (2) Different piles should be clearly <em>different</em> from each other (far apart). If two piles blur into each other so you can't tell where one ends, they probably should've been one pile. Tight inside, far apart outside — that's a good grouping.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>There's no answer key for clusters, so you can't measure "accuracy." Instead you score tightness-and-separation with a single number, and — just as important — you check the groups are <em>stable</em> (re-run on slightly different data; do roughly the same groups appear?) and <em>meaningful</em> (can a human name each one and act on it?). A statistically gorgeous cluster nobody can describe is useless.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Internal validation</strong> with no labels: the <strong>silhouette score</strong> (cohesion vs separation, [−1,1]), Davies-Bouldin, Calinski-Harabász — each encodes "tight and separated" differently, so report several. Add <strong>stability</strong> (bootstrap + ARI across runs) and, if you ever have labels, <strong>external</strong> measures (ARI, NMI). And never forget the human test: are the clusters interpretable and actionable?</p></div></div>
+  </div>
+  <p class="fun">😄 A clustering with a great silhouette score but no nameable groups is like a beautifully organised drawer where every item is labelled "stuff." Tidy. Useless.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#evaluation" target="_blank">Go deeper → silhouette, DBI, CH, stability &amp; ARI/NMI ↗</a>
+</div>
+</section>
+
+<section class="section" id="words">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 8</div>
+  <div class="section-title">Clustering <em>words</em> and <em>pictures</em>, not just numbers</div>
+  <div class="illus">
+    <div class="illus-cap">Turn each sentence into a "meaning point," then cluster those points</div>
+    <svg viewBox="0 0 680 150" class="viz-svg" style="max-height:150px">
+      <g font-family="monospace" font-size="9">
+        <text x="20" y="50" fill="var(--text2)">"great phone 📱"</text>
+        <text x="20" y="80" fill="var(--text2)">"awesome handset"</text>
+        <text x="20" y="110" fill="var(--text2)">"terrible battery"</text>
+        <text x="250" y="80" font-size="18">→ 🧠 embed →</text>
+        <text x="380" y="20" fill="var(--text3)">meaning-space (similar meaning = near)</text>
+        <circle cx="470" cy="55" r="7" fill="var(--accent)"/><circle cx="495" cy="65" r="7" fill="var(--accent)"/>
+        <ellipse cx="482" cy="60" rx="35" ry="24" fill="var(--accent)" opacity="0.12" stroke="var(--accent)"/><text x="482" y="100" fill="var(--accent)" text-anchor="middle">praise</text>
+        <circle cx="600" cy="110" r="7" fill="var(--coral)"/><text x="600" y="95" fill="var(--coral)" text-anchor="middle">complaint</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>How do you put <em>sentences</em> into piles? "Great phone" and "awesome handset" mean almost the same thing but share no words. The trick: a clever model reads each sentence and drops a dot on a giant "meaning map," so things that <em>mean</em> the same land near each other — even with totally different words. Now you just cluster the dots like before. Same magic works for photos: similar pictures land near each other.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>This is how you auto-discover the themes in a million reviews, support tickets, or news articles without reading them. Convert each text to a "meaning point" (an embedding), squish the map down a bit, then cluster — and you get topics like "delivery complaints," "praise for battery," "refund requests" with their top words attached. It's the dominant way clustering is done on text and images in 2026.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Embedding-based clustering.</strong> Encode items with a pretrained model (<strong>sentence-transformers</strong> for text), reduce dimensions with <strong>UMAP</strong> (cosine), cluster with <strong>HDBSCAN</strong>, then label clusters via <strong>c-TF-IDF</strong> — the <strong>BERTopic</strong> pipeline. Normalise vectors and cluster a 5–15D reduction, never the 2D you drew for the eye.</p></div></div>
+  </div>
+  <p class="fun">😄 Embeddings are like seating guests by vibe instead of by name. "Great phone" and "awesome handset" never met, but they clearly belong at the same table.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#embeddings" target="_blank">Go deeper → the modern embedding stack &amp; BERTopic ↗</a>
+</div>
+</section>
+
+<section class="section" id="toolbox">
+<div class="container">
+  <div class="depth"><span>complexity</span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot on"></span><span class="dot"></span></div>
+  <div class="section-eyebrow">Idea 9</div>
+  <div class="section-title">The whole <em>toolbox</em> — picking the right one</div>
+  <div class="illus">
+    <div class="illus-cap">A rough "which tool when" cheat-map</div>
+    <svg viewBox="0 0 680 170" class="viz-svg" style="max-height:170px">
+      <g font-family="monospace" font-size="9">
+        <rect x="270" y="10" width="140" height="30" rx="6" fill="var(--bg2)" stroke="var(--accent2)"/><text x="340" y="29" fill="var(--text)" text-anchor="middle">Start here</text>
+        <text x="150" y="70" fill="var(--text3)" text-anchor="middle">round-ish blobs,</text><text x="150" y="82" fill="var(--text3)" text-anchor="middle">know how many?</text>
+        <rect x="95" y="95" width="110" height="28" rx="6" fill="var(--accent)" opacity="0.18" stroke="var(--accent)"/><text x="150" y="113" fill="var(--text)" text-anchor="middle">K-Means</text>
+        <text x="340" y="70" fill="var(--text3)" text-anchor="middle">weird shapes /</text><text x="340" y="82" fill="var(--text3)" text-anchor="middle">outliers / unknown K?</text>
+        <rect x="285" y="95" width="110" height="28" rx="6" fill="var(--teal)" opacity="0.18" stroke="var(--teal)"/><text x="340" y="113" fill="var(--text)" text-anchor="middle">DBSCAN / HDBSCAN</text>
+        <text x="540" y="70" fill="var(--text3)" text-anchor="middle">text / images /</text><text x="540" y="82" fill="var(--text3)" text-anchor="middle">soft membership?</text>
+        <rect x="470" y="95" width="140" height="28" rx="6" fill="var(--coral)" opacity="0.18" stroke="var(--coral)"/><text x="540" y="113" fill="var(--text)" text-anchor="middle">Embeddings / GMM</text>
+        <line x1="320" y1="40" x2="160" y2="62" stroke="var(--text3)"/><line x1="340" y1="40" x2="340" y2="62" stroke="var(--text3)"/><line x1="360" y1="40" x2="530" y2="62" stroke="var(--text3)"/>
+        <text x="340" y="150" fill="var(--text3)" text-anchor="middle">…and always: scale first, validate, name the groups.</text>
+      </g>
+    </svg>
+  </div>
+  <div class="ladder">
+    <div class="rung rung-kid"><div class="rung-emoji">🧒</div><div class="rung-body"><span class="rung-tag">Like you're 10</span><p>There isn't one magic sorter — there's a toolbox. The flag-dance (K-Means) for tidy round piles. The neighbour-hopping one (DBSCAN) for curvy piles and spotting loners. The meaning-map one for words and pictures. A good sorter doesn't love one tool — they look at the mess first, then pick. The skill is matching the tool to the shape of the problem.</p></div></div>
+    <div class="rung rung-real"><div class="rung-emoji">🛒</div><div class="rung-body"><span class="rung-tag">In the real world</span><p>Customer segments on tidy numeric data? K-Means. Fraud or fault detection? Density methods that flag loners. Topics in reviews? Embeddings + HDBSCAN. Need "this customer is 70% loyalist, 30% bargain-hunter"? A soft method (GMM). Same recipe wraps them all: scale the features, run a couple of candidates, validate, then name and act on the groups.</p></div></div>
+    <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>The families: <strong>centroid</strong> (K-Means), <strong>density</strong> (DBSCAN/HDBSCAN), <strong>distribution</strong> (GMM/EM, soft), <strong>hierarchical</strong> (dendrograms), <strong>spectral</strong> (graph-based), and <strong>deep/embedding</strong> clustering. Selection hinges on cluster shape, whether K is known, noise, scale, and interpretability — captured in the reference's chooser table.</p></div></div>
+  </div>
+  <p class="fun">😄 "I only know K-Means" is the data equivalent of "I only own a hammer." Suddenly every dataset looks like a tidy round nail. Most aren't.</p>
+  <a class="deeper" href="clustering_complete_reference_v2.html#algo-compare" target="_blank">Go deeper → the full algorithm chooser table ↗</a>
+</div>
+</section>
+<section class="section" id="recap">
+<div class="container">
+  <div class="section-eyebrow">The whole climb</div>
+  <div class="section-title">You just climbed the <em>whole staircase</em></div>
+  <p class="section-sub">Nine ideas, each taken from a child's story to a working definition. That's the entire backbone of clustering — you now have the map. Here's the climb in one picture.</p>
+  <div class="illus">
+    <div class="illus-cap">From "tidy the LEGO" to a validated, embedding-powered clustering system</div>
+    <svg viewBox="0 0 680 215" class="viz-svg" style="max-height:215px">
+      <g font-family="monospace" font-size="9">
+        <line class="anim-rise" x1="40" y1="195" x2="100" y2="195" stroke="var(--green)" stroke-width="10"/><text x="110" y="198" fill="var(--text2)">1 · what clustering is</text>
+        <line class="anim-rise" x1="40" y1="177" x2="118" y2="177" stroke="var(--green)" stroke-width="10" style="animation-delay:.1s"/><text x="128" y="180" fill="var(--text2)">2 · "close" needs a ruler (+ scaling)</text>
+        <line class="anim-rise" x1="40" y1="159" x2="136" y2="159" stroke="var(--teal)" stroke-width="10" style="animation-delay:.2s"/><text x="146" y="162" fill="var(--text2)">3 · the K-Means dance</text>
+        <line class="anim-rise" x1="40" y1="141" x2="154" y2="141" stroke="var(--teal)" stroke-width="10" style="animation-delay:.3s"/><text x="164" y="144" fill="var(--text2)">4 · how many groups (elbow / silhouette)</text>
+        <line class="anim-rise" x1="40" y1="123" x2="172" y2="123" stroke="var(--accent)" stroke-width="10" style="animation-delay:.4s"/><text x="182" y="126" fill="var(--text2)">5 · weird shapes → density / spectral</text>
+        <line class="anim-rise" x1="40" y1="105" x2="190" y2="105" stroke="var(--accent)" stroke-width="10" style="animation-delay:.5s"/><text x="200" y="108" fill="var(--text2)">6 · loners = outliers / anomalies</text>
+        <line class="anim-rise" x1="40" y1="87" x2="208" y2="87" stroke="var(--accent)" stroke-width="10" style="animation-delay:.6s"/><text x="218" y="90" fill="var(--text2)">7 · are the groups good? (validate + name)</text>
+        <line class="anim-rise" x1="40" y1="69" x2="232" y2="69" stroke="var(--accent2)" stroke-width="10" style="animation-delay:.7s"/><text x="242" y="72" fill="var(--text2)">8 · cluster words &amp; pictures (embeddings)</text>
+        <line class="anim-rise" x1="40" y1="51" x2="256" y2="51" stroke="var(--accent2)" stroke-width="10" style="animation-delay:.8s"/><text x="266" y="54" fill="var(--text2)">9 · pick the right tool from the box</text>
+        <text x="40" y="30" fill="var(--accent2)" font-size="11">🎓 …and now you can read the real science.</text>
+      </g>
+    </svg>
+  </div>
+  <h3 style="margin-top:10px">Where to go next</h3>
+  <div class="grid3">
+    <div class="card"><h4>🧒→🎓 You are here</h4><p style="font-size:13px">The Intuition Guide. Come back any time a concept stops making sense — the green box is always the gentle reset.</p></div>
+    <a class="card" href="clustering_complete_reference_v2.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--accent)">📘 The Reference →</h4><p style="font-size:13px">Now the ideas click: the rigorous version — math, code, 80 Q&amp;A, 12 sections, all the depth.</p></a>
+    <a class="card" href="clustering_projects_guide_v2.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--teal)">🛠️ The Projects →</h4><p style="font-size:13px">Ready to build? Five hands-on projects on real data — from mall segmentation to an MLOps clustering system.</p></a>
+  </div>
+  <div class="alert alert-success" style="margin-top:18px"><strong>The one thing to remember:</strong> clustering is finding the natural groups in data when nobody gave you the labels — and the whole craft is (1) defining "similar" honestly (scale your features!), (2) picking a tool that matches the shape of your data, and (3) checking the groups are tight, stable, and <em>nameable</em>. Everything else is detail. Fascinating, career-spanning detail — but detail.</div>
+</div>
+</section>
+
+<footer style="padding:48px 0;text-align:center">
+  <div class="container">
+    <p style="font-size:14px;color:var(--text2)">The trilogy, in order:</p>
+    <p style="font-size:14px;color:var(--text3);margin-top:6px">🧒 <strong style="color:var(--text)">Intuition</strong> (you're here) &nbsp;→&nbsp; <a class="cite" href="clustering_complete_reference_v2.html" target="_blank">📘 Reference</a> &nbsp;→&nbsp; <a class="cite" href="clustering_projects_guide_v2.html" target="_blank">🛠️ Projects</a></p>
+    <p style="font-size:12px;color:var(--text3);margin-top:22px">Clustering · The Intuition Guide · 2026 · explained from age 10 to PhD, one staircase at a time.</p>
+  </div>
+</footer>
+</div>
+</div>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<script>
+function toggleTheme(){const d=document.documentElement,b=document.getElementById('theme-btn');if(d.getAttribute('data-theme')==='dark'){d.setAttribute('data-theme','light');b.textContent='☀️ Light';localStorage.setItem('theme','light');}else{d.setAttribute('data-theme','dark');b.textContent='🌙 Dark';localStorage.setItem('theme','dark');}}
+(function(){try{const t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');document.getElementById('theme-btn').textContent='☀️ Light';}}catch(e){}})();
+function gotoS(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});}
+const sids=['what','howfar','kmeans','howmany','shapes','loners','goodbad','words','toolbox','recap'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
+});
+</script>
+</body></html>

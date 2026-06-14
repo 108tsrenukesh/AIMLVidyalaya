@@ -31,7 +31,7 @@ export default function ResetPasswordPage() {
     return (
       <div className="auth-page">
         <div className="auth-card">
-          <div className="auth-logo">V</div>
+          <img src="/logo.svg" alt="Vidyalaya" className="auth-logo" />
           <h1>Password reset</h1>
           <p className="auth-subtitle">Your password has been reset successfully.</p>
           <Link to="/login" className="btn-primary" style={{ textAlign: 'center', display: 'block' }}>
