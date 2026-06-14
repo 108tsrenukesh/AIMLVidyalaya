@@ -20,6 +20,9 @@ export default function ContentLibrary() {
 
   return (
     <div className="content-library">
+      <button className="library-back" onClick={() => navigate('/')}>
+        ← Home
+      </button>
       <div className="library-header">
         <h1>Topics</h1>
         <p>Choose a topic to start learning</p>

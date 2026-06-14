@@ -1,50 +1,16 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
-import { logout, type User } from '../utils/auth'
 
-export default function Layout({ user, onLogout }: { user: User; onLogout: () => void }) {
+export default function Layout() {
   const navigate = useNavigate()
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
   })
-  const [deferredPrompt, setDeferredPrompt] = useState<any>(null)
-  const [showInstall, setShowInstall] = useState(false)
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
     localStorage.setItem('theme', theme)
   }, [theme])
-
-  useEffect(() => {
-    const handler = (e: any) => {
-      e.preventDefault()
-      setDeferredPrompt(e)
-      setShowInstall(true)
-    }
-    window.addEventListener('beforeinstallprompt', handler)
-
-    if (window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone) {
-      setShowInstall(false)
-    }
-
-    return () => window.removeEventListener('beforeinstallprompt', handler)
-  }, [])
-
-  const handleInstall = async () => {
-    if (!deferredPrompt) return
-    deferredPrompt.prompt()
-    const { outcome } = await deferredPrompt.userChoice
-    if (outcome === 'accepted') {
-      setShowInstall(false)
-    }
-    setDeferredPrompt(null)
-  }
-
-  const handleLogout = () => {
-    logout()
-    onLogout()
-    navigate('/login')
-  }
 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
@@ -55,13 +21,6 @@ export default function Layout({ user, onLogout }: { user: User; onLogout: () =>
           <img src={`${import.meta.env.BASE_URL}vidyalaya-logo.png`} alt="Vidyalaya" className="brand-logo" />
         </div>
         <div className="header-right">
-          {showInstall && (
-            <button className="install-btn" onClick={handleInstall} title="Install App">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M12 5v14M5 12l7 7 7-7" />
-              </svg>
-            </button>
-          )}
           <button className="theme-toggle" onClick={toggleTheme}>
             {theme === 'dark' ? (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -81,8 +40,6 @@ export default function Layout({ user, onLogout }: { user: User; onLogout: () =>
               </svg>
             )}
           </button>
-          <span className="user-name">{user.username}</span>
-          <button className="btn-logout" onClick={handleLogout}>Logout</button>
         </div>
       </header>
       <main className="app-main">
