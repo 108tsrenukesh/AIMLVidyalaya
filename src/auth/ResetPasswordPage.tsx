@@ -13,10 +13,6 @@ export default function ResetPasswordPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
-    if (newPassword.length < 6) {
-      setError('Password must be at least 6 characters')
-      return
-    }
     setLoading(true)
     const result = await resetPassword(username, recoveryCode, newPassword)
     setLoading(false)
@@ -66,7 +62,7 @@ export default function ResetPasswordPage() {
               type="text"
               value={recoveryCode}
               onChange={(e) => setRecoveryCode(e.target.value)}
-              placeholder="XXXX-XXXX-XXXX-XXXX"
+              placeholder="XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX-XXXX"
               required
             />
           </div>
@@ -76,7 +72,7 @@ export default function ResetPasswordPage() {
               type="password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              placeholder="Min 6 characters"
+              placeholder="8+ chars, upper, lower, digit"
               required
             />
           </div>

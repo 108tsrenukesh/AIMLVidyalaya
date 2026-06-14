@@ -17,10 +17,6 @@ export default function RegisterPage({ onRegister }: { onRegister: (user: User) 
       setError('Passwords do not match')
       return
     }
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters')
-      return
-    }
     setLoading(true)
     const result = await register(username, password)
     setLoading(false)
@@ -81,7 +77,7 @@ export default function RegisterPage({ onRegister }: { onRegister: (user: User) 
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Min 6 characters"
+              placeholder="8+ chars, upper, lower, digit"
               required
             />
           </div>

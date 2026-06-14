@@ -77,7 +77,7 @@ export default function ContentViewer() {
               srcDoc={htmlContent}
               className="content-iframe"
               title="Content"
-              sandbox="allow-scripts allow-same-origin"
+              sandbox="allow-scripts"
             />
             <div className="viewer-nav">
               {prevFile ? (

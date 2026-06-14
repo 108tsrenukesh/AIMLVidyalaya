@@ -12,8 +12,27 @@ interface StoredUser {
 }
 
 const DB_NAME = 'vidyalaya-auth'
-const DB_VERSION = 1
+const DB_VERSION = 2
 const STORE_NAME = 'users'
+
+const MAX_LOGIN_ATTEMPTS = 5
+const LOGIN_WINDOW_MS = 60_000
+const MAX_RECOVERY_ATTEMPTS = 3
+const RECOVERY_WINDOW_MS = 3_600_000
+
+const rateLimitStore = new Map<string, { count: number; resetAt: number }>()
+
+function checkRateLimit(key: string, maxAttempts: number, windowMs: number): boolean {
+  const now = Date.now()
+  const entry = rateLimitStore.get(key)
+  if (!entry || now > entry.resetAt) {
+    rateLimitStore.set(key, { count: 1, resetAt: now + windowMs })
+    return true
+  }
+  if (entry.count >= maxAttempts) return false
+  entry.count++
+  return true
+}
 
 function openDB(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
@@ -21,7 +40,14 @@ function openDB(): Promise<IDBDatabase> {
     request.onupgradeneeded = () => {
       const db = request.result
       if (!db.objectStoreNames.contains(STORE_NAME)) {
-        db.createObjectStore(STORE_NAME, { keyPath: 'id' })
+        const store = db.createObjectStore(STORE_NAME, { keyPath: 'id' })
+        store.createIndex('username', 'username', { unique: true })
+      } else {
+        const tx = request.transaction!
+        const store = tx.objectStore(STORE_NAME)
+        if (!store.indexNames.contains('username')) {
+          store.createIndex('username', 'username', { unique: true })
+        }
       }
     }
     request.onsuccess = () => resolve(request.result)
@@ -31,9 +57,14 @@ function openDB(): Promise<IDBDatabase> {
 
 async function hashPassword(password: string, salt: string): Promise<string> {
   const encoder = new TextEncoder()
-  const data = encoder.encode(salt + password)
-  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
-  return Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2, '0')).join('')
+  const keyMaterial = await crypto.subtle.importKey(
+    'raw', encoder.encode(password), 'PBKDF2', false, ['deriveBits']
+  )
+  const bits = await crypto.subtle.deriveBits(
+    { name: 'PBKDF2', salt: encoder.encode(salt), iterations: 600_000, hash: 'SHA-256' },
+    keyMaterial, 256
+  )
+  return Array.from(new Uint8Array(bits)).map(b => b.toString(16).padStart(2, '0')).join('')
 }
 
 function generateSalt(): string {
@@ -45,7 +76,7 @@ function generateSalt(): string {
 function generateRecoveryCodes(): string[] {
   const codes: string[] = []
   for (let i = 0; i < 8; i++) {
-    const array = new Uint8Array(4)
+    const array = new Uint8Array(16)
     crypto.getRandomValues(array)
     const code = Array.from(array).map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase().match(/.{4}/g)!.join('-')
     codes.push(code)
@@ -53,16 +84,47 @@ function generateRecoveryCodes(): string[] {
   return codes
 }
 
+function timingSafeEqual(a: string, b: string): boolean {
+  if (a.length !== b.length) return false
+  let result = 0
+  for (let i = 0; i < a.length; i++) {
+    result |= a.charCodeAt(i) ^ b.charCodeAt(i)
+  }
+  return result === 0
+}
+
+function validateUsername(username: string): string | null {
+  if (username.length < 3) return 'Username must be at least 3 characters'
+  if (username.length > 30) return 'Username must be at most 30 characters'
+  if (!/^[a-zA-Z0-9_-]+$/.test(username)) return 'Username can only contain letters, numbers, underscores, and hyphens'
+  return null
+}
+
+function validatePassword(password: string): string | null {
+  if (password.length < 8) return 'Password must be at least 8 characters'
+  if (password.length > 128) return 'Password must be at most 128 characters'
+  if (!/[A-Z]/.test(password)) return 'Password must contain at least one uppercase letter'
+  if (!/[a-z]/.test(password)) return 'Password must contain at least one lowercase letter'
+  if (!/[0-9]/.test(password)) return 'Password must contain at least one digit'
+  return null
+}
+
 export async function register(username: string, password: string): Promise<{ success: boolean; error?: string; recoveryCodes?: string[] }> {
+  const usernameError = validateUsername(username)
+  if (usernameError) return { success: false, error: usernameError }
+
+  const passwordError = validatePassword(password)
+  if (passwordError) return { success: false, error: passwordError }
+
   const db = await openDB()
   const tx = db.transaction(STORE_NAME, 'readwrite')
   const store = tx.objectStore(STORE_NAME)
+  const index = store.index('username')
 
   return new Promise((resolve) => {
-    const getAll = store.getAll()
-    getAll.onsuccess = () => {
-      const existing = getAll.result.find((u: StoredUser) => u.username === username)
-      if (existing) {
+    const getExisting = index.get(username)
+    getExisting.onsuccess = () => {
+      if (getExisting.result) {
         resolve({ success: false, error: 'Username already taken' })
         return
       }
@@ -70,9 +132,7 @@ export async function register(username: string, password: string): Promise<{ su
       const salt = generateSalt()
       hashPassword(password, salt).then((passwordHash) => {
         const recoveryCodes = generateRecoveryCodes()
-        const hashedRecoveryCodes = Promise.all(recoveryCodes.map(code => hashPassword(code, salt)))
-
-        hashedRecoveryCodes.then((codeHashes) => {
+        Promise.all(recoveryCodes.map(code => hashPassword(code, salt))).then((codeHashes) => {
           const user: StoredUser = {
             id: crypto.randomUUID(),
             username,
@@ -93,20 +153,27 @@ export async function register(username: string, password: string): Promise<{ su
 }
 
 export async function login(username: string, password: string): Promise<{ success: boolean; error?: string; user?: User }> {
+  const rateKey = `login:${username}`
+  if (!checkRateLimit(rateKey, MAX_LOGIN_ATTEMPTS, LOGIN_WINDOW_MS)) {
+    return { success: false, error: 'Too many attempts. Please try again in 1 minute.' }
+  }
+
   const db = await openDB()
   const tx = db.transaction(STORE_NAME, 'readonly')
   const store = tx.objectStore(STORE_NAME)
+  const index = store.index('username')
 
   return new Promise((resolve) => {
-    const getAll = store.getAll()
-    getAll.onsuccess = () => {
-      const stored = getAll.result.find((u: StoredUser) => u.username === username)
+    const getStored = index.get(username)
+    getStored.onsuccess = () => {
+      const stored = getStored.result as StoredUser | undefined
       if (!stored) {
         resolve({ success: false, error: 'Invalid credentials' })
         return
       }
       hashPassword(password, stored.salt).then((hash) => {
-        if (hash === stored.passwordHash) {
+        if (timingSafeEqual(hash, stored.passwordHash)) {
+          rateLimitStore.delete(rateKey)
           const user = { id: stored.id, username: stored.username }
           sessionStorage.setItem('currentUser', JSON.stringify(user))
           resolve({ success: true, user })
@@ -119,21 +186,30 @@ export async function login(username: string, password: string): Promise<{ succe
 }
 
 export async function resetPassword(username: string, recoveryCode: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
+  const passwordError = validatePassword(newPassword)
+  if (passwordError) return { success: false, error: passwordError }
+
+  const rateKey = `recovery:${username}`
+  if (!checkRateLimit(rateKey, MAX_RECOVERY_ATTEMPTS, RECOVERY_WINDOW_MS)) {
+    return { success: false, error: 'Too many attempts. Please try again in 1 hour.' }
+  }
+
   const db = await openDB()
   const tx = db.transaction(STORE_NAME, 'readwrite')
   const store = tx.objectStore(STORE_NAME)
+  const index = store.index('username')
 
   return new Promise((resolve) => {
-    const getAll = store.getAll()
-    getAll.onsuccess = () => {
-      const stored = getAll.result.find((u: StoredUser) => u.username === username)
+    const getStored = index.get(username)
+    getStored.onsuccess = () => {
+      const stored = getStored.result as StoredUser | undefined
       if (!stored) {
         resolve({ success: false, error: 'User not found' })
         return
       }
 
       hashPassword(recoveryCode, stored.salt).then((codeHash) => {
-        const codeIndex = stored.recoveryCodes.indexOf(codeHash)
+        const codeIndex = stored.recoveryCodes.findIndex((c: string) => timingSafeEqual(c, codeHash))
         if (codeIndex === -1) {
           resolve({ success: false, error: 'Invalid recovery code' })
           return
@@ -145,6 +221,7 @@ export async function resetPassword(username: string, recoveryCode: string, newP
           store.put(stored)
           tx.oncomplete = () => {
             db.close()
+            rateLimitStore.delete(rateKey)
             resolve({ success: true })
           }
         })
@@ -157,7 +234,9 @@ export async function getCurrentUser(): Promise<User | null> {
   const stored = sessionStorage.getItem('currentUser')
   if (!stored) return null
   try {
-    return JSON.parse(stored)
+    const user = JSON.parse(stored)
+    if (!user || !user.id || !user.username) return null
+    return user
   } catch {
     return null
   }
