@@ -77,12 +77,12 @@ html, body, #root {
    AUTH PAGES — Login, Register, Reset
    ========================================== */
 .auth-page {
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  padding: 20px;
+  padding: 20px 20px 60px;
   background: linear-gradient(135deg, #04152d 0%, #0b2455 30%, #0d1b3a 60%, #1a0a30 100%);
   position: relative;
   overflow: hidden;
@@ -201,14 +201,12 @@ html, body, #root {
 /* Waves */
 .wave-bg {
   position: absolute;
-  bottom: 0;
+  bottom: -20px;
   left: 0;
   width: 100%;
   height: 55%;
   pointer-events: none;
   z-index: 1;
-  mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 80%, transparent 100%);
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 80%, transparent 100%);
 }
 
 .wave-left {
@@ -236,6 +234,7 @@ html, body, #root {
   max-width: 440px;
   box-shadow: 0 8px 40px rgba(0,0,0,0.3);
   margin: 0 auto;
+  flex-shrink: 0;
 }
 
 .auth-logo {
@@ -419,36 +418,37 @@ html, body, #root {
 /* Tagline */
 .tagline {
   position: absolute;
-  bottom: 32px;
+  bottom: 28px;
   left: 0;
   right: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
+  gap: 20px;
   z-index: 10;
 }
 
 .tagline-item {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   font-size: 13px;
-  font-weight: 600;
-  letter-spacing: 2.5px;
-  color: var(--text3);
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: var(--text2);
 }
 
 .tagline-item svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   stroke: var(--accent);
   flex-shrink: 0;
 }
 
 .tagline-dot {
   color: var(--accent);
-  font-size: 8px;
+  font-size: 10px;
+  opacity: 0.6;
 }
 
 /* Recovery codes */
