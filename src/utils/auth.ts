@@ -117,38 +117,47 @@ export async function register(username: string, password: string): Promise<{ su
   if (passwordError) return { success: false, error: passwordError }
 
   const db = await openDB()
-  const tx = db.transaction(STORE_NAME, 'readwrite')
-  const store = tx.objectStore(STORE_NAME)
-  const index = store.index('username')
+
+  const checkUsername = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly')
+      const index = tx.objectStore(STORE_NAME).index('username')
+      const req = index.get(username)
+      req.onsuccess = () => resolve(!!req.result)
+      req.onerror = () => resolve(false)
+    })
+  }
+
+  if (await checkUsername()) {
+    db.close()
+    return { success: false, error: 'Username already taken' }
+  }
+
+  const salt = generateSalt()
+  const passwordHash = await hashPassword(password, salt)
+  const recoveryCodes = generateRecoveryCodes()
+  const codeHashes = await Promise.all(recoveryCodes.map(code => hashPassword(code, salt)))
 
   return new Promise((resolve) => {
-    const getExisting = index.get(username)
-    getExisting.onsuccess = () => {
-      if (getExisting.result) {
-        resolve({ success: false, error: 'Username already taken' })
-        return
-      }
-
-      const salt = generateSalt()
-      hashPassword(password, salt).then((passwordHash) => {
-        const recoveryCodes = generateRecoveryCodes()
-        Promise.all(recoveryCodes.map(code => hashPassword(code, salt))).then((codeHashes) => {
-          const user: StoredUser = {
-            id: crypto.randomUUID(),
-            username,
-            passwordHash,
-            salt,
-            recoveryCodes: codeHashes
-          }
-          store.put(user)
-          tx.oncomplete = () => {
-            db.close()
-            sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, username: user.username }))
-            resolve({ success: true, recoveryCodes })
-          }
-        })
-      })
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    const user: StoredUser = {
+      id: crypto.randomUUID(),
+      username,
+      passwordHash,
+      salt,
+      recoveryCodes: codeHashes
     }
+    tx.oncomplete = () => {
+      db.close()
+      sessionStorage.setItem('currentUser', JSON.stringify({ id: user.id, username: user.username }))
+      resolve({ success: true, recoveryCodes })
+    }
+    tx.onerror = () => {
+      db.close()
+      resolve({ success: false, error: 'Registration failed' })
+    }
+    store.put(user)
   })
 }
 
@@ -159,30 +168,33 @@ export async function login(username: string, password: string): Promise<{ succe
   }
 
   const db = await openDB()
-  const tx = db.transaction(STORE_NAME, 'readonly')
-  const store = tx.objectStore(STORE_NAME)
-  const index = store.index('username')
 
-  return new Promise((resolve) => {
-    const getStored = index.get(username)
-    getStored.onsuccess = () => {
-      const stored = getStored.result as StoredUser | undefined
-      if (!stored) {
-        resolve({ success: false, error: 'Invalid credentials' })
-        return
-      }
-      hashPassword(password, stored.salt).then((hash) => {
-        if (timingSafeEqual(hash, stored.passwordHash)) {
-          rateLimitStore.delete(rateKey)
-          const user = { id: stored.id, username: stored.username }
-          sessionStorage.setItem('currentUser', JSON.stringify(user))
-          resolve({ success: true, user })
-        } else {
-          resolve({ success: false, error: 'Invalid credentials' })
-        }
-      })
-    }
-  })
+  const fetchUser = (): Promise<StoredUser | undefined> => {
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly')
+      const index = tx.objectStore(STORE_NAME).index('username')
+      const req = index.get(username)
+      req.onsuccess = () => resolve(req.result)
+      req.onerror = () => resolve(undefined)
+    })
+  }
+
+  const stored = await fetchUser()
+  db.close()
+
+  if (!stored) {
+    return { success: false, error: 'Invalid credentials' }
+  }
+
+  const hash = await hashPassword(password, stored.salt)
+  if (timingSafeEqual(hash, stored.passwordHash)) {
+    rateLimitStore.delete(rateKey)
+    const user = { id: stored.id, username: stored.username }
+    sessionStorage.setItem('currentUser', JSON.stringify(user))
+    return { success: true, user }
+  }
+
+  return { success: false, error: 'Invalid credentials' }
 }
 
 export async function resetPassword(username: string, recoveryCode: string, newPassword: string): Promise<{ success: boolean; error?: string }> {
@@ -195,38 +207,47 @@ export async function resetPassword(username: string, recoveryCode: string, newP
   }
 
   const db = await openDB()
-  const tx = db.transaction(STORE_NAME, 'readwrite')
-  const store = tx.objectStore(STORE_NAME)
-  const index = store.index('username')
+
+  const fetchUser = (): Promise<StoredUser | undefined> => {
+    return new Promise((resolve) => {
+      const tx = db.transaction(STORE_NAME, 'readonly')
+      const index = tx.objectStore(STORE_NAME).index('username')
+      const req = index.get(username)
+      req.onsuccess = () => resolve(req.result)
+      req.onerror = () => resolve(undefined)
+    })
+  }
+
+  const stored = await fetchUser()
+  if (!stored) {
+    db.close()
+    return { success: false, error: 'User not found' }
+  }
+
+  const codeHash = await hashPassword(recoveryCode, stored.salt)
+  const codeIndex = stored.recoveryCodes.findIndex((c: string) => timingSafeEqual(c, codeHash))
+  if (codeIndex === -1) {
+    db.close()
+    return { success: false, error: 'Invalid recovery code' }
+  }
+
+  const newHash = await hashPassword(newPassword, stored.salt)
+  stored.recoveryCodes.splice(codeIndex, 1)
+  stored.passwordHash = newHash
 
   return new Promise((resolve) => {
-    const getStored = index.get(username)
-    getStored.onsuccess = () => {
-      const stored = getStored.result as StoredUser | undefined
-      if (!stored) {
-        resolve({ success: false, error: 'User not found' })
-        return
-      }
-
-      hashPassword(recoveryCode, stored.salt).then((codeHash) => {
-        const codeIndex = stored.recoveryCodes.findIndex((c: string) => timingSafeEqual(c, codeHash))
-        if (codeIndex === -1) {
-          resolve({ success: false, error: 'Invalid recovery code' })
-          return
-        }
-
-        hashPassword(newPassword, stored.salt).then((newHash) => {
-          stored.recoveryCodes.splice(codeIndex, 1)
-          stored.passwordHash = newHash
-          store.put(stored)
-          tx.oncomplete = () => {
-            db.close()
-            rateLimitStore.delete(rateKey)
-            resolve({ success: true })
-          }
-        })
-      })
+    const tx = db.transaction(STORE_NAME, 'readwrite')
+    const store = tx.objectStore(STORE_NAME)
+    tx.oncomplete = () => {
+      db.close()
+      rateLimitStore.delete(rateKey)
+      resolve({ success: true })
     }
+    tx.onerror = () => {
+      db.close()
+      resolve({ success: false, error: 'Reset failed' })
+    }
+    store.put(stored)
   })
 }
 

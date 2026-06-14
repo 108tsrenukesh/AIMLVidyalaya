@@ -5,6 +5,26 @@ const CONTENT_DIR = join(process.cwd(), 'content');
 const PUBLIC_CONTENT_DIR = join(process.cwd(), 'public', 'content');
 const MANIFEST_PATH = join(process.cwd(), 'src', 'utils', 'content-manifest.json');
 
+const ABBREVIATIONS = new Set(['ann', 'ml', 'ai', 'dl', 'nlp', 'cnn', 'rnn', 'lstm', 'gpu', 'cpu', 'api', 'db', 'ui', 'ux', 'csv', 'sql', 'pca', 'svm', 'rf', 'xgb', 'gbm', 'knn', 'nn', 'dt', 'ols', 'ar', 'ma', 'arma', 'arima', 'sarima', 'garch', 'var', 'vecm']);
+
+function toTitleCase(str) {
+  return str.split(/\s+/).map(word => {
+    const lower = word.toLowerCase();
+    if (ABBREVIATIONS.has(lower)) return lower.toUpperCase();
+    if (word.length <= 3 && word === word.toUpperCase() && /[A-Z]/.test(word)) return word;
+    return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+  }).join(' ');
+}
+
+function formatFileName(filename) {
+  const cleaned = filename
+    .replace('.html', '')
+    .replace(/^\d+[\.\-\s]*/, '')
+    .replace(/[-_]/g, ' ')
+    .trim();
+  return toTitleCase(cleaned);
+}
+
 function scanContentDir(dir) {
   const topics = [];
   const manifest = {};
@@ -26,17 +46,14 @@ function scanContentDir(dir) {
 
     if (files.length === 0) continue;
 
-    const label = entry.name
-      .split(/[-_\s]+/)
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-      .join(' ');
+    const label = toTitleCase(entry.name.replace(/[-_]/g, ' '));
 
     topics.push({
       name: label,
       path: entry.name,
       type: 'folder',
       children: files.map(f => ({
-        name: f.replace('.html', '').replace(/^\d+[\.\-\s]*/, '').replace(/[-_]/g, ' '),
+        name: formatFileName(f),
         path: `${entry.name}/${f}`,
         type: 'file'
       }))

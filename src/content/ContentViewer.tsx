@@ -50,7 +50,7 @@ export default function ContentViewer() {
           </h3>
         </div>
         <nav className="sidebar-nav">
-          {fileList.map((f) => {
+          {fileList.map((f, i) => {
             const fileName = f.path.split('/')[1]
             const isActive = fileName === currentFile
             return (
@@ -61,6 +61,7 @@ export default function ContentViewer() {
                   navigate(`/content/${topic}/${fileName}`)
                 }}
               >
+                <span className="sidebar-num">{i + 1}</span>
                 {f.name}
               </button>
             )
@@ -77,7 +78,7 @@ export default function ContentViewer() {
               srcDoc={htmlContent}
               className="content-iframe"
               title="Content"
-              sandbox="allow-scripts"
+              sandbox="allow-scripts allow-same-origin"
             />
             <div className="viewer-nav">
               {prevFile ? (
