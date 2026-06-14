@@ -8,3 +8,4 @@ release/
 Thumbs.db
 src/utils/content-manifest.json
 public/content/
+*.tsbuildinfo
