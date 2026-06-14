@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getContentLibrary, getTopicLabel, type ContentItem } from '../utils/content'
 
@@ -10,6 +10,7 @@ export default function ContentViewer() {
   const [htmlContent, setHtmlContent] = useState('')
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const iframeRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
     getContentLibrary().then(setTopics)
@@ -30,6 +31,81 @@ export default function ContentViewer() {
         setLoading(false)
       })
   }, [topic, file])
+
+  const findTopicForFile = useCallback((filename: string): ContentItem | undefined => {
+    return topics.find(t => t.children?.some(c => c.path.split('/')[1] === filename))
+  }, [topics])
+
+  const handleIframeLoad = useCallback(() => {
+    const iframe = iframeRef.current
+    if (!iframe?.contentDocument) return
+
+    const doc = iframe.contentDocument
+
+    doc.addEventListener('click', (e) => {
+      const target = (e.target as HTMLElement).closest('a')
+      if (!target) return
+
+      const href = target.getAttribute('href')
+      if (!href) return
+
+      if (href.startsWith('http://') || href.startsWith('https://')) {
+        const url = new URL(href, doc.baseURI)
+        if (url.origin !== window.location.origin) {
+          e.preventDefault()
+          window.open(href, '_blank', 'noopener')
+          return
+        }
+      }
+
+      if (href.endsWith('.html') || href.includes('.html#')) {
+        e.preventDefault()
+        const filename = href.split('/').pop()!.split('#')[0]
+        const anchor = href.includes('#') ? href.split('#')[1] : null
+
+        const fileTopic = findTopicForFile(filename)
+        if (fileTopic) {
+          navigate(`/content/${fileTopic.path}/${filename}${anchor ? `#${anchor}` : ''}`)
+        }
+        return
+      }
+
+      if (href.startsWith('#')) {
+        e.preventDefault()
+        const el = doc.getElementById(href.slice(1))
+        if (el) el.scrollIntoView({ behavior: 'smooth' })
+        return
+      }
+
+      e.preventDefault()
+    }, true)
+
+    doc.querySelectorAll('a[target="_blank"]').forEach(a => {
+      const href = a.getAttribute('href')
+      if (!href) return
+      if (href.startsWith('http://') || href.startsWith('https://')) {
+        const url = new URL(href, doc.baseURI)
+        if (url.origin === window.location.origin) {
+          a.removeAttribute('target')
+        }
+      } else {
+        a.removeAttribute('target')
+      }
+    })
+
+    if (topic) {
+      const hash = window.location.hash
+      if (hash.includes('#') && !hash.endsWith('#')) {
+        const anchor = hash.split('#').pop()
+        if (anchor) {
+          setTimeout(() => {
+            const el = doc.getElementById(anchor)
+            if (el) el.scrollIntoView({ behavior: 'smooth' })
+          }, 100)
+        }
+      }
+    }
+  }, [topic, findTopicForFile, navigate])
 
   const currentTopic = topics.find(t => t.path === topic)
   const fileList = currentTopic?.children || []
@@ -75,10 +151,12 @@ export default function ContentViewer() {
         ) : (
           <>
             <iframe
+              ref={iframeRef}
               srcDoc={htmlContent}
               className="content-iframe"
               title="Content"
               sandbox="allow-scripts allow-same-origin"
+              onLoad={handleIframeLoad}
             />
             <div className="viewer-nav">
               {prevFile ? (
