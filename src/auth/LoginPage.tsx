@@ -128,7 +128,7 @@ export default function LoginPage({ onLogin }: { onLogin: (user: User) => void }
 
       {/* Login card */}
       <div className="auth-card">
-        <img src="/vidyalaya-logo.png" alt="Vidyalaya" className="auth-logo" onError={(e) => { (e.target as HTMLImageElement).src = '/logo.svg' }} />
+        <img src={`${import.meta.env.BASE_URL}vidyalaya-logo.png`} alt="Vidyalaya" className="auth-logo" onError={(e) => { (e.target as HTMLImageElement).src = `${import.meta.env.BASE_URL}logo.svg` }} />
         <h1>Welcome back</h1>
         <p className="auth-subtitle">Sign in to continue learning</p>
         <form onSubmit={handleSubmit}>

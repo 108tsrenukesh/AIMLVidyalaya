@@ -19,7 +19,7 @@ export default function ContentViewer() {
     if (!topic || !file) return
     setLoading(true)
     setCurrentFile(file)
-    fetch(`/content/${topic}/${file}`)
+    fetch(`${import.meta.env.BASE_URL}content/${topic}/${file}`)
       .then(r => r.text())
       .then(html => {
         setHtmlContent(html)

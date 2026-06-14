@@ -25,7 +25,7 @@ export default function Layout({ user, onLogout }: { user: User; onLogout: () =>
     <div className="app-layout">
       <header className="app-header">
         <div className="header-brand" onClick={() => navigate('/')}>
-          <img src="/vidyalaya-logo.png" alt="Vidyalaya" className="brand-logo" />
+          <img src={`${import.meta.env.BASE_URL}vidyalaya-logo.png`} alt="Vidyalaya" className="brand-logo" />
         </div>
         <div className="header-right">
           <button className="theme-toggle" onClick={toggleTheme}>

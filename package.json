@@ -6,7 +6,7 @@
   "scripts": {
     "content": "node scripts/generate-content.cjs",
     "dev": "node scripts/generate-content.cjs && vite",
-    "build": "node scripts/generate-content.cjs && tsc -b && vite build",
+    "build": "node scripts/generate-content.cjs && tsc -b && vite build && node scripts/postbuild.cjs",
     "preview": "vite preview"
   },
   "dependencies": {
