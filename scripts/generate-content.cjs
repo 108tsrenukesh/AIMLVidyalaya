@@ -42,7 +42,15 @@ function scanContentDir(dir) {
     const topicDir = join(dir, entry.name);
     const files = readdirSync(topicDir)
       .filter(f => f.endsWith('.html'))
-      .sort();
+      .sort((a, b) => {
+        const aBase = a.replace('.html', '').toLowerCase();
+        const bBase = b.replace('.html', '').toLowerCase();
+        const aIsFirst = aBase.includes('visual_primer') || aBase.includes('intuition');
+        const bIsFirst = bBase.includes('visual_primer') || bBase.includes('intuition');
+        if (aIsFirst && !bIsFirst) return -1;
+        if (!aIsFirst && bIsFirst) return 1;
+        return a.localeCompare(b);
+      });
 
     if (files.length === 0) continue;
 
