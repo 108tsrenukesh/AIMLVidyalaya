@@ -583,6 +583,30 @@ html, body, #root {
   height: 16px;
 }
 
+.install-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border2);
+  border-radius: 8px;
+  padding: 6px 10px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: var(--accent);
+  transition: all 0.2s;
+  font-size: 13px;
+}
+
+.install-btn:hover {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: white;
+}
+
+.install-btn svg {
+  width: 16px;
+  height: 16px;
+}
+
 .user-name {
   font-size: 13px;
   color: var(--text2);
@@ -989,6 +1013,10 @@ html, body, #root {
     border-right: none;
   }
 
+  .viewer-sidebar:not(.collapsed):not(.open) {
+    transform: translateX(-100%);
+  }
+
   .content-library { padding: 20px 16px; }
   .topic-grid { grid-template-columns: 1fr; }
   .topic-card { padding: 20px; }
@@ -1016,5 +1044,18 @@ html, body, #root {
     bottom: 16px;
     flex-wrap: wrap;
     justify-content: center;
+  }
+
+  .sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    top: 48px;
+    background: rgba(0,0,0,0.5);
+    z-index: 140;
+  }
+
+  .sidebar-overlay.visible {
+    display: block;
   }
 }

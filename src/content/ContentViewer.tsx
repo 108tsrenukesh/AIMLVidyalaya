@@ -9,8 +9,16 @@ export default function ContentViewer() {
   const [currentFile, setCurrentFile] = useState<string>(file || '')
   const [htmlContent, setHtmlContent] = useState('')
   const [loading, setLoading] = useState(true)
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+  const [isMobile, setIsMobile] = useState(false)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   useEffect(() => {
     getContentLibrary().then(setTopics)
@@ -20,6 +28,7 @@ export default function ContentViewer() {
     if (!topic || !file) return
     setLoading(true)
     setCurrentFile(file)
+    setSidebarOpen(false)
     fetch(`${import.meta.env.BASE_URL}content/${topic}/${file}`)
       .then(r => r.text())
       .then(html => {
@@ -49,27 +58,6 @@ export default function ContentViewer() {
       const href = target.getAttribute('href')
       if (!href) return
 
-      if (href.startsWith('http://') || href.startsWith('https://')) {
-        const url = new URL(href, doc.baseURI)
-        if (url.origin !== window.location.origin) {
-          e.preventDefault()
-          window.open(href, '_blank', 'noopener')
-          return
-        }
-      }
-
-      if (href.endsWith('.html') || href.includes('.html#')) {
-        e.preventDefault()
-        const filename = href.split('/').pop()!.split('#')[0]
-        const anchor = href.includes('#') ? href.split('#')[1] : null
-
-        const fileTopic = findTopicForFile(filename)
-        if (fileTopic) {
-          navigate(`/content/${fileTopic.path}/${filename}${anchor ? `#${anchor}` : ''}`)
-        }
-        return
-      }
-
       if (href.startsWith('#')) {
         e.preventDefault()
         const el = doc.getElementById(href.slice(1))
@@ -77,35 +65,28 @@ export default function ContentViewer() {
         return
       }
 
-      e.preventDefault()
-    }, true)
+      if (href.endsWith('.html') || href.includes('.html#')) {
+        const filename = href.split('/').pop()!.split('#')[0]
+        const anchor = href.includes('#') ? href.split('#')[1] : null
+        const fileTopic = findTopicForFile(filename)
 
-    doc.querySelectorAll('a[target="_blank"]').forEach(a => {
-      const href = a.getAttribute('href')
-      if (!href) return
+        if (fileTopic) {
+          if (target.getAttribute('target') === '_blank') {
+            return
+          }
+          e.preventDefault()
+          navigate(`/content/${fileTopic.path}/${filename}${anchor ? `#${anchor}` : ''}`)
+          return
+        }
+      }
+
       if (href.startsWith('http://') || href.startsWith('https://')) {
-        const url = new URL(href, doc.baseURI)
-        if (url.origin === window.location.origin) {
-          a.removeAttribute('target')
-        }
-      } else {
-        a.removeAttribute('target')
+        e.preventDefault()
+        window.open(href, '_blank', 'noopener')
+        return
       }
-    })
-
-    if (topic) {
-      const hash = window.location.hash
-      if (hash.includes('#') && !hash.endsWith('#')) {
-        const anchor = hash.split('#').pop()
-        if (anchor) {
-          setTimeout(() => {
-            const el = doc.getElementById(anchor)
-            if (el) el.scrollIntoView({ behavior: 'smooth' })
-          }, 100)
-        }
-      }
-    }
-  }, [topic, findTopicForFile, navigate])
+    }, true)
+  }, [topics, findTopicForFile, navigate])
 
   const currentTopic = topics.find(t => t.path === topic)
   const fileList = currentTopic?.children || []
@@ -115,11 +96,14 @@ export default function ContentViewer() {
 
   return (
     <div className="content-viewer">
+      {isMobile && sidebarOpen && (
+        <div className="sidebar-overlay visible" onClick={() => setSidebarOpen(false)} />
+      )}
       <button className="sidebar-toggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
         {sidebarOpen ? '✕' : '☰'}
       </button>
 
-      <aside className={`viewer-sidebar ${sidebarOpen ? '' : 'collapsed'}`}>
+      <aside className={`viewer-sidebar ${isMobile ? (sidebarOpen ? 'open' : 'collapsed') : (sidebarOpen ? '' : 'collapsed')}`}>
         <div className="sidebar-header">
           <h3 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
             ← {getTopicLabel(topic || '')}
@@ -135,6 +119,7 @@ export default function ContentViewer() {
                 className={`sidebar-link ${isActive ? 'active' : ''}`}
                 onClick={() => {
                   navigate(`/content/${topic}/${fileName}`)
+                  setSidebarOpen(false)
                 }}
               >
                 <span className="sidebar-num">{i + 1}</span>
