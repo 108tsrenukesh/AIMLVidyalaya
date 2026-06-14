@@ -201,12 +201,14 @@ html, body, #root {
 /* Waves */
 .wave-bg {
   position: absolute;
-  bottom: -20px;
+  bottom: 0;
   left: 0;
   width: 100%;
   height: 55%;
   pointer-events: none;
   z-index: 1;
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 25%, black 70%, transparent 100%);
 }
 
 .wave-left {
@@ -718,8 +720,8 @@ html, body, #root {
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
-  overflow-y: auto;
-  transition: width 0.25s ease, min-width 0.25s ease;
+  overflow: hidden;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 [data-theme="light"] .viewer-sidebar {
@@ -728,9 +730,12 @@ html, body, #root {
 
 .viewer-sidebar.collapsed {
   width: 0;
-  min-width: 0;
   border-right: none;
-  overflow: hidden;
+}
+
+.viewer-sidebar .sidebar-header,
+.viewer-sidebar .sidebar-nav {
+  min-width: 260px;
 }
 
 .sidebar-header {
