@@ -2,6 +2,124 @@ import { useState, useEffect, useRef, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getContentLibrary, getTopicLabel, type ContentItem } from '../utils/content'
 
+/* ------------------------------------------------------------------ *
+ * App-level section navigation + live theme sync
+ *
+ * - Sections: read every <section class="section" id="..."> from the lesson
+ *   and render them in the sidebar under the active lesson (works for all
+ *   nine lessons; Clustering/Forecasting lacked their own mobile menu).
+ * - Theme: the lessons have a [data-theme="light"] palette but no longer their
+ *   own toggle (we hide it). We mirror the APP's theme into each lesson and keep
+ *   it in sync live, and soften the lessons' light palette so it isn't glaring.
+ *
+ * The iframe is sandbox="allow-scripts allow-same-origin", so the parent can
+ * read and update the iframe document directly.
+ * ------------------------------------------------------------------ */
+
+interface Section {
+  id: string
+  label: string
+}
+
+// CSS injected INTO each lesson:
+//  1) hide the lesson's own nav / theme toggle / internal TOC button
+//  2) soften the light theme — off-white surfaces with real shading instead of
+//     glaring pure white, easier on the eyes and more readable.
+const LESSON_INJECT_CSS = `
+  nav,
+  .theme-toggle,
+  .toc-toggle,
+  .toc-backdrop,
+  .toc { display: none !important; }
+  .main-layout { grid-template-columns: 1fr !important; }
+
+  /* Softer, shaded light theme (overrides the lesson's pure-white defaults).
+     html[...] beats the lesson's [data-theme="light"] on specificity. */
+  html[data-theme="light"] {
+    --bg:      #e7ebf1;   /* page: soft cool grey, not white */
+    --bg2:     #f6f7fa;   /* cards/panels: off-white */
+    --bg3:     #edf0f5;   /* subtle raised surfaces */
+    --bg4:     #dfe4ed;   /* hover / chips */
+    --border:  rgba(15,23,42,0.10);
+    --border2: rgba(15,23,42,0.18);
+    --text:    #1f2733;   /* near-black slate, not harsh #000 */
+    --text2:   #3c4654;
+    --text3:   #69727f;
+    --shadow:  0 2px 14px rgba(15,23,42,0.08);
+  }
+  html[data-theme="light"] body { background: var(--bg); color: var(--text); }
+`
+
+// Styling for our sidebar + section list (lives in the PARENT document, so it
+// can be theme-aware via [data-theme]). Also fixes sidebar scrolling.
+const SECTION_LIST_CSS = `
+  /* make the sidebar's list area actually scroll */
+  .content-viewer .sidebar-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 88px;
+  }
+
+  .vy-section-block { margin: 2px 0 14px 24px; }
+  .vy-section-head {
+    display: flex; align-items: center; gap: 8px; width: 100%;
+    background: none; border: 0; cursor: pointer; font: inherit;
+    font-size: 10.5px; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--text3, #6b7594); padding: 6px 8px; border-radius: 8px;
+    transition: color .15s, background .15s;
+  }
+  .vy-section-head:hover { color: var(--text2, #b0bace); background: rgba(255,255,255,0.04); }
+  .vy-chevron { font-size: 9px; width: 10px; flex-shrink: 0; }
+  .vy-count { margin-left: auto; font-size: 10px; opacity: 0.7; font-weight: 600; }
+
+  .vy-section-list {
+    display: flex; flex-direction: column; margin-top: 2px;
+    padding-left: 10px; border-left: 1px solid rgba(255,255,255,0.12);
+  }
+  .vy-section-link {
+    position: relative; text-align: left; background: none; border: 0;
+    cursor: pointer; font: inherit; font-size: 12.5px;
+    color: var(--text2, #b0bace); padding: 7px 10px; border-radius: 8px;
+    line-height: 1.35; transition: color .15s, background .15s;
+  }
+  .vy-section-link:hover { color: var(--text, #f0f2f8); background: rgba(255,255,255,0.05); }
+  .vy-section-link.active {
+    color: var(--accent, #5b8dee); background: rgba(91,141,238,0.14); font-weight: 600;
+  }
+  .vy-section-link.active::before {
+    content: ""; position: absolute; left: -11px; top: 50%;
+    transform: translateY(-50%); width: 2px; height: 16px;
+    border-radius: 2px; background: var(--accent, #5b8dee);
+  }
+
+  /* light-theme variants so the section list stays readable on a light sidebar */
+  [data-theme="light"] .vy-section-list { border-left-color: rgba(15,23,42,0.14); }
+  [data-theme="light"] .vy-section-head:hover { background: rgba(15,23,42,0.05); }
+  [data-theme="light"] .vy-section-link:hover { background: rgba(15,23,42,0.06); color: #1f2733; }
+`
+
+function readAppTheme(): string {
+  if (typeof document !== 'undefined') {
+    return document.documentElement.getAttribute('data-theme') || 'dark'
+  }
+  return 'dark'
+}
+
+function withInjectedCss(html: string): string {
+  const style = `<style id="vidyalaya-shell">${LESSON_INJECT_CSS}</style>`
+  if (html.includes('</head>')) return html.replace('</head>', `${style}</head>`)
+  return style + html
+}
+
+function deriveLabel(section: Element, id: string): string {
+  const heading = section.querySelector('h1, h2, h3, h4, .section-title, [class*="title"]')
+  const text = heading?.textContent?.replace(/\s+/g, ' ').trim()
+  if (text) return text.slice(0, 80)
+  return id.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
+}
+
 export default function ContentViewer() {
   const { topic, file } = useParams()
   const navigate = useNavigate()
@@ -11,6 +129,10 @@ export default function ContentViewer() {
   const [loading, setLoading] = useState(true)
   const [sidebarOpen, setSidebarOpen] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [sections, setSections] = useState<Section[]>([])
+  const [activeSection, setActiveSection] = useState<string>('')
+  const [sectionsCollapsed, setSectionsCollapsed] = useState(false)
+  const [appTheme, setAppTheme] = useState<string>(readAppTheme)
   const iframeRef = useRef<HTMLIFrameElement>(null)
 
   useEffect(() => {
@@ -24,15 +146,39 @@ export default function ContentViewer() {
     getContentLibrary().then(setTopics)
   }, [])
 
+  // Watch the app's theme (set by Layout on <html data-theme>) and track it live.
+  useEffect(() => {
+    const root = document.documentElement
+    const update = () => setAppTheme(root.getAttribute('data-theme') || 'dark')
+    update()
+    const obs = new MutationObserver(update)
+    obs.observe(root, { attributes: true, attributeFilter: ['data-theme'] })
+    return () => obs.disconnect()
+  }, [])
+
+  // Push the current theme into the lesson iframe whenever it changes or reloads.
+  useEffect(() => {
+    const doc = iframeRef.current?.contentDocument
+    if (!doc) return
+    try {
+      doc.documentElement.setAttribute('data-theme', appTheme)
+    } catch {
+      /* ignore */
+    }
+  }, [appTheme, htmlContent, loading])
+
   useEffect(() => {
     if (!topic || !file) return
     setLoading(true)
     setCurrentFile(file)
     setSidebarOpen(false)
+    setSections([])
+    setActiveSection('')
+    setSectionsCollapsed(false)
     fetch(`${import.meta.env.BASE_URL}content/${topic}/${file}`)
-      .then(r => r.text())
-      .then(html => {
-        setHtmlContent(html)
+      .then((r) => r.text())
+      .then((html) => {
+        setHtmlContent(withInjectedCss(html))
         setLoading(false)
       })
       .catch(() => {
@@ -41,61 +187,105 @@ export default function ContentViewer() {
       })
   }, [topic, file])
 
-  const findTopicForFile = useCallback((filename: string): ContentItem | undefined => {
-    return topics.find(t => t.children?.some(c => c.path.split('/')[1] === filename))
-  }, [topics])
+  const findTopicForFile = useCallback(
+    (filename: string): ContentItem | undefined => {
+      return topics.find((t) => t.children?.some((c) => c.path.split('/')[1] === filename))
+    },
+    [topics],
+  )
+
+  const scrollToSection = useCallback(
+    (id: string) => {
+      const doc = iframeRef.current?.contentDocument
+      const el = doc?.getElementById(id)
+      if (el) el.scrollIntoView({ behavior: 'smooth' })
+      if (isMobile) setSidebarOpen(false)
+    },
+    [isMobile],
+  )
 
   const handleIframeLoad = useCallback(() => {
     const iframe = iframeRef.current
-    if (!iframe?.contentDocument) return
+    const doc = iframe?.contentDocument
+    if (!doc) return
 
-    const doc = iframe.contentDocument
+    // apply current app theme immediately on load
+    try {
+      doc.documentElement.setAttribute('data-theme', readAppTheme())
+    } catch {
+      /* ignore */
+    }
 
-    doc.addEventListener('click', (e) => {
-      const target = (e.target as HTMLElement).closest('a')
-      if (!target) return
+    doc.addEventListener(
+      'click',
+      (e) => {
+        const target = (e.target as HTMLElement).closest('a')
+        if (!target) return
+        const href = target.getAttribute('href')
+        if (!href) return
 
-      const href = target.getAttribute('href')
-      if (!href) return
-
-      if (href.startsWith('#')) {
-        e.preventDefault()
-        const el = doc.getElementById(href.slice(1))
-        if (el) el.scrollIntoView({ behavior: 'smooth' })
-        return
-      }
-
-      if (href.endsWith('.html') || href.includes('.html#')) {
-        const filename = href.split('/').pop()!.split('#')[0]
-        const anchor = href.includes('#') ? href.split('#')[1] : null
-        const fileTopic = findTopicForFile(filename)
-
-        if (fileTopic) {
-          if (target.getAttribute('target') === '_blank') {
-            return
-          }
+        if (href.startsWith('#')) {
           e.preventDefault()
-          navigate(`/content/${fileTopic.path}/${filename}${anchor ? `#${anchor}` : ''}`)
+          const el = doc.getElementById(href.slice(1))
+          if (el) el.scrollIntoView({ behavior: 'smooth' })
           return
         }
-      }
 
-      if (href.startsWith('http://') || href.startsWith('https://')) {
-        e.preventDefault()
-        window.open(href, '_blank', 'noopener')
-        return
-      }
-    }, true)
-  }, [topics, findTopicForFile, navigate])
+        if (href.endsWith('.html') || href.includes('.html#')) {
+          const filename = href.split('/').pop()!.split('#')[0]
+          const anchor = href.includes('#') ? href.split('#')[1] : null
+          const fileTopic = findTopicForFile(filename)
+          if (fileTopic) {
+            if (target.getAttribute('target') === '_blank') return
+            e.preventDefault()
+            navigate(`/content/${fileTopic.path}/${filename}${anchor ? `#${anchor}` : ''}`)
+            return
+          }
+        }
 
-  const currentTopic = topics.find(t => t.path === topic)
+        if (href.startsWith('http://') || href.startsWith('https://')) {
+          e.preventDefault()
+          window.open(href, '_blank', 'noopener')
+          return
+        }
+      },
+      true,
+    )
+
+    try {
+      const found = Array.from(doc.querySelectorAll<HTMLElement>('section.section[id]'))
+        .map((el) => ({ id: el.id, label: deriveLabel(el, el.id) }))
+        .filter((s) => s.id)
+      setSections(found)
+
+      if (found.length) {
+        const win = doc.defaultView
+        const spy = () => {
+          let current = found[0].id
+          for (const s of found) {
+            const el = doc.getElementById(s.id)
+            if (el && el.getBoundingClientRect().top <= 120) current = s.id
+          }
+          setActiveSection(current)
+        }
+        spy()
+        win?.addEventListener('scroll', spy, { passive: true })
+      }
+    } catch {
+      setSections([])
+    }
+  }, [findTopicForFile, navigate])
+
+  const currentTopic = topics.find((t) => t.path === topic)
   const fileList = currentTopic?.children || []
-  const currentIndex = fileList.findIndex(f => f.path.split('/')[1] === currentFile)
+  const currentIndex = fileList.findIndex((f) => f.path.split('/')[1] === currentFile)
   const prevFile = currentIndex > 0 ? fileList[currentIndex - 1] : null
   const nextFile = currentIndex < fileList.length - 1 ? fileList[currentIndex + 1] : null
 
   return (
     <div className="content-viewer">
+      <style>{SECTION_LIST_CSS}</style>
+
       {isMobile && sidebarOpen && (
         <div className="sidebar-overlay visible" onClick={() => setSidebarOpen(false)} />
       )}
@@ -103,7 +293,11 @@ export default function ContentViewer() {
         {sidebarOpen ? '✕' : '☰'}
       </button>
 
-      <aside className={`viewer-sidebar ${isMobile ? (sidebarOpen ? 'open' : 'collapsed') : (sidebarOpen ? '' : 'collapsed')}`}>
+      <aside
+        className={`viewer-sidebar ${
+          isMobile ? (sidebarOpen ? 'open' : 'collapsed') : sidebarOpen ? '' : 'collapsed'
+        }`}
+      >
         <div className="sidebar-header">
           <h3 onClick={() => navigate('/')} style={{ cursor: 'pointer' }}>
             ← {getTopicLabel(topic || '')}
@@ -114,17 +308,47 @@ export default function ContentViewer() {
             const fileName = f.path.split('/')[1]
             const isActive = fileName === currentFile
             return (
-              <button
-                key={f.path}
-                className={`sidebar-link ${isActive ? 'active' : ''}`}
-                onClick={() => {
-                  navigate(`/content/${topic}/${fileName}`)
-                  setSidebarOpen(false)
-                }}
-              >
-                <span className="sidebar-num">{i + 1}</span>
-                {f.name}
-              </button>
+              <div key={f.path}>
+                <button
+                  className={`sidebar-link ${isActive ? 'active' : ''}`}
+                  onClick={() => {
+                    navigate(`/content/${topic}/${fileName}`)
+                    setSidebarOpen(false)
+                  }}
+                >
+                  <span className="sidebar-num">{i + 1}</span>
+                  {f.name}
+                </button>
+
+                {isActive && sections.length > 0 && (
+                  <div className="vy-section-block">
+                    <button
+                      className="vy-section-head"
+                      onClick={() => setSectionsCollapsed((c) => !c)}
+                      aria-expanded={!sectionsCollapsed}
+                      aria-label={sectionsCollapsed ? 'Show sections' : 'Hide sections'}
+                    >
+                      <span className="vy-chevron">{sectionsCollapsed ? '▶' : '▼'}</span>
+                      On this page
+                      <span className="vy-count">{sections.length}</span>
+                    </button>
+
+                    {!sectionsCollapsed && (
+                      <div className="vy-section-list">
+                        {sections.map((s) => (
+                          <button
+                            key={s.id}
+                            className={`vy-section-link ${activeSection === s.id ? 'active' : ''}`}
+                            onClick={() => scrollToSection(s.id)}
+                          >
+                            {s.label}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
             )
           })}
         </nav>
@@ -132,7 +356,9 @@ export default function ContentViewer() {
 
       <div className="viewer-content">
         {loading ? (
-          <div className="loading-screen"><div className="loading-spinner" /></div>
+          <div className="loading-screen">
+            <div className="loading-spinner" />
+          </div>
         ) : (
           <>
             <iframe
@@ -145,15 +371,25 @@ export default function ContentViewer() {
             />
             <div className="viewer-nav">
               {prevFile ? (
-                <button className="nav-btn prev" onClick={() => navigate(`/content/${topic}/${prevFile.path.split('/')[1]}`)}>
+                <button
+                  className="nav-btn prev"
+                  onClick={() => navigate(`/content/${topic}/${prevFile.path.split('/')[1]}`)}
+                >
                   ← Previous
                 </button>
-              ) : <div />}
+              ) : (
+                <div />
+              )}
               {nextFile ? (
-                <button className="nav-btn next" onClick={() => navigate(`/content/${topic}/${nextFile.path.split('/')[1]}`)}>
+                <button
+                  className="nav-btn next"
+                  onClick={() => navigate(`/content/${topic}/${nextFile.path.split('/')[1]}`)}
+                >
                   Next →
                 </button>
-              ) : <div />}
+              ) : (
+                <div />
+              )}
             </div>
           </>
         )}
