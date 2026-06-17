@@ -1,11 +1,13 @@
 import { useState, useEffect } from 'react'
 import { Outlet, useNavigate } from 'react-router-dom'
+import { useInstallPrompt } from '../utils/install'
 
 export default function Layout() {
   const navigate = useNavigate()
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
   })
+  const { showInstall, showIosTip, handleInstall, dismissIosTip } = useInstallPrompt()
 
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme)
@@ -18,10 +20,28 @@ export default function Layout() {
     <div className="app-layout">
       <header className="app-header">
         <div className="header-brand" onClick={() => navigate('/')}>
-          <img src={`${import.meta.env.BASE_URL}vidyalaya-logo.png`} alt="Vidyalaya" className="brand-logo" />
+          <img src={`${import.meta.env.BASE_URL}vidyalaya-logo-small.webp`} alt="Vidyalaya" className="brand-logo" />
         </div>
         <div className="header-right">
-          <button className="theme-toggle" onClick={toggleTheme}>
+          {showInstall && (
+            <button className="install-btn" onClick={handleInstall} aria-label="Install Vidyalaya">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+              <span>Install</span>
+            </button>
+          )}
+          {showIosTip && (
+            <button className="ios-tip-btn" onClick={dismissIosTip} aria-label="iOS install instructions">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" />
+                <polyline points="16 6 12 2 8 6" />
+                <line x1="12" y1="2" x2="12" y2="15" />
+              </svg>
+              <span>Install</span>
+            </button>
+          )}
+          <button className="theme-toggle" onClick={toggleTheme} aria-label="Toggle theme">
             {theme === 'dark' ? (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="12" cy="12" r="5" />
@@ -42,6 +62,15 @@ export default function Layout() {
           </button>
         </div>
       </header>
+      {showIosTip && (
+        <div className="ios-install-tip">
+          <div>
+            <strong>Install Vidyalaya</strong>
+            <p>Tap the Share icon, then "Add to Home Screen"</p>
+          </div>
+          <button onClick={dismissIosTip} aria-label="Dismiss install instructions">×</button>
+        </div>
+      )}
       <main className="app-main">
         <Outlet />
       </main>

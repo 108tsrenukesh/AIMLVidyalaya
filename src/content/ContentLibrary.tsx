@@ -28,16 +28,24 @@ export default function ContentLibrary() {
         <p>Choose a topic to start learning</p>
       </div>
       <div className="topic-grid">
-        {topics.map((topic) => (
-          <div key={topic.path} className="topic-card" onClick={() => navigate(`/content/${topic.path}/${topic.children?.[0]?.path.split('/')[1] || ''}`)}>
-            <div className="topic-icon">
-              {topic.path === 'clustering' ? '◎' : '⬡'}
-            </div>
-            <h2>{topic.name}</h2>
-            <p>{getTopicDescription(topic.path)}</p>
-            <div className="topic-count">{topic.children?.length || 0} lessons</div>
-          </div>
-        ))}
+        {topics.map((topic) => {
+          const firstFile = topic.children?.[0]?.path.split('/')[1] || ''
+          return (
+            <button
+              key={topic.path}
+              className="topic-card"
+              onClick={() => navigate(`/content/${topic.path}/${firstFile}`)}
+              aria-label={`Open ${topic.name} topic`}
+            >
+              <div className="topic-icon">
+                {topic.path === 'clustering' ? '◎' : '⬡'}
+              </div>
+              <h2>{topic.name}</h2>
+              <p>{getTopicDescription(topic.path)}</p>
+              <div className="topic-count">{topic.children?.length || 0} lessons</div>
+            </button>
+          )
+        })}
       </div>
     </div>
   )

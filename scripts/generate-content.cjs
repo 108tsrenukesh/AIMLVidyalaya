@@ -1,3 +1,4 @@
+const fs = require('fs');
 const { readdirSync, writeFileSync, copyFileSync, mkdirSync, existsSync, rmSync } = require('fs');
 const { join } = require('path');
 
@@ -23,6 +24,34 @@ function formatFileName(filename) {
     .replace(/[-_]/g, ' ')
     .trim();
   return toTitleCase(cleaned);
+}
+
+function validateUniqueIds(filePath) {
+  const html = fs.readFileSync(filePath, 'utf8');
+  const idMatches = html.matchAll(/id="([^"]+)"/g);
+  const ids = new Map();
+  
+  for (const match of idMatches) {
+    const id = match[1];
+    if (ids.has(id)) {
+      throw new Error(`Duplicate id "${id}" in ${filePath}`);
+    }
+    ids.set(id, true);
+  }
+}
+
+function validateContentIds(dir) {
+  if (!existsSync(dir)) return;
+  
+  const entries = readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const srcPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      validateContentIds(srcPath);
+    } else if (entry.name.endsWith('.html')) {
+      validateUniqueIds(srcPath);
+    }
+  }
 }
 
 function scanContentDir(dir) {
@@ -99,6 +128,7 @@ function copyContentToPublic(srcDir, destDir) {
 }
 
 console.log('Scanning content/ folder...');
+validateContentIds(CONTENT_DIR);
 const { topics, manifest } = scanContentDir(CONTENT_DIR);
 
 writeFileSync(MANIFEST_PATH, JSON.stringify({ topics, topicMeta: manifest }, null, 2));
