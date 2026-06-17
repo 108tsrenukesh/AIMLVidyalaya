@@ -3,17 +3,17 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getContentLibrary, getTopicLabel, type ContentItem } from '../utils/content'
 
 /* ------------------------------------------------------------------ *
- * App-level section navigation + live theme sync
+ * Lesson viewer
+ *  - App-level section navigation (sidebar lists each lesson's sections).
+ *  - Live theme sync into the lesson + softened light palette.
+ *  - In-app cross-lesson links ("Go deeper → …") + scroll to their section.
  *
- * - Sections: read every <section class="section" id="..."> from the lesson
- *   and render them in the sidebar under the active lesson (works for all
- *   nine lessons; Clustering/Forecasting lacked their own mobile menu).
- * - Theme: the lessons have a [data-theme="light"] palette but no longer their
- *   own toggle (we hide it). We mirror the APP's theme into each lesson and keep
- *   it in sync live, and soften the lessons' light palette so it isn't glaring.
+ * The lessons' cross-links use target="_blank" (a leftover from when they were
+ * standalone files). Inside our sandboxed iframe a new tab is blocked, so we
+ * intercept any link pointing to one of our lessons and navigate IN-APP instead,
+ * regardless of target="_blank". True external links still open in a new tab.
  *
- * The iframe is sandbox="allow-scripts allow-same-origin", so the parent can
- * read and update the iframe document directly.
+ * iframe = sandbox="allow-scripts allow-same-origin" → parent can read/update it.
  * ------------------------------------------------------------------ */
 
 interface Section {
@@ -21,10 +21,6 @@ interface Section {
   label: string
 }
 
-// CSS injected INTO each lesson:
-//  1) hide the lesson's own nav / theme toggle / internal TOC button
-//  2) soften the light theme — off-white surfaces with real shading instead of
-//     glaring pure white, easier on the eyes and more readable.
 const LESSON_INJECT_CSS = `
   nav,
   .theme-toggle,
@@ -33,16 +29,15 @@ const LESSON_INJECT_CSS = `
   .toc { display: none !important; }
   .main-layout { grid-template-columns: 1fr !important; }
 
-  /* Softer, shaded light theme (overrides the lesson's pure-white defaults).
-     html[...] beats the lesson's [data-theme="light"] on specificity. */
+  /* Softer, shaded light theme (overrides the lesson's pure-white defaults). */
   html[data-theme="light"] {
-    --bg:      #e7ebf1;   /* page: soft cool grey, not white */
-    --bg2:     #f6f7fa;   /* cards/panels: off-white */
-    --bg3:     #edf0f5;   /* subtle raised surfaces */
-    --bg4:     #dfe4ed;   /* hover / chips */
+    --bg:      #e7ebf1;
+    --bg2:     #f6f7fa;
+    --bg3:     #edf0f5;
+    --bg4:     #dfe4ed;
     --border:  rgba(15,23,42,0.10);
     --border2: rgba(15,23,42,0.18);
-    --text:    #1f2733;   /* near-black slate, not harsh #000 */
+    --text:    #1f2733;
     --text2:   #3c4654;
     --text3:   #69727f;
     --shadow:  0 2px 14px rgba(15,23,42,0.08);
@@ -50,10 +45,7 @@ const LESSON_INJECT_CSS = `
   html[data-theme="light"] body { background: var(--bg); color: var(--text); }
 `
 
-// Styling for our sidebar + section list (lives in the PARENT document, so it
-// can be theme-aware via [data-theme]). Also fixes sidebar scrolling.
 const SECTION_LIST_CSS = `
-  /* make the sidebar's list area actually scroll */
   .content-viewer .sidebar-nav {
     flex: 1 1 auto;
     min-height: 0;
@@ -94,7 +86,6 @@ const SECTION_LIST_CSS = `
     border-radius: 2px; background: var(--accent, #5b8dee);
   }
 
-  /* light-theme variants so the section list stays readable on a light sidebar */
   [data-theme="light"] .vy-section-list { border-left-color: rgba(15,23,42,0.14); }
   [data-theme="light"] .vy-section-head:hover { background: rgba(15,23,42,0.05); }
   [data-theme="light"] .vy-section-link:hover { background: rgba(15,23,42,0.06); color: #1f2733; }
@@ -134,6 +125,8 @@ export default function ContentViewer() {
   const [sectionsCollapsed, setSectionsCollapsed] = useState(false)
   const [appTheme, setAppTheme] = useState<string>(readAppTheme)
   const iframeRef = useRef<HTMLIFrameElement>(null)
+  // Section to scroll to after a cross-lesson link loads a new lesson.
+  const pendingAnchorRef = useRef<string | null>(null)
 
   useEffect(() => {
     const check = () => setIsMobile(window.innerWidth <= 768)
@@ -146,7 +139,6 @@ export default function ContentViewer() {
     getContentLibrary().then(setTopics)
   }, [])
 
-  // Watch the app's theme (set by Layout on <html data-theme>) and track it live.
   useEffect(() => {
     const root = document.documentElement
     const update = () => setAppTheme(root.getAttribute('data-theme') || 'dark')
@@ -156,7 +148,6 @@ export default function ContentViewer() {
     return () => obs.disconnect()
   }, [])
 
-  // Push the current theme into the lesson iframe whenever it changes or reloads.
   useEffect(() => {
     const doc = iframeRef.current?.contentDocument
     if (!doc) return
@@ -209,7 +200,6 @@ export default function ContentViewer() {
     const doc = iframe?.contentDocument
     if (!doc) return
 
-    // apply current app theme immediately on load
     try {
       doc.documentElement.setAttribute('data-theme', readAppTheme())
     } catch {
@@ -224,6 +214,7 @@ export default function ContentViewer() {
         const href = target.getAttribute('href')
         if (!href) return
 
+        // In-page anchor (#section) → scroll within this lesson.
         if (href.startsWith('#')) {
           e.preventDefault()
           const el = doc.getElementById(href.slice(1))
@@ -231,18 +222,28 @@ export default function ContentViewer() {
           return
         }
 
+        // Link to one of our lessons (e.g. "Go deeper → reference.html#methods").
+        // Always navigate IN-APP, even if it has target="_blank".
         if (href.endsWith('.html') || href.includes('.html#')) {
           const filename = href.split('/').pop()!.split('#')[0]
           const anchor = href.includes('#') ? href.split('#')[1] : null
           const fileTopic = findTopicForFile(filename)
           if (fileTopic) {
-            if (target.getAttribute('target') === '_blank') return
             e.preventDefault()
-            navigate(`/content/${fileTopic.path}/${filename}${anchor ? `#${anchor}` : ''}`)
+            // Same lesson + anchor present → just scroll here.
+            if (anchor && doc.getElementById(anchor)) {
+              doc.getElementById(anchor)!.scrollIntoView({ behavior: 'smooth' })
+              return
+            }
+            // Different lesson → navigate, then scroll to the anchor after load.
+            pendingAnchorRef.current = anchor
+            navigate(`/content/${fileTopic.path}/${filename}`)
             return
           }
+          // Not one of our lessons (e.g. an external .html) → fall through.
         }
 
+        // External links → open in a new tab (window.open runs in the parent).
         if (href.startsWith('http://') || href.startsWith('https://')) {
           e.preventDefault()
           window.open(href, '_blank', 'noopener')
@@ -252,6 +253,7 @@ export default function ContentViewer() {
       true,
     )
 
+    // Build the section list for the sidebar.
     try {
       const found = Array.from(doc.querySelectorAll<HTMLElement>('section.section[id]'))
         .map((el) => ({ id: el.id, label: deriveLabel(el, el.id) }))
@@ -273,6 +275,16 @@ export default function ContentViewer() {
       }
     } catch {
       setSections([])
+    }
+
+    // If we arrived here via a cross-lesson link, scroll to the requested section.
+    if (pendingAnchorRef.current) {
+      const targetId = pendingAnchorRef.current
+      pendingAnchorRef.current = null
+      setTimeout(() => {
+        const el = doc.getElementById(targetId)
+        if (el) el.scrollIntoView({ behavior: 'smooth' })
+      }, 80)
     }
   }, [findTopicForFile, navigate])
 
