@@ -8,6 +8,14 @@ const MANIFEST_PATH = join(process.cwd(), 'src', 'utils', 'content-manifest.json
 
 const ABBREVIATIONS = new Set(['ann', 'ml', 'ai', 'dl', 'nlp', 'cnn', 'rnn', 'lstm', 'gpu', 'cpu', 'api', 'db', 'ui', 'ux', 'csv', 'sql', 'pca', 'svm', 'rf', 'xgb', 'gbm', 'knn', 'nn', 'dt', 'ols', 'ar', 'ma', 'arma', 'arima', 'sarima', 'garch', 'var', 'vecm']);
 
+// Real one-line descriptions per topic (folder name -> description).
+// Topics not listed here fall back to "<n> lessons".
+const TOPIC_DESCRIPTIONS = {
+  ann: 'From a single neuron to deep networks — intuition, math, and runnable code.',
+  clustering: 'Find natural groups in unlabeled data, from k-means to embeddings.',
+  forecasting: 'Predict future demand from past patterns — baselines to real methods.',
+};
+
 function toTitleCase(str) {
   return str.split(/\s+/).map(word => {
     const lower = word.toLowerCase();
@@ -30,7 +38,7 @@ function validateUniqueIds(filePath) {
   const html = fs.readFileSync(filePath, 'utf8');
   const idMatches = html.matchAll(/id="([^"]+)"/g);
   const ids = new Map();
-  
+
   for (const match of idMatches) {
     const id = match[1];
     if (ids.has(id)) {
@@ -42,7 +50,7 @@ function validateUniqueIds(filePath) {
 
 function validateContentIds(dir) {
   if (!existsSync(dir)) return;
-  
+
   const entries = readdirSync(dir, { withFileTypes: true });
   for (const entry of entries) {
     const srcPath = join(dir, entry.name);
@@ -98,7 +106,7 @@ function scanContentDir(dir) {
 
     manifest[entry.name] = {
       label,
-      description: `${files.length} lessons`,
+      description: TOPIC_DESCRIPTIONS[entry.name] || `${files.length} lessons`,
       files
     };
   }
