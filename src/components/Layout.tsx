@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
-import { Outlet, useNavigate } from 'react-router-dom'
+import { Outlet, useNavigate, useLocation } from 'react-router-dom'
 import { useInstallPrompt } from '../utils/install'
+import { getTopicLabel } from '../utils/content'
 
 export default function Layout() {
   const navigate = useNavigate()
+  const location = useLocation()
   const [theme, setTheme] = useState<'dark' | 'light'>(() => {
     return (localStorage.getItem('theme') as 'dark' | 'light') || 'dark'
   })
@@ -16,12 +18,27 @@ export default function Layout() {
 
   const toggleTheme = () => setTheme(t => t === 'dark' ? 'light' : 'dark')
 
+  const contentMatch = location.pathname.match(/^\/content\/([^/]+)\//)
+  const currentTopic = contentMatch ? contentMatch[1] : null
+  const topicLabel = currentTopic ? getTopicLabel(currentTopic) : null
+
   return (
     <div className="app-layout">
       <header className="app-header">
-        <div className="header-brand" onClick={() => navigate('/')}>
-          <img src={`${import.meta.env.BASE_URL}vidyalaya-logo-small.webp`} alt="Vidyalaya" className="brand-logo" />
-        </div>
+        {topicLabel ? (
+          <div className="header-left">
+            <button className="header-back" onClick={() => navigate('/library')} aria-label="Back to library">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+            <span className="header-title">{topicLabel}</span>
+          </div>
+        ) : (
+          <div className="header-brand" onClick={() => navigate('/')}>
+            <img src={`${import.meta.env.BASE_URL}vidyalaya-logo-small.webp`} alt="Vidyalaya" className="brand-logo" />
+          </div>
+        )}
         <div className="header-right">
           {showInstall && (
             <button className="install-btn" onClick={handleInstall} aria-label="Install Vidyalaya">
