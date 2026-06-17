@@ -62,6 +62,74 @@ function validateContentIds(dir) {
   }
 }
 
+function collectAllHtmlFiles(dir) {
+  const files = new Set();
+  if (!existsSync(dir)) return files;
+  const entries = readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const full = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      for (const f of collectAllHtmlFiles(full)) files.add(f);
+    } else if (entry.name.endsWith('.html')) {
+      files.add(entry.name);
+    }
+  }
+  return files;
+}
+
+function validateContentStructure(dir) {
+  if (!existsSync(dir)) return;
+
+  const allHtml = collectAllHtmlFiles(dir);
+  const entries = readdirSync(dir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const srcPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      validateContentStructure(srcPath);
+      continue;
+    }
+    if (!entry.name.endsWith('.html')) continue;
+
+    const html = fs.readFileSync(srcPath, 'utf8');
+
+    // Check: at least one <section class="section" id="...">
+    const sectionMatches = [...html.matchAll(/<section\b[^>]*class="[^"]*\bsection\b[^"]*"[^>]*>/gi)];
+    if (sectionMatches.length === 0) {
+      throw new Error(`${srcPath}: lesson has no <section class="section"> elements`);
+    }
+
+    // Check: every <section class="section"> must have an id, and id must be valid
+    for (const m of sectionMatches) {
+      const tag = m[0];
+      const idMatch = tag.match(/\bid="([^"]*)"/);
+      if (!idMatch) {
+        throw new Error(`${srcPath}: <section class="section"> missing id attribute (tag: ${tag.slice(0, 80)})`);
+      }
+      const id = idMatch[1];
+      if (id === '') {
+        throw new Error(`${srcPath}: section has an empty id=""`);
+      }
+      if (/\s/.test(id)) {
+        throw new Error(`${srcPath}: section id "${id}" contains whitespace`);
+      }
+      if (/["']/.test(id)) {
+        throw new Error(`${srcPath}: section id "${id}" contains quotes`);
+      }
+    }
+
+    // Check: broken cross-lesson href="*.html" links (skip external URLs)
+    const linkMatches = [...html.matchAll(/href="([^"#]*\.html)(?:#[^"]*)?"/gi)];
+    for (const m of linkMatches) {
+      const hrefFile = m[1];
+      if (hrefFile.includes('://')) continue; // external URL, skip
+      if (!allHtml.has(hrefFile)) {
+        throw new Error(`${srcPath}: broken cross-lesson link href="${hrefFile}" — file not found under content/`);
+      }
+    }
+  }
+}
+
 function scanContentDir(dir) {
   const topics = [];
   const manifest = {};
@@ -137,6 +205,7 @@ function copyContentToPublic(srcDir, destDir) {
 
 console.log('Scanning content/ folder...');
 validateContentIds(CONTENT_DIR);
+validateContentStructure(CONTENT_DIR);
 const { topics, manifest } = scanContentDir(CONTENT_DIR);
 
 writeFileSync(MANIFEST_PATH, JSON.stringify({ topics, topicMeta: manifest }, null, 2));
