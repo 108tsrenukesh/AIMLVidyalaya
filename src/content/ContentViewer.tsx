@@ -43,6 +43,13 @@ const LESSON_INJECT_CSS = `
     --shadow:  0 2px 14px rgba(15,23,42,0.08);
   }
   html[data-theme="light"] body { background: var(--bg); color: var(--text); }
+
+  /* "Level up" callouts: stack on narrow screens so the link can't squeeze
+     the text into a one-word-per-line column or overflow off the edge. */
+  @media (max-width: 600px) {
+    .levelup { flex-direction: column; align-items: flex-start; }
+    .levelup a { white-space: normal; }
+  }
 `
 
 const SECTION_LIST_CSS = `
