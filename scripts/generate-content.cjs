@@ -14,6 +14,8 @@ const TOPIC_DESCRIPTIONS = {
   ann: 'From a single neuron to deep networks — intuition, math, and runnable code.',
   clustering: 'Find natural groups in unlabeled data, from k-means to embeddings.',
   forecasting: 'Predict future demand from past patterns — baselines to real methods.',
+  boosting_and_bagging: 'Combine many weak models into one strong one — bagging, forests, and boosting.',
+  linear_and_logistic: 'The two workhorse models — predicting numbers and predicting classes.',
 };
 
 function toTitleCase(str) {
