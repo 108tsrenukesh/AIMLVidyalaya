@@ -20,25 +20,16 @@ export default defineConfig({
         start_url: '/AIMLVidyalaya/',
         icons: [
           {
-            src: '/AIMLVidyalaya/favicon.svg',
-            sizes: 'any',
-            type: 'image/svg+xml'
-          },
-          {
-            src: '/AIMLVidyalaya/logo.svg',
-            sizes: 'any',
-            type: 'image/svg+xml',
-            purpose: 'any maskable'
-          },
-          {
             src: '/AIMLVidyalaya/icon-192.png',
             sizes: '192x192',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: '/AIMLVidyalaya/icon-512.png',
             sizes: '512x512',
-            type: 'image/png'
+            type: 'image/png',
+            purpose: 'any'
           },
           {
             src: '/AIMLVidyalaya/icon-512-maskable.png',

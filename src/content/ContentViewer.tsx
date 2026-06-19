@@ -44,11 +44,13 @@ const LESSON_INJECT_CSS = `
   }
   html[data-theme="light"] body { background: var(--bg); color: var(--text); }
 
-  /* "Level up" callouts: stack on narrow screens so the link can't squeeze
-     the text into a one-word-per-line column or overflow off the edge. */
+  /* "Level up" callouts: never let the long link squeeze the description into a
+     one-word-per-line column or overflow off the edge. Allow the row to wrap and
+     the link itself to break; !important overrides the lesson's inline nowrap. */
+  .levelup { flex-wrap: wrap !important; align-items: flex-start !important; }
+  .levelup a { white-space: normal !important; min-width: 0; word-break: break-word; }
   @media (max-width: 600px) {
-    .levelup { flex-direction: column; align-items: flex-start; }
-    .levelup a { white-space: normal; }
+    .levelup { flex-direction: column; }
   }
 `
 
