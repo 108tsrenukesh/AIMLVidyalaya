@@ -524,7 +524,9 @@ a:focus-visible {
 
 .app-main {
   flex: 1;
-  overflow: hidden;
+  min-height: 0;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ==========================================
