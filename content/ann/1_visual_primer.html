@@ -332,7 +332,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>Under the hood, the box isn't memorizing photos. Inside are <strong>millions of tiny dials</strong>, and learning means slowly turning those dials until the guesses match reality. So really: a neural network is just a <strong>guessing machine that tunes its own dials</strong>. Everything else in this guide is about <em>what the dials are</em> and <em>how they get tuned</em>.</p>
-  <div class="levelup">🔬 Want the precise definition, the "when not to use one," and the function-not-a-brain view? <a href="neural_network_foundations.html#intro" target="_blank">Level up → Reference: What is a neural network ↗</a></div>
+  <div class="levelup">🔬 Want the precise definition, the "when not to use one," and the function-not-a-brain view? <a href="2_neural_network_foundations.html#intro" target="_blank">Level up → Reference: What is a neural network ↗</a></div>
 </div></section>
 
 <section class="section" id="neuron"><div class="container">
@@ -377,7 +377,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>That's the whole neuron: multiply each input by its <strong>weight</strong> (how much it matters), add them all up with a <strong>bias</strong> (the baseline), and pass the total along. One neuron is just a simple voter. The magic comes later, when we wire thousands of them together — and when learning gets to <em>change those weights automatically</em>.</p>
-  <div class="levelup">🔬 Ready for <code>z = wᵀx + b</code>, the perceptron, and why one neuron can't solve "XOR"? <a href="neural_network_foundations.html#neuron" target="_blank">Level up → Reference: The neuron ↗</a></div>
+  <div class="levelup">🔬 Ready for <code>z = wᵀx + b</code>, the perceptron, and why one neuron can't solve "XOR"? <a href="2_neural_network_foundations.html#neuron" target="_blank">Level up → Reference: The neuron ↗</a></div>
 </div></section>
 <section class="section" id="activation"><div class="container">
   <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
@@ -422,7 +422,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>This little "decision curve" is the secret that makes deep learning work. Without it, stacking neuron after neuron would just blur into <strong>one big boring straight line</strong> — useless for anything curvy like a face or a voice. The squish (the <strong>non-linearity</strong>) is what lets a pile of simple neurons bend and fold to match messy, real-world patterns. Different curves have names — sigmoid, tanh, ReLU, GELU — but they all do the same job: <em>decide how much signal to pass on.</em></p>
-  <div class="levelup">🔬 Want every activation, its formula, its derivative, and when to use which? <a href="neural_network_foundations.html#activations" target="_blank">Level up → Reference: Activation functions ↗</a></div>
+  <div class="levelup">🔬 Want every activation, its formula, its derivative, and when to use which? <a href="2_neural_network_foundations.html#activations" target="_blank">Level up → Reference: Activation functions ↗</a></div>
 </div></section>
 
 <section class="section" id="forward"><div class="container">
@@ -472,7 +472,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>Pushing the input through every row to get an answer is called the <strong>forward pass</strong>. The beautiful part: nobody tells the middle rows what to look for. They <em>learn</em> that early rows should find simple things (edges, corners) and later rows should combine those into complex things (eyes, faces). "Deep" learning just means <strong>lots of rows</strong>.</p>
-  <div class="levelup">🔬 Want the matrix form, the shapes, and the runnable code? <a href="neural_network_foundations.html#forward" target="_blank">Level up → Reference: Forward propagation ↗</a></div>
+  <div class="levelup">🔬 Want the matrix form, the shapes, and the runnable code? <a href="2_neural_network_foundations.html#forward" target="_blank">Level up → Reference: Forward propagation ↗</a></div>
 </div></section>
 <section class="section" id="loss"><div class="container">
   <div class="climb-meter"><span class="climb-step on">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step">🎓 Trail</span></div>
@@ -512,7 +512,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>That score has a name: the <strong>loss</strong>. It's a single number for "total wrongness," and the entire goal of training is to make it as <strong>small as possible</strong>. Different jobs use different scorekeepers — one kind for predicting numbers (how far off), another for yes/no answers (how confidently wrong). The loss is the thing the network is relentlessly trying to shrink.</p>
-  <div class="levelup">🔬 Want MSE, cross-entropy, and the "match the loss to the task" table? <a href="neural_network_foundations.html#loss" target="_blank">Level up → Reference: Loss functions ↗</a></div>
+  <div class="levelup">🔬 Want MSE, cross-entropy, and the "match the loss to the task" table? <a href="2_neural_network_foundations.html#loss" target="_blank">Level up → Reference: Loss functions ↗</a></div>
 </div></section>
 
 <section class="section" id="gradient"><div class="container">
@@ -555,7 +555,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>Three real names for the three everyday ideas: feeling the slope is the <strong>gradient</strong>; stepping downhill is <strong>gradient descent</strong>; your step size is the <strong>learning rate</strong> — and yes, it really is the single most important setting to get right. This little loop (feel slope → step down → repeat) is <em>how every neural network on Earth learns</em>, from a toy example to a giant language model.</p>
-  <div class="levelup">🔬 Want batches vs SGD, momentum, Adam/AdamW, and the update rule? <a href="neural_network_foundations.html#gradient" target="_blank">Level up → Reference: Gradient descent ↗</a></div>
+  <div class="levelup">🔬 Want batches vs SGD, momentum, Adam/AdamW, and the update rule? <a href="2_neural_network_foundations.html#gradient" target="_blank">Level up → Reference: Gradient descent ↗</a></div>
 </div></section>
 <style>@keyframes flowRev{to{stroke-dashoffset:24}} .wire-rev{stroke-dasharray:6 6;animation:flowRev 1s linear infinite}
 @keyframes lossDrop{0%{opacity:0}10%{opacity:1}100%{opacity:1}}</style>
@@ -600,7 +600,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>The real name is <strong>backpropagation</strong> ("back-prop" to friends). It sends the error backward through the network, layer by layer, working out how much <em>each</em> weight should change to reduce the mistake. The genius is that it <strong>reuses the math from the forward pass</strong>, so even with millions of dials it's fast. Pair it with the downhill-stepping from idea 6, and the network knows both <em>which</em> dials to turn and <em>which way</em>.</p>
-  <div class="levelup">🔬 Want the chain rule, the four equations, and a worked example with real numbers? <a href="neural_network_foundations.html#backprop" target="_blank">Level up → Reference: Backpropagation ↗</a></div>
+  <div class="levelup">🔬 Want the chain rule, the four equations, and a worked example with real numbers? <a href="2_neural_network_foundations.html#backprop" target="_blank">Level up → Reference: Backpropagation ↗</a></div>
 </div></section>
 
 <section class="section" id="training"><div class="container">
@@ -642,7 +642,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <div class="lvl lvl-teen">🎓 One step up the trail</div>
   <p>One trip around the loop on a handful of examples is a <strong>training step</strong>; one full pass over all your data is an <strong>epoch</strong>. Run many epochs and the loss steadily drops — the network is learning. The one catch: you keep a separate <strong>"pop quiz" set</strong> it never trains on, to make sure it's truly learning the idea and not just <em>memorizing</em> the answers (that's called overfitting).</p>
-  <div class="levelup">🔬 Want the real PyTorch training loop, regularization, and the tuning recipe? <a href="neural_network_foundations.html#training" target="_blank">Level up → Reference: Training in practice ↗</a></div>
+  <div class="levelup">🔬 Want the real PyTorch training loop, regularization, and the tuning recipe? <a href="2_neural_network_foundations.html#training" target="_blank">Level up → Reference: Training in practice ↗</a></div>
 </div></section>
 <section class="section" id="next"><div class="container">
   <div class="climb-meter"><span class="climb-step">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step on">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit next</span></div>
@@ -669,8 +669,8 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 
   <h3 style="margin-top:28px">Ready to climb higher?</h3>
   <div class="grid2" style="margin-top:14px">
-    <a href="neural_network_foundations.html" target="_blank" style="text-decoration:none"><div class="card" style="border-color:rgba(139,108,247,.4)"><div class="lvl lvl-sci">🔬 The Summit</div><h4 style="font-size:17px">Reference Guide</h4><p>The same ideas with the real math, the formulas, runnable code, the worked backprop example, pitfalls, and the tuning recipe. Each "level up" link above lands you exactly here.</p><p style="color:#b09aff;font-weight:600;margin-top:8px">Open the Reference →</p></div></a>
-    <a href="projects_guide.html" target="_blank" style="text-decoration:none"><div class="card" style="border-color:rgba(91,141,238,.4)"><div class="lvl lvl-teen">🛠️ Hands-on</div><h4 style="font-size:17px">Projects Guide</h4><p>Build it yourself: a neuron from scratch, a network that learns by your own backprop, then a real digit-recognizer in PyTorch. The best way to make all of this stick.</p><p style="color:#7aabff;font-weight:600;margin-top:8px">Open the Projects →</p></div></a>
+    <a href="2_neural_network_foundations.html" target="_blank" style="text-decoration:none"><div class="card" style="border-color:rgba(139,108,247,.4)"><div class="lvl lvl-sci">🔬 The Summit</div><h4 style="font-size:17px">Reference Guide</h4><p>The same ideas with the real math, the formulas, runnable code, the worked backprop example, pitfalls, and the tuning recipe. Each "level up" link above lands you exactly here.</p><p style="color:#b09aff;font-weight:600;margin-top:8px">Open the Reference →</p></div></a>
+    <a href="3_projects_guide.html" target="_blank" style="text-decoration:none"><div class="card" style="border-color:rgba(91,141,238,.4)"><div class="lvl lvl-teen">🛠️ Hands-on</div><h4 style="font-size:17px">Projects Guide</h4><p>Build it yourself: a neuron from scratch, a network that learns by your own backprop, then a real digit-recognizer in PyTorch. The best way to make all of this stick.</p><p style="color:#7aabff;font-weight:600;margin-top:8px">Open the Projects →</p></div></a>
   </div>
   <div class="alert alert-info" style="margin-top:18px"><strong>Tip:</strong> keep all three files in the same folder — the "level up" links jump straight from a story here to the exact math in the Reference, and on to the matching project.</div>
 </div></section>
@@ -679,7 +679,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
   <div class="container">
     <p style="font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:10px">From pizza to PyTorch. 🍕→🤖</p>
     <p style="max-width:620px;margin:0 auto 22px">You started at "explain like I'm 10" and climbed to the doorstep of the real science. That's the hardest part of any subject — the first honest understanding. The rest is just detail and practice.</p>
-    <a href="neural_network_foundations.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px">🔬 Continue to the Reference Guide</a>
+    <a href="2_neural_network_foundations.html" target="_blank" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px">🔬 Continue to the Reference Guide</a>
     <p style="font-size:12px;color:var(--text3);margin-top:28px;font-family:var(--font-mono)">Neural Networks · The Visual Climb · Start here, climb at your own pace · 2026</p>
   </div>
 </footer>

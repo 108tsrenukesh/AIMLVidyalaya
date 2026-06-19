@@ -180,9 +180,15 @@ export default function ContentViewer() {
 
   const findTopicForFile = useCallback(
     (filename: string): ContentItem | undefined => {
+      // Prefer the current topic if it contains this filename. Lesson filenames
+      // are no longer globally unique (e.g. "3_projects_guide.html" exists in
+      // several topics), and cross-lesson links are always within the same
+      // topic — so resolve against the current topic first, then fall back.
+      const current = topics.find((t) => t.path === topic)
+      if (current?.children?.some((c) => c.path.split('/')[1] === filename)) return current
       return topics.find((t) => t.children?.some((c) => c.path.split('/')[1] === filename))
     },
-    [topics],
+    [topics, topic],
   )
 
   const scrollToSection = useCallback(

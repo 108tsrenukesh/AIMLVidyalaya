@@ -326,7 +326,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,156,246,.1
   </div>
   <div class="nav-actions">
     <button class="theme-btn" onclick="toggleTheme()">☀ Light</button>
-    <a class="ref-link-btn" href="clustering_complete_reference_v2.html">📖 Full Reference →</a>
+    <a class="ref-link-btn" href="2_clustering_complete_reference_v2.html">📖 Full Reference →</a>
   </div>
 </nav>
 
@@ -871,7 +871,7 @@ plt.tight_layout(); plt.savefig(<span class="st">'k_selection.png'</span>, dpi=<
       </div>
 
       <div id="p1-challenges" class="tab-content">
-        <div class="alert alert-info" style="margin-bottom:16px"><strong>These challenges extend Project 1.</strong> Complete the main project first, then pick any challenge below to deepen your understanding. Each links back to the relevant theory in the <a href="clustering_complete_reference_v2.html" style="color:var(--accent)">Complete Reference</a>.</div>
+        <div class="alert alert-info" style="margin-bottom:16px"><strong>These challenges extend Project 1.</strong> Complete the main project first, then pick any challenge below to deepen your understanding. Each links back to the relevant theory in the <a href="2_clustering_complete_reference_v2.html" style="color:var(--accent)">Complete Reference</a>.</div>
         <div class="ex-block">
           <div class="ex-header">
             <div><div class="ex-meta">P1 Challenge 01 · Conceptual · 30 min</div><div class="ex-title">Why does scaling matter? — A calculation exercise</div></div>
@@ -1801,7 +1801,7 @@ bundle = joblib.load(<span class="st">"taxi_zone_model.pkl"</span>)  <span class
     </div>
     <div class="ex-body">Without any reference, draw a diagram showing: initial centroid placement (K-Means++ logic), assignment step, update step, convergence. Annotate with the WCSS formula. Explain convergence in 3 sentences.</div>
     <div class="ex-hint">💡 Think about why WCSS can never increase between iterations — each step is an exact analytical optimum for its sub-problem.</div>
-    <div class="ex-project-link"><span>📖</span><p>Theory reference: <a href="clustering_complete_reference_v2.html#kmeans" style="color:var(--accent)">Complete Reference → K-Means → Algorithm tab</a></p></div>
+    <div class="ex-project-link"><span>📖</span><p>Theory reference: <a href="2_clustering_complete_reference_v2.html#kmeans" style="color:var(--accent)">Complete Reference → K-Means → Algorithm tab</a></p></div>
   </div>
 
   <div class="ex-block">
@@ -1819,7 +1819,7 @@ bundle = joblib.load(<span class="st">"taxi_zone_model.pkl"</span>)  <span class
       <span class="badge b-blue">→ Project 2</span>
     </div>
     <div class="ex-body">Implement silhouette score without sklearn for a 20-point, 2-cluster sample. Formula: s(i) = (b(i) − a(i)) / max(a(i), b(i)). Verify against sklearn. Explain: if a point has s = −0.3, geometrically what does that mean?</div>
-    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#evaluation" style="color:var(--accent)">Complete Reference → Evaluation → Silhouette</a></p></div>
+    <div class="ex-project-link"><span>📖</span><p><a href="2_clustering_complete_reference_v2.html#evaluation" style="color:var(--accent)">Complete Reference → Evaluation → Silhouette</a></p></div>
   </div>
 
   <div class="ex-block">
@@ -1828,7 +1828,7 @@ bundle = joblib.load(<span class="st">"taxi_zone_model.pkl"</span>)  <span class
       <span class="badge b-blue">→ Project 3</span>
     </div>
     <div class="ex-body">Generate <code>make_moons(n_samples=300, noise=0.1)</code>. Run DBSCAN with ε in [0.1, 0.2, 0.3, 0.5, 1.0] × min_samples in [3, 5, 10, 20]. Plot a 5×4 grid. For which combinations does DBSCAN correctly find 2 clusters? What happens at extremes?</div>
-    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#alternates" style="color:var(--accent)">Complete Reference → Algorithms → DBSCAN parameter selection</a></p></div>
+    <div class="ex-project-link"><span>📖</span><p><a href="2_clustering_complete_reference_v2.html#alternates" style="color:var(--accent)">Complete Reference → Algorithms → DBSCAN parameter selection</a></p></div>
   </div>
 
   <div class="ex-block">
@@ -1837,7 +1837,7 @@ bundle = joblib.load(<span class="st">"taxi_zone_model.pkl"</span>)  <span class
       <span class="badge b-amber">→ Project 5</span>
     </div>
     <div class="ex-body">Generate 3-cluster data. Fit K-Means with random_state=1 and random_state=2 — cluster IDs will differ between runs. Use <code>scipy.optimize.linear_sum_assignment</code> on the distance matrix between centroid sets to match labels across runs. Verify: same data points in same "logical" cluster both runs after matching.</div>
-    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#deployment" style="color:var(--accent)">Complete Reference → Deployment → "Hungarian label matching"</a></p></div>
+    <div class="ex-project-link"><span>📖</span><p><a href="2_clustering_complete_reference_v2.html#deployment" style="color:var(--accent)">Complete Reference → Deployment → "Hungarian label matching"</a></p></div>
   </div>
 
   <div class="ex-block">
@@ -1846,7 +1846,7 @@ bundle = joblib.load(<span class="st">"taxi_zone_model.pkl"</span>)  <span class
       <span class="badge b-amber">→ Projects 1, 3</span>
     </div>
     <div class="ex-body">Generate: (a) concentric rings, (b) half-moons, (c) elongated + circular. Run K-Means K=2 on each. Then run DBSCAN. Plot a 2×3 grid. Write 200 words: what geometric assumption does K-Means violate in each case? Why does DBSCAN succeed?</div>
-    <div class="ex-project-link"><span>📖</span><p><a href="clustering_complete_reference_v2.html#kmeans" style="color:var(--accent)">Complete Reference → K-Means → Pros &amp; Cons → "Spherical assumption"</a></p></div>
+    <div class="ex-project-link"><span>📖</span><p><a href="2_clustering_complete_reference_v2.html#kmeans" style="color:var(--accent)">Complete Reference → K-Means → Pros &amp; Cons → "Spherical assumption"</a></p></div>
   </div>
 
   <h3 style="margin-top:32px;margin-bottom:14px">Timed mini-challenges</h3>
@@ -1979,8 +1979,8 @@ GitHub: [link] | Kaggle: [link]
   <div class="container">
     <p style="font-size:14px;color:var(--text3)">Clustering Projects Portfolio Track · 5 Projects · Beginner to Expert · 2026</p>
     <p style="font-size:13px;color:var(--text3);margin-top:6px">K-Means · DBSCAN · HDBSCAN · GMM · NLP Clustering · MLOps · Drift Monitoring</p>
-    <p style="font-size:13px;color:var(--text3);margin-top:6px">Companion: <a href="clustering_complete_reference_v2.html" style="color:var(--accent);text-decoration:none">Complete Reference Guide →</a></p>
-    <p style="font-size:13px;color:var(--text3);margin-top:6px">New here? Start with the gentle <a href="clustering_intuition_guide.html" style="color:var(--accent2);text-decoration:none">🧒 Intuition Guide →</a></p>
+    <p style="font-size:13px;color:var(--text3);margin-top:6px">Companion: <a href="2_clustering_complete_reference_v2.html" style="color:var(--accent);text-decoration:none">Complete Reference Guide →</a></p>
+    <p style="font-size:13px;color:var(--text3);margin-top:6px">New here? Start with the gentle <a href="1_clustering_intuition_guide.html" style="color:var(--accent2);text-decoration:none">🧒 Intuition Guide →</a></p>
   </div>
 </footer>
 

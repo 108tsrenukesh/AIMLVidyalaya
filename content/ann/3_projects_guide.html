@@ -235,7 +235,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
       <div class="hero-stat"><div class="n">2</div><div class="l">datasets</div></div>
       <div class="hero-stat"><div class="n">9</div><div class="l">key code blocks</div></div>
     </div>
-    <div style="margin-top:20px"><a href="neural_network_foundations.html" style="color:var(--accent);font-size:13px;font-family:var(--font-mono);text-decoration:none">← back to the Reference Guide</a></div>
+    <div style="margin-top:20px"><a href="2_neural_network_foundations.html" style="color:var(--accent);font-size:13px;font-family:var(--font-mono);text-decoration:none">← back to the Reference Guide</a></div>
   </div>
 </div>
 
@@ -267,7 +267,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
       <tr class="proj-row" onclick="gotoS('p3')"><td><strong>3</strong></td><td>MLP in PyTorch on MNIST</td><td>Real classifier, autograd, validation</td><td>PyTorch</td><td><span class="qa-difficulty diff-intermediate">intermediate</span></td><td>~2.5h</td></tr>
     </tbody>
   </table>
-  <div class="alert alert-info"><strong>How to use this guide.</strong> Each project has tabs: <em>About</em> (what &amp; why), <em>Build steps</em> (the procedure), <em>Key code</em> (runnable snippets), <em>Expected results</em> (what success looks like), <em>Common errors</em> (and fixes), and <em>Extend it</em> (challenges). Type the code yourself rather than copying — the point is the doing. Concepts link back to the <a href="neural_network_foundations.html" style="color:var(--accent)">reference guide</a>, and when a run misbehaves, work through the <a href="neural_network_foundations.html#tuning" style="color:var(--accent)">tuning &amp; debugging recipe</a>.</div>
+  <div class="alert alert-info"><strong>How to use this guide.</strong> Each project has tabs: <em>About</em> (what &amp; why), <em>Build steps</em> (the procedure), <em>Key code</em> (runnable snippets), <em>Expected results</em> (what success looks like), <em>Common errors</em> (and fixes), and <em>Extend it</em> (challenges). Type the code yourself rather than copying — the point is the doing. Concepts link back to the <a href="2_neural_network_foundations.html" style="color:var(--accent)">reference guide</a>, and when a run misbehaves, work through the <a href="2_neural_network_foundations.html#tuning" style="color:var(--accent)">tuning &amp; debugging recipe</a>.</div>
 </div></section>
 <section class="section" id="datasets"><div class="container">
   <div class="section-eyebrow">Setup</div>
@@ -305,7 +305,7 @@ train = datasets.MNIST(<span class="st">"./data"</span>, train=<span class="kw">
 test  = datasets.MNIST(<span class="st">"./data"</span>, train=<span class="kw">False</span>, download=<span class="kw">True</span>, transform=tf)</div>
     </div>
   </div>
-  <div class="alert alert-warn"><strong>Normalize with training statistics only.</strong> The MNIST mean (0.1307) and std (0.3081) are computed from the training set and applied to both splits — never compute them over the test set, or you leak. This is the most common subtle setup mistake. (See <a href="neural_network_foundations.html#pitfalls" style="color:var(--accent)">Pitfalls → data leakage</a>.)</div>
+  <div class="alert alert-warn"><strong>Normalize with training statistics only.</strong> The MNIST mean (0.1307) and std (0.3081) are computed from the training set and applied to both splits — never compute them over the test set, or you leak. This is the most common subtle setup mistake. (See <a href="2_neural_network_foundations.html#pitfalls" style="color:var(--accent)">Pitfalls → data leakage</a>.)</div>
 </div></section>
 <section class="section" id="p1"><div class="container">
   <div style="display:flex;align-items:center;gap:16px;margin-bottom:8px"><span class="proj-num-big">01</span><div><div class="section-eyebrow" style="margin:0">Project 1 · ~1 hour · <span class="qa-difficulty diff-beginner">beginner</span></div><h2 class="section-title" style="margin:0">Neuron from scratch</h2></div></div>
@@ -323,7 +323,7 @@ test  = datasets.MNIST(<span class="st">"./data"</span>, train=<span class="kw">
   <div class="tab-content active" id="p1-about">
     <h3>What you'll build &amp; why</h3>
     <p>A <code>Neuron</code> class that computes <code>a = σ(wᵀx + b)</code>, plus a small library of activations (<code>relu, sigmoid, tanh, gelu</code>) and their derivatives. You will plot each function and gradient-check the derivatives against finite differences.</p>
-    <p><strong>Why first:</strong> the neuron is the unit every architecture is made of. Implementing it — and proving your derivatives are correct — removes all the mystery before you assemble many of them in Project 2. Pairs with <a href="neural_network_foundations.html#neuron" style="color:var(--accent)">Reference → The neuron</a> and <a href="neural_network_foundations.html#activations" style="color:var(--accent)">Activations</a>.</p>
+    <p><strong>Why first:</strong> the neuron is the unit every architecture is made of. Implementing it — and proving your derivatives are correct — removes all the mystery before you assemble many of them in Project 2. Pairs with <a href="2_neural_network_foundations.html#neuron" style="color:var(--accent)">Reference → The neuron</a> and <a href="2_neural_network_foundations.html#activations" style="color:var(--accent)">Activations</a>.</p>
     <div class="deliverable">A <code>Neuron</code> class with a working forward method</div>
     <div class="deliverable">Four activations + four derivatives</div>
     <div class="deliverable">A gradient-check confirming derivatives to ~1e-6</div>
@@ -388,7 +388,7 @@ num = (sigmoid(z+eps) - sigmoid(z-eps)) / (<span class="num">2</span>*eps)
       <li>Make the neuron classify the AND and OR logic gates by setting weights and bias by hand — then confirm no single neuron can do XOR.</li>
       <li>Vectorize <code>forward</code> to accept a batch <code>(m × n)</code> and return <code>(m,)</code> in one matrix multiply.</li>
     </ul>
-    <a class="ex-project-link" href="neural_network_foundations.html#exercises">→ Related exercises EX-01, EX-05 in the reference guide</a>
+    <a class="ex-project-link" href="2_neural_network_foundations.html#exercises">→ Related exercises EX-01, EX-05 in the reference guide</a>
   </div>
 </div></section>
 <section class="section" id="p2"><div class="container">
@@ -407,7 +407,7 @@ num = (sigmoid(z+eps) - sigmoid(z-eps)) / (<span class="num">2</span>*eps)
   <div class="tab-content active" id="p2-about">
     <h3>What you'll build &amp; why</h3>
     <p>A network: 2 inputs → 4 hidden (ReLU) → 1 output (sigmoid), trained with binary cross-entropy. You implement the forward pass, the full backward pass using the four equations, and the weight-update loop — all in NumPy, no autograd. Then you gradient-check the whole network and train it until it solves XOR.</p>
-    <p><strong>Why it matters:</strong> this is the exact engine inside every deep learning framework, with the cover off. Pairs with <a href="neural_network_foundations.html#forward" style="color:var(--accent)">Forward propagation</a>, <a href="neural_network_foundations.html#backprop" style="color:var(--accent)">Backpropagation</a>, and <a href="neural_network_foundations.html#gradient" style="color:var(--accent)">Gradient descent</a>.</p>
+    <p><strong>Why it matters:</strong> this is the exact engine inside every deep learning framework, with the cover off. Pairs with <a href="2_neural_network_foundations.html#forward" style="color:var(--accent)">Forward propagation</a>, <a href="2_neural_network_foundations.html#backprop" style="color:var(--accent)">Backpropagation</a>, and <a href="2_neural_network_foundations.html#gradient" style="color:var(--accent)">Gradient descent</a>.</p>
     <div class="deliverable">Forward pass with cached intermediates</div>
     <div class="deliverable">Backward pass implementing BP1–BP4 by hand</div>
     <div class="deliverable">A whole-network gradient check that passes</div>
@@ -488,7 +488,7 @@ W1[i,j]+=eps; lp=loss_at(W1,b1,W2,b2); W1[i,j]-=<span class="num">2</span>*eps; 
     <h3>Common errors &amp; fixes</h3>
     <div class="alert alert-danger"><strong>Loss stuck at 0.69, never drops.</strong> Usually a backprop sign/shape bug or zero gradients. Run the gradient check — it pinpoints the exact weight whose analytic gradient is wrong.</div>
     <div class="alert alert-warn"><strong>Shape errors in the matrix multiplies.</strong> Keep targets as <code>(4,1)</code> not <code>(4,)</code>. Print every array's shape through one forward+backward pass; the transpose in <code>a1.T @ dz2</code> is where most mismatches surface.</div>
-    <div class="alert alert-warn"><strong>All hidden units die (a1 all zeros).</strong> Bad init or too-high LR drove every pre-activation negative. Re-seed, confirm He init, or lower the LR. (See <a href="neural_network_foundations.html#pitfalls" style="color:var(--accent)">Pitfalls → dead ReLUs</a>.)</div>
+    <div class="alert alert-warn"><strong>All hidden units die (a1 all zeros).</strong> Bad init or too-high LR drove every pre-activation negative. Re-seed, confirm He init, or lower the LR. (See <a href="2_neural_network_foundations.html#pitfalls" style="color:var(--accent)">Pitfalls → dead ReLUs</a>.)</div>
     <div class="alert alert-warn"><strong>Loss becomes NaN.</strong> You forgot to clip before <code>log</code>, or the LR is far too high. Add the <code>np.clip</code> and reduce the learning rate.</div>
   </div>
 
@@ -500,7 +500,7 @@ W1[i,j]+=eps; lp=loss_at(W1,b1,W2,b2); W1[i,j]-=<span class="num">2</span>*eps; 
       <li>Add mini-batching and train on a larger synthetic 2-D dataset (two interleaving moons).</li>
       <li>Add L2 weight decay to the loss and gradients; observe the effect on the boundary.</li>
     </ul>
-    <a class="ex-project-link" href="neural_network_foundations.html#exercises">→ Related exercises EX-06, EX-07, EX-08 in the reference guide</a>
+    <a class="ex-project-link" href="2_neural_network_foundations.html#exercises">→ Related exercises EX-06, EX-07, EX-08 in the reference guide</a>
   </div>
 </div></section>
 <section class="section" id="p3"><div class="container">
@@ -519,7 +519,7 @@ W1[i,j]+=eps; lp=loss_at(W1,b1,W2,b2); W1[i,j]-=<span class="num">2</span>*eps; 
   <div class="tab-content active" id="p3-about">
     <h3>What you'll build &amp; why</h3>
     <p>A 784 → 256 → 128 → 10 MLP that classifies MNIST digits, trained with AdamW, cross-entropy, dropout, and an early-stopping validation loop — the canonical 2026 training setup. The contrast with Project 2 is the lesson: same math, but autograd and <code>nn.Module</code> remove all the manual gradient work, letting you focus on architecture and training.</p>
-    <p>Pairs with <a href="neural_network_foundations.html#training" style="color:var(--accent)">Training in practice</a> and <a href="neural_network_foundations.html#evaluation" style="color:var(--accent)">Evaluation</a>.</p>
+    <p>Pairs with <a href="2_neural_network_foundations.html#training" style="color:var(--accent)">Training in practice</a> and <a href="2_neural_network_foundations.html#evaluation" style="color:var(--accent)">Evaluation</a>.</p>
     <div class="deliverable">A clean <code>nn.Module</code> MLP with dropout</div>
     <div class="deliverable">Train / validation / test split with DataLoaders</div>
     <div class="deliverable">A training loop with the five-step inner cycle</div>
@@ -629,7 +629,7 @@ model.load_state_dict(torch.load(<span class="st">"best.pt"</span>))
       <li>Replace the MLP with a small CNN and beat 99% — your bridge to the next guide in the curriculum.</li>
       <li>Add mixed precision with <code>torch.amp</code> and time the speedup on a GPU.</li>
     </ul>
-    <a class="ex-project-link" href="neural_network_foundations.html#exercises">→ Related exercise EX-09 in the reference guide</a>
+    <a class="ex-project-link" href="2_neural_network_foundations.html#exercises">→ Related exercise EX-09 in the reference guide</a>
   </div>
 </div></section>
 <section class="section" id="publish"><div class="container">
@@ -677,14 +677,14 @@ Backprop is just the chain rule applied backward... (your words)</div>
     <div class="tl-item"><div class="tl-dot" style="background:var(--accent2)"></div><div class="tl-title">→ Transformers &amp; attention</div><div class="tl-body">The added idea: self-attention — every token attends to every other in parallel. The dominant 2026 architecture and the basis of large language models. Project: build a tiny GPT-style model from scratch.</div></div>
     <div class="tl-item"><div class="tl-dot" style="background:var(--green)"></div><div class="tl-title">Then: specialize</div><div class="tl-body">Fine-tuning pretrained models, deployment (ONNX/TorchServe), and the domain you care about — vision, NLP, or applying nets to tabular/operational problems where you already have expertise.</div></div>
   </div>
-  <div class="alert alert-success"><strong>The one thing to carry forward.</strong> Nothing ahead replaces what you just learned — it extends it. When a new architecture looks intimidating, find the neuron, the activation, the loss, and the gradient step inside it. They are always there. <a href="neural_network_foundations.html#family" style="color:var(--accent)">See the architecture family map →</a></div>
+  <div class="alert alert-success"><strong>The one thing to carry forward.</strong> Nothing ahead replaces what you just learned — it extends it. When a new architecture looks intimidating, find the neuron, the activation, the loss, and the gradient step inside it. They are always there. <a href="2_neural_network_foundations.html#family" style="color:var(--accent)">See the architecture family map →</a></div>
 </div></section>
 
 <section class="section" id="refs"><div class="container">
   <div class="section-eyebrow">Reference</div>
   <h2 class="section-title">References &amp; tools</h2>
   <p class="section-sub">What you need for these three projects. For the full bibliography of papers and courses, see the reference guide.</p>
-  <a class="ref-card" href="neural_network_foundations.html" target="_blank"><div class="ref-num">★</div><div><div class="ref-title">Neural Network Foundations — Reference Guide</div><div class="ref-meta">The companion to this guide: all the theory, math, and the full 30-source bibliography.</div><span class="ref-tag">companion</span></div></a>
+  <a class="ref-card" href="2_neural_network_foundations.html" target="_blank"><div class="ref-num">★</div><div><div class="ref-title">Neural Network Foundations — Reference Guide</div><div class="ref-meta">The companion to this guide: all the theory, math, and the full 30-source bibliography.</div><span class="ref-tag">companion</span></div></a>
   <a class="ref-card" href="https://pytorch.org/tutorials/beginner/basics/intro.html" target="_blank"><div class="ref-num">01</div><div><div class="ref-title">PyTorch — Learn the Basics</div><div class="ref-meta">Tensors, datasets, autograd, the training loop — everything Project 3 uses.</div><span class="ref-tag">docs</span></div></a>
   <a class="ref-card" href="https://pytorch.org/vision/stable/datasets.html#mnist" target="_blank"><div class="ref-num">02</div><div><div class="ref-title">torchvision — MNIST dataset</div><div class="ref-meta">The official loader used in Project 3 (download, transforms, normalization).</div><span class="ref-tag">dataset</span></div></a>
   <a class="ref-card" href="https://numpy.org/doc/stable/" target="_blank"><div class="ref-num">03</div><div><div class="ref-title">NumPy documentation</div><div class="ref-meta">Arrays, broadcasting, and matrix multiply for the from-scratch projects.</div><span class="ref-tag">docs</span></div></a>
@@ -696,7 +696,7 @@ Backprop is just the chain rule applied backward... (your words)</div>
   <div class="container">
     <p style="font-family:var(--font-display);font-size:22px;color:var(--text);margin-bottom:10px">You built it — twice.</p>
     <p style="max-width:620px;margin:0 auto 22px">By hand and in PyTorch, on a toy problem and a real one. That is the whole foundation, demonstrated. The theory behind every line lives in the reference guide.</p>
-    <a href="neural_network_foundations.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px">← back to the Reference Guide</a>
+    <a href="2_neural_network_foundations.html" style="display:inline-flex;align-items:center;gap:8px;padding:12px 24px;background:var(--accent);color:#fff;border-radius:10px;text-decoration:none;font-weight:600;font-size:15px">← back to the Reference Guide</a>
     <p style="font-size:12px;color:var(--text3);margin-top:28px;font-family:var(--font-mono)">Neural Network Foundations · Hands-On Projects · Build to understand · 2026</p>
   </div>
 </footer>

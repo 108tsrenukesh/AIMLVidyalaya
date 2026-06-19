@@ -330,7 +330,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>Clustering is <strong>unsupervised learning</strong>: grouping data by intrinsic similarity with <em>no labels</em>. This is the key difference from classification (which is supervised — you train on known answers). Because there's no ground truth, you can't score it with accuracy; you judge groups by how tight and well-separated they are, and by whether they're <em>useful</em>.</p></div></div>
   </div>
   <p class="fun">😄 Classification is a teacher handing you sorted boxes and saying "put new toys in the right one." Clustering is being dumped in a messy room and told "make some sense of this" — with no boxes and no teacher.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#intro" target="_blank">Go deeper → the real definition &amp; when to cluster ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#intro" target="_blank">Go deeper → the real definition &amp; when to cluster ↗</a>
 </div>
 </section>
 
@@ -360,7 +360,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>You represent each item as a <strong>feature vector</strong> and measure similarity with a <strong>distance metric</strong> — usually Euclidean (straight-line), sometimes cosine (angle, for text/embeddings). Because distance is scale-sensitive, you must <strong>standardise</strong> features first (z-score / min-max). Skipping scaling is the single most common clustering mistake, and in very high dimensions distances stop being meaningful at all — the "curse of dimensionality."</p></div></div>
   </div>
   <p class="fun">😄 Forgetting to scale your features is like judging "who's most similar" by net worth alone. Technically a number. Wildly misses the point.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#data-prep" target="_blank">Go deeper → distance metrics &amp; why scaling matters ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#data-prep" target="_blank">Go deeper → distance metrics &amp; why scaling matters ↗</a>
 </div>
 </section>
 
@@ -397,7 +397,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>K-Means</strong>: alternate an <em>assignment</em> step (each point → nearest centroid) and an <em>update</em> step (centroid → mean of its points), minimising within-cluster sum of squares (WCSS). It's guaranteed to converge but only to a <em>local</em> optimum, so you use <strong>K-Means++</strong> initialisation and several restarts (<code>n_init</code>). You must pre-specify K, and it assumes roughly round, similar-size clusters.</p></div></div>
   </div>
   <p class="fun">😄 K-Means is musical chairs where the chairs also keep sneaking toward the biggest cluster of players. The music stops when everyone's comfy and no chair wants to move.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#kmeans" target="_blank">Go deeper → the K-Means algorithm, math &amp; code ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#kmeans" target="_blank">Go deeper → the K-Means algorithm, math &amp; code ↗</a>
 </div>
 </section>
 <section class="section" id="howmany">
@@ -425,7 +425,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>Choosing K: the <strong>Elbow method</strong> (plot WCSS vs K, pick the bend), the <strong>silhouette score</strong> (how tight-and-separated, peak is best), the <strong>gap statistic</strong>, and <em>business constraints</em>. These often disagree — that disagreement is information. Density methods (DBSCAN/HDBSCAN) dodge the question by finding K themselves.</p></div></div>
   </div>
   <p class="fun">😄 The "optimal K" is whatever number makes the maths happy AND your colleague stop asking "but what do we actually <em>do</em> with cluster #11?"</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#k-selection" target="_blank">Go deeper → elbow, silhouette &amp; choosing K ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#k-selection" target="_blank">Go deeper → elbow, silhouette &amp; choosing K ↗</a>
 </div>
 </section>
 
@@ -456,7 +456,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>K-Means produces <strong>convex (Voronoi) boundaries</strong> — straight hyperplanes — so it fails on non-convex shapes. <strong>DBSCAN/HDBSCAN</strong> grow clusters by connecting dense neighbourhoods, finding arbitrary shapes and the number of clusters automatically; <strong>spectral clustering</strong> reshapes the data via a graph so tangled shapes become separable. Different geometry, different tool.</p></div></div>
   </div>
   <p class="fun">😄 Asking K-Means to cluster two interlocking rings is like asking someone who only cuts in straight lines to carve a spiral. Technically they'll cut something. You won't like it.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#alternates" target="_blank">Go deeper → DBSCAN, HDBSCAN, spectral &amp; the chooser ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#alternates" target="_blank">Go deeper → DBSCAN, HDBSCAN, spectral &amp; the chooser ↗</a>
 </div>
 </section>
 
@@ -484,7 +484,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Outliers / anomalies.</strong> K-Means has no concept of noise — every point gets a cluster, so outliers drag centroids around. <strong>DBSCAN/HDBSCAN</strong> label points that belong to no dense region as <strong>−1 (noise)</strong>, which doubles as unsupervised <strong>anomaly detection</strong>. Always report the noise fraction and decide whether to quarantine or assign it.</p></div></div>
   </div>
   <p class="fun">😄 K-Means is the host who insists every guest join a table, even the one who wandered in from the wedding next door. DBSCAN lets them stand awkwardly by the snacks — which is honestly the right call.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#adv-anomaly" target="_blank">Go deeper → outliers &amp; anomaly detection ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#adv-anomaly" target="_blank">Go deeper → outliers &amp; anomaly detection ↗</a>
 </div>
 </section>
 <section class="section" id="goodbad">
@@ -511,7 +511,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Internal validation</strong> with no labels: the <strong>silhouette score</strong> (cohesion vs separation, [−1,1]), Davies-Bouldin, Calinski-Harabász — each encodes "tight and separated" differently, so report several. Add <strong>stability</strong> (bootstrap + ARI across runs) and, if you ever have labels, <strong>external</strong> measures (ARI, NMI). And never forget the human test: are the clusters interpretable and actionable?</p></div></div>
   </div>
   <p class="fun">😄 A clustering with a great silhouette score but no nameable groups is like a beautifully organised drawer where every item is labelled "stuff." Tidy. Useless.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#evaluation" target="_blank">Go deeper → silhouette, DBI, CH, stability &amp; ARI/NMI ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#evaluation" target="_blank">Go deeper → silhouette, DBI, CH, stability &amp; ARI/NMI ↗</a>
 </div>
 </section>
 
@@ -541,7 +541,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Embedding-based clustering.</strong> Encode items with a pretrained model (<strong>sentence-transformers</strong> for text), reduce dimensions with <strong>UMAP</strong> (cosine), cluster with <strong>HDBSCAN</strong>, then label clusters via <strong>c-TF-IDF</strong> — the <strong>BERTopic</strong> pipeline. Normalise vectors and cluster a 5–15D reduction, never the 2D you drew for the eye.</p></div></div>
   </div>
   <p class="fun">😄 Embeddings are like seating guests by vibe instead of by name. "Great phone" and "awesome handset" never met, but they clearly belong at the same table.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#embeddings" target="_blank">Go deeper → the modern embedding stack &amp; BERTopic ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#embeddings" target="_blank">Go deeper → the modern embedding stack &amp; BERTopic ↗</a>
 </div>
 </section>
 
@@ -572,7 +572,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>The families: <strong>centroid</strong> (K-Means), <strong>density</strong> (DBSCAN/HDBSCAN), <strong>distribution</strong> (GMM/EM, soft), <strong>hierarchical</strong> (dendrograms), <strong>spectral</strong> (graph-based), and <strong>deep/embedding</strong> clustering. Selection hinges on cluster shape, whether K is known, noise, scale, and interpretability — captured in the reference's chooser table.</p></div></div>
   </div>
   <p class="fun">😄 "I only know K-Means" is the data equivalent of "I only own a hammer." Suddenly every dataset looks like a tidy round nail. Most aren't.</p>
-  <a class="deeper" href="clustering_complete_reference_v2.html#algo-compare" target="_blank">Go deeper → the full algorithm chooser table ↗</a>
+  <a class="deeper" href="2_clustering_complete_reference_v2.html#algo-compare" target="_blank">Go deeper → the full algorithm chooser table ↗</a>
 </div>
 </section>
 <section class="section" id="recap">
@@ -600,8 +600,8 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
   <h3 style="margin-top:10px">Where to go next</h3>
   <div class="grid3">
     <div class="card"><h4>🧒→🎓 You are here</h4><p style="font-size:13px">The Intuition Guide. Come back any time a concept stops making sense — the green box is always the gentle reset.</p></div>
-    <a class="card" href="clustering_complete_reference_v2.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--accent)">📘 The Reference →</h4><p style="font-size:13px">Now the ideas click: the rigorous version — math, code, 80 Q&amp;A, 12 sections, all the depth.</p></a>
-    <a class="card" href="clustering_projects_guide_v2.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--teal)">🛠️ The Projects →</h4><p style="font-size:13px">Ready to build? Five hands-on projects on real data — from mall segmentation to an MLOps clustering system.</p></a>
+    <a class="card" href="2_clustering_complete_reference_v2.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--accent)">📘 The Reference →</h4><p style="font-size:13px">Now the ideas click: the rigorous version — math, code, 80 Q&amp;A, 12 sections, all the depth.</p></a>
+    <a class="card" href="3_clustering_projects_guide_v2.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--teal)">🛠️ The Projects →</h4><p style="font-size:13px">Ready to build? Five hands-on projects on real data — from mall segmentation to an MLOps clustering system.</p></a>
   </div>
   <div class="alert alert-success" style="margin-top:18px"><strong>The one thing to remember:</strong> clustering is finding the natural groups in data when nobody gave you the labels — and the whole craft is (1) defining "similar" honestly (scale your features!), (2) picking a tool that matches the shape of your data, and (3) checking the groups are tight, stable, and <em>nameable</em>. Everything else is detail. Fascinating, career-spanning detail — but detail.</div>
 </div>
@@ -610,7 +610,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 <footer style="padding:48px 0;text-align:center">
   <div class="container">
     <p style="font-size:14px;color:var(--text2)">The trilogy, in order:</p>
-    <p style="font-size:14px;color:var(--text3);margin-top:6px">🧒 <strong style="color:var(--text)">Intuition</strong> (you're here) &nbsp;→&nbsp; <a class="cite" href="clustering_complete_reference_v2.html" target="_blank">📘 Reference</a> &nbsp;→&nbsp; <a class="cite" href="clustering_projects_guide_v2.html" target="_blank">🛠️ Projects</a></p>
+    <p style="font-size:14px;color:var(--text3);margin-top:6px">🧒 <strong style="color:var(--text)">Intuition</strong> (you're here) &nbsp;→&nbsp; <a class="cite" href="2_clustering_complete_reference_v2.html" target="_blank">📘 Reference</a> &nbsp;→&nbsp; <a class="cite" href="3_clustering_projects_guide_v2.html" target="_blank">🛠️ Projects</a></p>
     <p style="font-size:12px;color:var(--text3);margin-top:22px">Clustering · The Intuition Guide · 2026 · explained from age 10 to PhD, one staircase at a time.</p>
   </div>
 </footer>

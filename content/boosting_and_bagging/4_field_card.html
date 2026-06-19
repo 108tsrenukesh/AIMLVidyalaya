@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bagging &amp; Boosting — Field Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222840;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f2f8;--text2:#b0bace;--text3:#6b7594;--accent:#2fa56f;--accent2:#8b6cf7;--teal:#30d4a8;--coral:#f96e4f;--amber:#f5a623;--green:#4cca78;--red:#e05c5c;--pink:#e86cad;--font-display:'Fraunces',serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;--radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.32)}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#fff;--bg3:#eef1f8;--bg4:#e0e6f0;--border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);--text:#111827;--text2:#374151;--text3:#6b7280;--accent:#15935f;--accent2:#7c3aed;--teal:#0d9488;--coral:#dc4e2a;--amber:#d97706;--green:#16a34a;--red:#dc2626;--pink:#db2777;--shadow:0 4px 24px rgba(0,0,0,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:200;background:var(--bg3);border:1px solid var(--border2);border-radius:24px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:var(--font-body);color:var(--text2);font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:var(--shadow)}
+.theme-toggle:hover{color:var(--text);border-color:var(--accent)}
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:54px;backdrop-filter:blur(12px)}
+.nav-brand{font-family:var(--font-display);font-size:19px;color:var(--text);margin-right:2rem;white-space:nowrap;font-weight:600}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:54px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.03em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.hero{padding:84px 0 64px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(91,141,238,.10) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,62px);line-height:1.07;color:var(--text);margin-bottom:18px;font-weight:300}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:600}
+.hero-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 32px;line-height:1.65}
+.hero-tags{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:30px}
+.hero-tag{font-family:var(--font-mono);font-size:11px;padding:5px 13px;border:1px solid var(--border2);border-radius:20px;color:var(--text3)}
+.hero-stats{display:flex;gap:30px;justify-content:center;flex-wrap:wrap}
+.hero-stat{text-align:center}
+.hero-stat .n{font-family:var(--font-display);font-size:28px;color:var(--accent);font-weight:600}
+.hero-stat .l{font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.container{max-width:1120px;margin:0 auto;padding:0 2rem}
+.section{padding:64px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);color:var(--text);margin-bottom:14px;line-height:1.15;font-weight:300}
+.section-sub{font-size:15px;color:var(--text2);max-width:760px;margin-bottom:36px;line-height:1.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;transition:border-color .2s}
+.card:hover{border-color:var(--border2)}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+@media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.badge{display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:500;padding:3px 9px;border-radius:20px;margin-right:5px;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.b-blue{background:rgba(91,141,238,.15);color:#7aabff;border:1px solid rgba(91,141,238,.25)}
+.b-teal{background:rgba(48,212,168,.12);color:#30d4a8;border:1px solid rgba(48,212,168,.2)}
+.b-coral{background:rgba(249,110,79,.12);color:#f96e4f;border:1px solid rgba(249,110,79,.2)}
+.b-green{background:rgba(76,202,120,.12);color:#4cca78;border:1px solid rgba(76,202,120,.2)}
+.b-amber{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2)}
+.b-purple{background:rgba(139,108,247,.12);color:#b09aff;border:1px solid rgba(139,108,247,.2)}
+.b-red{background:rgba(224,92,92,.12);color:#e05c5c;border:1px solid rgba(224,92,92,.2)}
+[data-theme="light"] .b-blue{background:rgba(37,99,235,.10);color:#1d4ed8;border-color:rgba(37,99,235,.25)}
+[data-theme="light"] .b-teal{background:rgba(13,148,136,.10);color:#0f766e;border-color:rgba(13,148,136,.25)}
+[data-theme="light"] .b-green{background:rgba(22,163,74,.10);color:#15803d;border-color:rgba(22,163,74,.25)}
+[data-theme="light"] .b-amber{background:rgba(217,119,6,.10);color:#b45309;border-color:rgba(217,119,6,.25)}
+[data-theme="light"] .b-purple{background:rgba(124,58,237,.10);color:#6d28d9;border-color:rgba(124,58,237,.25)}
+h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:7px}
+h5{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+p{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:20px;line-height:1.75}
+li{margin-bottom:6px}strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1);color:var(--accent);padding:2px 6px;border-radius:4px}
+.code-block{background:#0a0d14;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;font-family:var(--font-mono);font-size:12.5px;color:#c9d1d9;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;white-space:pre;margin:14px 0;line-height:1.7;position:relative}
+[data-theme="light"] .code-block{background:#1e2330;color:#e2e8f5}
+.code-block .kw{color:#ff7b72}.code-block .fn{color:#d2a8ff}.code-block .st{color:#a5d6ff}.code-block .cm{color:#5d6580;font-style:italic}.code-block .num{color:#f2cc60}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--bg4);color:var(--text3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.7;border-left:3px solid}
+.alert-info{background:rgba(91,141,238,.07);border-color:var(--accent)}
+.alert-warn{background:rgba(245,166,35,.07);border-color:var(--amber)}
+.alert-success{background:rgba(76,202,120,.07);border-color:var(--green)}
+.alert-danger{background:rgba(224,92,92,.07);border-color:var(--red)}
+.pipeline{position:relative;padding-left:36px}
+.pipeline::before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2));opacity:.3}
+.pipe-item{position:relative;margin-bottom:20px}
+.pipe-dot{position:absolute;left:-29px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--bg4);border:2px solid var(--accent)}
+.pipe-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:5px}
+.pipe-body{font-size:14px;color:var(--text2);line-height:1.65}
+.formula{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;font-family:var(--font-mono);font-size:14px;color:var(--teal);text-align:center;margin:14px 0;overflow-x:auto}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-size:13px;font-weight:500;color:var(--text3);padding:10px 18px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s,border-color .2s;font-family:var(--font-body)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.algo-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;margin-bottom:24px;transition:border-color .2s}
+.algo-card:hover{border-color:var(--border2)}
+.algo-header{padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:flex-start;gap:16px}
+.algo-icon{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;font-family:var(--font-mono);flex-shrink:0}
+.algo-body{padding:20px 24px}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.compare-table th{background:var(--bg3);color:var(--text2);font-weight:500;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:14px}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.pros-cons{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+@media(max-width:700px){.pros-cons{grid-template-columns:1fr}}
+.qa-filter{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.qa-filter-btn{font-size:12px;font-family:var(--font-mono);padding:5px 14px;border-radius:20px;border:1px solid var(--border);background:transparent;color:var(--text3);cursor:pointer;transition:all .2s}
+.qa-filter-btn:hover,.qa-filter-btn.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius);margin-bottom:10px;overflow:hidden}
+.qa-q{padding:14px 18px;font-size:15px;font-weight:500;color:var(--text);cursor:pointer;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;background:var(--bg3);line-height:1.45}
+.qa-q:hover{background:var(--bg4)}
+.qa-q-text{flex:1}
+.qa-meta{display:flex;gap:6px;align-items:center;flex-shrink:0}
+.qa-arrow{font-size:12px;color:var(--text3);transition:transform .2s}
+.qa-item.open .qa-arrow{transform:rotate(180deg)}
+.qa-a{padding:16px 18px;font-size:14px;color:var(--text2);line-height:1.72;border-top:1px solid var(--border);display:none;background:var(--bg2)}
+.qa-a p{font-size:14px;margin-bottom:8px}
+.qa-item.open .qa-a{display:block}
+.qa-difficulty{font-size:10px;font-family:var(--font-mono);padding:2px 7px;border-radius:10px;white-space:nowrap}
+.diff-beginner{background:rgba(76,202,120,.15);color:#4cca78}
+.diff-intermediate{background:rgba(91,141,238,.15);color:#6ea8fe}
+.diff-advanced{background:rgba(245,166,35,.15);color:#f5a623}
+.diff-expert{background:rgba(249,110,79,.15);color:#f96e4f}
+.usecase-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px;transition:border-color .2s}
+.usecase-card:hover{border-color:var(--border2)}
+.usecase-header{display:flex;align-items:flex-start;gap:14px;margin-bottom:14px}
+.usecase-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.usecase-title{font-size:16px;font-weight:600;color:var(--text);margin-bottom:3px}
+.usecase-industry{font-size:11px;font-family:var(--font-mono);color:var(--text3)}
+.usecase-body{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.usecase-body{grid-template-columns:1fr}}
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:14px;transition:border-color .2s}
+.ex-block:hover{border-color:var(--border2)}
+.ex-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.ex-num{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.ex-title{font-size:16px;font-weight:600;color:var(--text);margin:4px 0 8px}
+.ex-body{font-size:14px;color:var(--text2);line-height:1.7}
+.ex-hint{font-size:13px;color:var(--text3);margin-top:10px;font-style:italic;padding:9px 12px;background:var(--bg3);border-radius:6px;border-left:2px solid var(--amber)}
+.ref-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;text-decoration:none}
+.ref-card:hover{border-color:var(--accent)}
+.ref-num{font-family:var(--font-mono);font-size:11px;color:var(--text3);min-width:26px;padding-top:2px}
+.ref-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ref-meta{font-size:12px;color:var(--text3);line-height:1.5}
+.ref-tag{font-size:10px;font-family:var(--font-mono);color:var(--accent);background:rgba(91,141,238,.1);padding:2px 7px;border-radius:10px;display:inline-block;margin-top:5px}
+.deploy-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;margin-bottom:12px}
+.deploy-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-26px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tl-body{font-size:14px;color:var(--text2);line-height:1.6}
+#top-btn{position:fixed;bottom:26px;right:26px;background:var(--accent);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(91,141,238,.4)}
+#top-btn.visible{opacity:1}
+@media(min-width:1250px){.main-layout{display:grid;grid-template-columns:210px 1fr}.toc{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:20px 0;border-right:1px solid var(--border);scrollbar-width:thin}.toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 18px 4px;letter-spacing:.08em;text-transform:uppercase}.toc-link{display:block;font-size:13px;color:var(--text3);padding:5px 18px;cursor:pointer;transition:color .15s;border-left:2px solid transparent}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--accent);border-left-color:var(--accent)}}
+.cite{color:var(--accent);font-size:12px;text-decoration:none;font-family:var(--font-mono);padding:2px 7px;background:rgba(91,141,238,.1);border-radius:4px;display:inline-block;margin-top:4px}
+.cite:hover{background:rgba(91,141,238,.2)}
+.viz-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0}
+.viz-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.viz-svg{width:100%;overflow:visible}
+.viz-caption{font-size:13px;color:var(--text3);margin-top:10px;line-height:1.6;font-style:italic}
+.metric-row{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:12px;margin-bottom:18px}
+.metric{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px}
+.metric .val{font-size:22px;font-weight:600;font-family:var(--font-mono);color:var(--text)}
+.metric .lbl{font-size:11px;color:var(--text3);margin-top:4px;line-height:1.45}
+.toc-toggle,.toc-backdrop{display:none}
+.viz-zoom-modal{display:none}
+@media(max-width:1249px){
+  .toc{position:fixed;top:0;left:0;z-index:300;width:82%;max-width:300px;height:100%;background:var(--bg2);border-right:1px solid var(--border2);box-shadow:var(--shadow);padding:62px 0 28px;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(-100%);transition:transform .25s ease}
+  .toc.open{transform:translateX(0)}
+  .toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 20px 4px;letter-spacing:.08em;text-transform:uppercase}
+  .toc-link{display:block;font-size:15px;color:var(--text2);padding:11px 20px;cursor:pointer;border-left:2px solid transparent}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
+  .toc-toggle{display:flex;align-items:center;justify-content:center;position:fixed;bottom:26px;left:20px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+  .toc-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250}
+  .toc-backdrop.open{display:block}
+  .container{padding:0 1.1rem}
+  nav{padding:0 1rem}
+  .section{padding:46px 0}
+  .hero{padding:62px 0 46px}
+  .compare-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13.5px}
+  .code-block{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:14px 14px}
+  .viz-container,.viz-svg{cursor:zoom-in}
+  .qa-q{padding:15px 16px}
+  .tab-btn{padding:11px 15px}
+}
+.viz-zoom-modal.open{display:flex;position:fixed;inset:0;z-index:400;background:rgba(8,10,16,.95);align-items:flex-start;justify-content:flex-start;padding:56px 12px 12px;overflow:auto;-webkit-overflow-scrolling:touch}
+.viz-zoom-modal .zoom-inner{min-width:560px;width:150%;max-width:none;margin:auto}
+.viz-zoom-modal .zoom-inner svg{width:100%;height:auto}
+.viz-zoom-close{position:fixed;top:12px;right:14px;z-index:401;width:42px;height:42px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+@media (prefers-reduced-motion: reduce){.wire-flow,.node-pulse,.fire,.float,.descend{animation:none !important}}
+@keyframes flowDash{to{stroke-dashoffset:-24}}
+@keyframes flowDashRev{to{stroke-dashoffset:24}}
+@keyframes pulseNode{0%,100%{opacity:.35}50%{opacity:1}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<button class="toc-toggle" onclick="toggleTOC()" id="toc-toggle" aria-label="Open contents">☰</button>
+<div class="toc-backdrop" id="toc-backdrop" onclick="toggleTOC()"></div>
+<nav>
+  <span class="nav-brand">Bagging &amp; Boosting — Field Card</span>
+  <div class="nav-links">
+    <span class="nav-link" onclick="gotoS('chooser')">Which algorithm</span>
+    <span class="nav-link" onclick="gotoS('order')">Tune order</span>
+    <span class="nav-link" onclick="gotoS('xgb')">XGBoost</span>
+    <span class="nav-link" onclick="gotoS('lgbm')">LightGBM</span>
+    <span class="nav-link" onclick="gotoS('cat')">CatBoost</span>
+    <span class="nav-link" onclick="gotoS('rf')">Random Forest</span>
+    <span class="nav-link" onclick="gotoS('map')">Knob map</span>
+    <span class="nav-link" onclick="gotoS('metrics')">Metric / plot</span>
+    <span class="nav-link" onclick="gotoS('snippets')">Snippets</span>
+  </div>
+</nav>
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Keep-it-open quick reference · 2026</div>
+    <h1>The Field Card</h1>
+    <p class="hero-sub">Per-library knobs, the cross-library map, and "which algorithm / which knob / which metric" — condensed for a second monitor while you model. Everything here is taught in full in the <a class="cite" href="2_complete_reference.html">Reference</a>.</p>
+  </div>
+</div>
+<div style="padding:16px 1.1rem 0"><div style="background:linear-gradient(90deg,rgba(139,108,247,.1),rgba(47,165,111,.08));border:1px solid rgba(139,108,247,.25);border-radius:16px;padding:14px 18px;margin:0 auto;max-width:1100px;font-size:13.5px;color:var(--text2);text-align:center">🃏 The condensed lookup. Learn the <em>why</em> in the <a href="2_complete_reference.html" style="color:var(--accent2);font-weight:600;text-decoration:none">Reference</a> · intuition in the <a href="1_intuition_primer.html" style="color:var(--accent2);font-weight:600;text-decoration:none">Primer</a> · build in the <a href="3_projects_guide.html" style="color:var(--accent2);font-weight:600;text-decoration:none">Projects</a>.</div></div>
+<div class="main-layout">
+<aside class="toc" id="toc">
+  <div class="toc-section">Decide</div>
+  <span class="toc-link" onclick="gotoS('chooser')">Which algorithm?</span>
+  <span class="toc-link" onclick="gotoS('order')">Tune in this order</span>
+  <div class="toc-section">Per-library knobs</div>
+  <span class="toc-link" onclick="gotoS('xgb')">XGBoost</span>
+  <span class="toc-link" onclick="gotoS('lgbm')">LightGBM</span>
+  <span class="toc-link" onclick="gotoS('cat')">CatBoost</span>
+  <span class="toc-link" onclick="gotoS('rf')">Random Forest</span>
+  <div class="toc-section">Look up</div>
+  <span class="toc-link" onclick="gotoS('map')">Cross-library knob map</span>
+  <span class="toc-link" onclick="gotoS('metrics')">Which metric / which plot</span>
+  <span class="toc-link" onclick="gotoS('snippets')">Canonical snippets</span>
+</aside>
+<div style="overflow:hidden"><div class="container">
+
+<section class="section" id="chooser">
+  <div class="section-eyebrow">Decide</div>
+  <h2 class="section-title">Which algorithm?</h2>
+  <table class="compare-table">
+    <tr><th>If you…</th><th>Reach for</th><th>Because</th></tr>
+    <tr><td>want a fast robust baseline, little tuning</td><td><strong>Random Forest</strong></td><td>good defaults, OOB, never overfits by adding trees</td></tr>
+    <tr><td>have large data / need speed / heavy tuning</td><td><strong>LightGBM</strong></td><td>leaf-wise + GOSS/EFB = fastest at scale</td></tr>
+    <tr><td>want widest support / conservative / smaller data</td><td><strong>XGBoost</strong></td><td>battle-tested, level-wise growth resists overfit</td></tr>
+    <tr><td>have high-card categoricals / small-noisy / want best defaults</td><td><strong>CatBoost</strong></td><td>ordered boosting + native categoricals</td></tr>
+    <tr><td>need the last 1–2% of accuracy</td><td><strong>bake off all three + stack</strong></td><td>they're a few lines apart; let CV decide</td></tr>
+    <tr><td>need to extrapolate / smooth trend</td><td><strong>not trees</strong> — use linear/GAM/hybrid</td><td>trees predict averages of seen targets</td></tr>
+  </table>
+</section>
+
+<section class="section" id="order">
+  <div class="section-eyebrow">Decide</div>
+  <h2 class="section-title">Tune in this order</h2>
+  <p><strong>Boosting:</strong></p>
+  <ol>
+    <li>Fix a <strong>low learning rate</strong> (0.03–0.1); let <strong>early stopping</strong> choose n_estimators.</li>
+    <li><strong>Tree complexity</strong> — max_depth / num_leaves, min_child_weight / min_child_samples.</li>
+    <li><strong>Regularisation</strong> — reg_lambda (L2), reg_alpha (L1), gamma / l2_leaf_reg.</li>
+    <li><strong>Stochastic subsampling</strong> — subsample (rows), colsample_bytree (features).</li>
+    <li><strong>Lower LR further + more rounds</strong> — final generalisation squeeze.</li>
+  </ol>
+  <p><strong>Random Forest:</strong> make <code>n_estimators</code> large → tune <code>max_features</code> (the main lever) → <code>min_samples_leaf</code> / <code>max_depth</code> if noisy. That's it.</p>
+  <div class="alert alert-info">Always tune with <strong>early stopping inside each trial</strong> and search with <strong>Optuna</strong> (Bayesian) over grid/random.</div>
+</section>
+
+<section class="section" id="xgb">
+  <div class="section-eyebrow">Per-library knobs</div>
+  <h2 class="section-title">XGBoost</h2>
+  <table class="compare-table">
+    <tr><th>Param</th><th>Does</th><th>Sensible range</th><th>↑ value →</th></tr>
+    <tr><td><code>learning_rate</code> (eta)</td><td>step size per tree</td><td>0.01–0.1</td><td>faster fit, more overfit risk</td></tr>
+    <tr><td><code>n_estimators</code></td><td>number of rounds</td><td>large + early stop</td><td>lower bias, then overfit</td></tr>
+    <tr><td><code>max_depth</code></td><td>tree depth / interaction order</td><td>3–8</td><td>more complex, more overfit</td></tr>
+    <tr><td><code>min_child_weight</code></td><td>min Σ Hessian in a leaf</td><td>1–50</td><td>more regularised</td></tr>
+    <tr><td><code>gamma</code></td><td>min split gain (prune)</td><td>0–5</td><td>simpler trees</td></tr>
+    <tr><td><code>reg_lambda</code> / <code>reg_alpha</code></td><td>L2 / L1 on leaf weights</td><td>λ≥1; α 0–1</td><td>more regularised</td></tr>
+    <tr><td><code>subsample</code> / <code>colsample_bytree</code></td><td>row / feature sampling</td><td>0.6–1.0</td><td>(lower) more regularised</td></tr>
+    <tr><td><code>tree_method</code></td><td>split finder</td><td><code>hist</code> (default)</td><td>—</td></tr>
+  </table>
+</section>
+
+<section class="section" id="lgbm">
+  <div class="section-eyebrow">Per-library knobs</div>
+  <h2 class="section-title">LightGBM</h2>
+  <table class="compare-table">
+    <tr><th>Param</th><th>Does</th><th>Sensible range</th><th>Note</th></tr>
+    <tr><td><code>learning_rate</code></td><td>step size</td><td>0.01–0.1</td><td>+ early stopping</td></tr>
+    <tr><td><code>num_leaves</code></td><td><strong>primary</strong> complexity (leaf-wise)</td><td>15–255</td><td>keep &lt; 2^max_depth</td></tr>
+    <tr><td><code>min_child_samples</code></td><td>min data in leaf</td><td>20–200</td><td><strong>raise on small data</strong></td></tr>
+    <tr><td><code>max_depth</code></td><td>optional depth cap</td><td>−1 or 3–12</td><td>guard-rail for leaf-wise</td></tr>
+    <tr><td><code>feature_fraction</code> / <code>bagging_fraction</code></td><td>feature / row sampling</td><td>0.6–1.0</td><td>regularise + speed</td></tr>
+    <tr><td><code>reg_lambda</code> / <code>reg_alpha</code></td><td>L2 / L1</td><td>0–10</td><td>regularise</td></tr>
+    <tr><td><code>categorical_feature</code></td><td>native categoricals</td><td>pass 'category' cols</td><td>no one-hot needed</td></tr>
+  </table>
+  <div class="alert alert-warn"><strong>Leaf-wise trap:</strong> on small data, lower <code>num_leaves</code> and raise <code>min_child_samples</code> or it memorises noise.</div>
+</section>
+
+<section class="section" id="cat">
+  <div class="section-eyebrow">Per-library knobs</div>
+  <h2 class="section-title">CatBoost</h2>
+  <table class="compare-table">
+    <tr><th>Param</th><th>Does</th><th>Sensible range</th><th>Note</th></tr>
+    <tr><td><code>learning_rate</code></td><td>step size</td><td>0.01–0.1 (auto if unset)</td><td>strong auto default</td></tr>
+    <tr><td><code>iterations</code></td><td>rounds</td><td>large + early stop</td><td>—</td></tr>
+    <tr><td><code>depth</code></td><td>oblivious tree depth</td><td>4–10</td><td>symmetric trees</td></tr>
+    <tr><td><code>l2_leaf_reg</code></td><td>L2 regularisation</td><td>1–10</td><td>main regulariser</td></tr>
+    <tr><td><code>cat_features</code></td><td>native categoricals</td><td>list raw columns</td><td>ordered target stats</td></tr>
+    <tr><td><code>bagging_temperature</code></td><td>Bayesian bootstrap strength</td><td>0–1+</td><td>randomness</td></tr>
+    <tr><td><code>random_strength</code></td><td>split-score noise</td><td>1+</td><td>fights overfit</td></tr>
+  </table>
+  <div class="alert alert-success">Often the <strong>best out-of-the-box</strong> — try defaults first, especially with categoricals or small/noisy data.</div>
+</section>
+
+<section class="section" id="rf">
+  <div class="section-eyebrow">Per-library knobs</div>
+  <h2 class="section-title">Random Forest</h2>
+  <table class="compare-table">
+    <tr><th>Param</th><th>Does</th><th>Sensible range</th><th>Note</th></tr>
+    <tr><td><code>n_estimators</code></td><td>number of trees</td><td>300–1000</td><td>just make it large; plateaus</td></tr>
+    <tr><td><code>max_features</code></td><td><strong>the</strong> decorrelation knob</td><td>"sqrt", "log2", 0.3–0.5</td><td>lower → less correlation</td></tr>
+    <tr><td><code>min_samples_leaf</code></td><td>min samples per leaf</td><td>1–50</td><td>raise on noisy data</td></tr>
+    <tr><td><code>max_depth</code></td><td>depth cap</td><td>None (deep)</td><td>averaging handles variance</td></tr>
+    <tr><td><code>class_weight</code></td><td>imbalance</td><td>"balanced"</td><td>for skewed targets</td></tr>
+    <tr><td><code>oob_score</code></td><td>free validation</td><td>True</td><td>≈ held-out estimate</td></tr>
+  </table>
+</section>
+
+<section class="section" id="map">
+  <div class="section-eyebrow">Look up</div>
+  <h2 class="section-title">Cross-library knob map</h2>
+  <table class="compare-table">
+    <tr><th>Concept</th><th>XGBoost</th><th>LightGBM</th><th>CatBoost</th></tr>
+    <tr><td>Learning rate</td><td><code>learning_rate</code>/<code>eta</code></td><td><code>learning_rate</code></td><td><code>learning_rate</code></td></tr>
+    <tr><td>Rounds</td><td><code>n_estimators</code></td><td><code>n_estimators</code></td><td><code>iterations</code></td></tr>
+    <tr><td>Tree size</td><td><code>max_depth</code></td><td><code>num_leaves</code></td><td><code>depth</code></td></tr>
+    <tr><td>Min leaf data</td><td><code>min_child_weight</code></td><td><code>min_child_samples</code></td><td><code>min_data_in_leaf</code></td></tr>
+    <tr><td>L2 penalty</td><td><code>reg_lambda</code></td><td><code>reg_lambda</code></td><td><code>l2_leaf_reg</code></td></tr>
+    <tr><td>L1 penalty</td><td><code>reg_alpha</code></td><td><code>reg_alpha</code></td><td>—</td></tr>
+    <tr><td>Row subsample</td><td><code>subsample</code></td><td><code>bagging_fraction</code></td><td><code>subsample</code></td></tr>
+    <tr><td>Feature subsample</td><td><code>colsample_bytree</code></td><td><code>feature_fraction</code></td><td><code>rsm</code></td></tr>
+    <tr><td>Min split gain</td><td><code>gamma</code></td><td><code>min_split_gain</code></td><td>—</td></tr>
+    <tr><td>Imbalance</td><td><code>scale_pos_weight</code></td><td><code>class_weight</code>/<code>scale_pos_weight</code></td><td><code>class_weights</code>/<code>auto_class_weights</code></td></tr>
+    <tr><td>Native categoricals</td><td><code>enable_categorical</code></td><td><code>categorical_feature</code></td><td><code>cat_features</code></td></tr>
+  </table>
+</section>
+
+<section class="section" id="metrics">
+  <div class="section-eyebrow">Look up</div>
+  <h2 class="section-title">Which metric / which plot</h2>
+  <table class="compare-table">
+    <tr><th>Question</th><th>Metric</th><th>Plot</th></tr>
+    <tr><td>Balanced classification</td><td>ROC-AUC, F1</td><td>ROC curve, confusion matrix</td></tr>
+    <tr><td>Imbalanced classification</td><td><strong>PR-AUC</strong>, recall@precision</td><td>PR curve</td></tr>
+    <tr><td>Probabilities feed a decision</td><td>Log-loss, Brier</td><td>calibration / reliability curve</td></tr>
+    <tr><td>Regression — typical error</td><td>MAE</td><td>residuals vs fitted</td></tr>
+    <tr><td>Regression — penalise big misses</td><td>RMSE</td><td>predicted vs actual</td></tr>
+    <tr><td>Where to stop boosting</td><td>val metric</td><td>learning curve (train vs val)</td></tr>
+    <tr><td>Which features matter</td><td>permutation importance</td><td>SHAP beeswarm / bar</td></tr>
+    <tr><td>Why this one prediction</td><td>—</td><td>SHAP waterfall / force</td></tr>
+    <tr><td>Shape of a feature's effect</td><td>—</td><td>PDP + ICE, SHAP dependence</td></tr>
+  </table>
+</section>
+
+<section class="section" id="snippets">
+  <div class="section-eyebrow">Look up</div>
+  <h2 class="section-title">Canonical snippets</h2>
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Random Forest baseline</span>
+RandomForestClassifier(n_estimators=<span class="num">500</span>, max_features=<span class="st">"sqrt"</span>,
+    class_weight=<span class="st">"balanced"</span>, oob_score=<span class="kw">True</span>, n_jobs=-<span class="num">1</span>, random_state=<span class="num">42</span>)</div>
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># XGBoost with early stopping</span>
+XGBClassifier(n_estimators=<span class="num">3000</span>, learning_rate=<span class="num">0.03</span>, max_depth=<span class="num">6</span>,
+    subsample=<span class="num">0.8</span>, colsample_bytree=<span class="num">0.8</span>, reg_lambda=<span class="num">1.0</span>,
+    tree_method=<span class="st">"hist"</span>, eval_metric=<span class="st">"auc"</span>, early_stopping_rounds=<span class="num">50</span>)
+<span class="cm"># .fit(Xtr, ytr, eval_set=[(Xval, yval)], verbose=False)</span></div>
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># LightGBM (note the leaf-wise guard-rails)</span>
+LGBMClassifier(n_estimators=<span class="num">3000</span>, learning_rate=<span class="num">0.03</span>,
+    num_leaves=<span class="num">31</span>, min_child_samples=<span class="num">50</span>, reg_lambda=<span class="num">1.0</span>)
+<span class="cm"># .fit(..., callbacks=[lgb.early_stopping(50)])</span></div>
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># CatBoost (native categoricals, strong defaults)</span>
+CatBoostClassifier(iterations=<span class="num">3000</span>, learning_rate=<span class="num">0.03</span>, depth=<span class="num">6</span>,
+    l2_leaf_reg=<span class="num">3.0</span>, cat_features=cat_cols, eval_metric=<span class="st">"AUC"</span>,
+    early_stopping_rounds=<span class="num">50</span>, verbose=<span class="num">0</span>)</div>
+  <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># SHAP + cost threshold (the two things you always do)</span>
+sv = shap.TreeExplainer(model)(X_te); shap.plots.beeswarm(sv)
+t = min(thresholds, key=<span class="kw">lambda</span> t: C_miss*FN(t) + C_false*FP(t))</div>
+</section>
+<footer style="padding:46px 0 64px;text-align:center">
+  <p style="color:var(--text3);font-size:13px;max-width:640px;margin:0 auto 8px">Field Card · the keep-it-open quick reference for Bagging &amp; Boosting. Part of a set with the <a class="cite" href="2_complete_reference.html">Reference</a>, <a class="cite" href="1_intuition_primer.html">Primer</a>, and <a class="cite" href="3_projects_guide.html">Projects</a> — keep all four in the same folder so links work.</p>
+  <p style="color:var(--text3);font-size:12px;font-family:var(--font-mono)">choose · tune · look up · 2026</p>
+</footer>
+</div></div></div>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<script>
+function toggleTheme(){const d=document.documentElement,b=document.getElementById('theme-btn');const light=d.getAttribute('data-theme')!=='light';d.setAttribute('data-theme',light?'light':'dark');b.textContent=light?'☀️ Light':'🌙 Dark';try{localStorage.setItem('theme',light?'light':'dark');}catch(e){}}
+(function(){try{const t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');const b=document.getElementById('theme-btn');if(b)b.textContent='☀️ Light';}}catch(e){}})();
+function gotoS(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});closeTOC();}
+const sids=['chooser','order','xgb','lgbm','cat','rf','map','metrics','snippets'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
+});
+function switchTab(navId,contentId){
+  const nav=document.getElementById(navId);if(!nav)return;
+  const scope=nav.parentElement;
+  nav.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  scope.querySelectorAll('.tab-content').forEach(c=>c.classList.remove('active'));
+  const btn=Array.from(nav.querySelectorAll('.tab-btn')).find(b=>(b.getAttribute('onclick')||'').includes(contentId));
+  if(btn)btn.classList.add('active');
+  const content=document.getElementById(contentId);
+  if(content)content.classList.add('active');
+}
+function toggleQA(el){el.closest('.qa-item').classList.toggle('open');}
+function filterQA(e,cat){
+  document.querySelectorAll('.qa-filter-btn').forEach(b=>b.classList.remove('active'));
+  e.target.classList.add('active');
+  document.querySelectorAll('.qa-item').forEach(item=>{
+    item.style.display=(cat==='all'||item.dataset.cat===cat)?'':'none';
+  });
+}
+function copyCode(btn){
+  const block=btn.closest('.code-block');
+  const text=Array.from(block.childNodes).filter(n=>n.nodeType===3||n.tagName!=='BUTTON').map(n=>n.textContent||'').join('');
+  navigator.clipboard.writeText(text.trim()).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',2000);});
+}
+function toggleTOC(){const t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(!t)return;const open=t.classList.toggle('open');if(b)b.classList.toggle('open',open);}
+function closeTOC(){const t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(t)t.classList.remove('open');if(b)b.classList.remove('open');}
+(function(){
+  if(!window.matchMedia||!window.matchMedia('(max-width:1249px)').matches)return;
+  function openZoom(svg){
+    const m=document.createElement('div');m.className='viz-zoom-modal open';
+    const inner=document.createElement('div');inner.className='zoom-inner';
+    inner.innerHTML=svg.outerHTML;
+    const close=document.createElement('button');close.className='viz-zoom-close';close.textContent='✕';
+    close.setAttribute('aria-label','Close');
+    const dismiss=()=>document.body.removeChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)dismiss();});
+    close.addEventListener('click',dismiss);
+    m.appendChild(close);m.appendChild(inner);document.body.appendChild(m);
+  }
+  document.querySelectorAll('.viz-container').forEach(c=>{
+    const svg=c.querySelector('svg');if(!svg)return;
+    c.addEventListener('click',()=>openZoom(svg));
+  });
+})();
+</script>
+</body></html>

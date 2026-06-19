@@ -1207,7 +1207,7 @@ topic_model.get_topic_info().head()               <span class="cm"># topic id, s
 
   <div class="alert alert-warn"><strong>Embedding-clustering pitfalls.</strong> (1) <strong>Normalise embeddings and use cosine</strong> — raw Euclidean on un-normalised vectors clusters by magnitude, not meaning. (2) <strong>Don't cluster the 2D plot</strong> — 2D UMAP is for the human eye only; cluster a 5–15D reduction. (3) <strong>UMAP is stochastic</strong> — fix <code>random_state</code> for reproducibility and never over-read exact distances in the projection. (4) <strong>Pick the embedding model deliberately</strong> — bigger isn't always better; consult the MTEB leaderboard and match the domain/language. (5) <strong>Mind the noise label −1</strong> — HDBSCAN refusing to force outliers into clusters is a feature; report the noise fraction and decide whether to assign or quarantine it.</p></div>
 
-  <p>Real implementations: <a class="cite" href="https://www.sbert.net/" target="_blank">sentence-transformers ↗</a> · <a class="cite" href="https://umap-learn.readthedocs.io/" target="_blank">UMAP ↗</a> · <a class="cite" href="https://hdbscan.readthedocs.io/" target="_blank">HDBSCAN ↗</a> · <a class="cite" href="https://maartengr.github.io/BERTopic/" target="_blank">BERTopic ↗</a> · <a class="cite" href="https://huggingface.co/spaces/mteb/leaderboard" target="_blank">MTEB leaderboard ↗</a>. Build the full version in <a class="cite" href="clustering_projects_guide_v2.html#p4" target="_blank">Project 4 — News Article Topic Discovery ↗</a>, and see the conceptual angle in the <a class="cite" onclick="gotoS('advanced')">Advanced → Embedding Clustering</a> tab.</p>
+  <p>Real implementations: <a class="cite" href="https://www.sbert.net/" target="_blank">sentence-transformers ↗</a> · <a class="cite" href="https://umap-learn.readthedocs.io/" target="_blank">UMAP ↗</a> · <a class="cite" href="https://hdbscan.readthedocs.io/" target="_blank">HDBSCAN ↗</a> · <a class="cite" href="https://maartengr.github.io/BERTopic/" target="_blank">BERTopic ↗</a> · <a class="cite" href="https://huggingface.co/spaces/mteb/leaderboard" target="_blank">MTEB leaderboard ↗</a>. Build the full version in <a class="cite" href="3_clustering_projects_guide_v2.html#p4" target="_blank">Project 4 — News Article Topic Discovery ↗</a>, and see the conceptual angle in the <a class="cite" onclick="gotoS('advanced')">Advanced → Embedding Clustering</a> tab.</p>
 </div>
 </section>
 <section class="section" id="advanced">
@@ -1378,28 +1378,28 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
       <div class="ex-header"><div><div class="ex-num">Conceptual 01 · Beginner</div><div class="ex-title">Draw K-Means from memory</div></div><span class="badge b-green">Beginner</span></div>
       <div class="ex-body">Without any reference, draw a complete diagram of K-Means: K-Means++ init, assignment step, update step, convergence check. Annotate with the WCSS formula: WCSS = Σᵢ Σ(x∈Cᵢ) ‖x−μᵢ‖². Explain convergence guarantee in 3 sentences.</div>
       <div class="ex-hint">💡 WCSS is bounded below by 0. Both steps can only decrease it. Finite distinct partitions → guaranteed termination.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p1" target="_blank">→ Applied in: Project 1 (Mall Segmentation)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p1" target="_blank">→ Applied in: Project 1 (Mall Segmentation)</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Conceptual 02 · Beginner</div><div class="ex-title">Why does scaling matter? — Manual calculation</div></div><span class="badge b-green">Beginner</span></div>
       <div class="ex-body">A = (Age: 25, Salary: 50,000), B = (Age: 30, Salary: 80,000). Centroid C = (Age: 27, Salary: 60,000). Compute Euclidean distances A→C and B→C without scaling. Then apply StandardScaler manually. Recalculate distances. Does the cluster assignment change? Which customer is actually closer to C in standardised space?</div>
       <div class="ex-hint">💡 Without scaling: salary difference of 20,000 completely dominates age difference of 2. Salary variance is ~10,000× larger.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p1" target="_blank">→ Applied in: Project 1</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p1" target="_blank">→ Applied in: Project 1</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Conceptual 03 · Intermediate</div><div class="ex-title">Silhouette from scratch</div></div><span class="badge b-blue">Intermediate</span></div>
       <div class="ex-body">Implement silhouette_score manually for 20 points, 2 clusters. Formula: s(i) = (b(i)−a(i)) / max(a(i),b(i)) where a(i) = mean intra-cluster distance, b(i) = mean distance to nearest other cluster. Verify against sklearn. Then: if a point has s(i) = −0.3, what does that mean geometrically?</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p2" target="_blank">→ Applied in: Project 2 (RFM Segmentation)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p2" target="_blank">→ Applied in: Project 2 (RFM Segmentation)</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Conceptual 04 · Intermediate</div><div class="ex-title">DBSCAN sensitivity grid</div></div><span class="badge b-blue">Intermediate</span></div>
       <div class="ex-body">Generate make_moons(n_samples=300, noise=0.1). Run DBSCAN on a 5×4 grid: epsilon in [0.1, 0.2, 0.3, 0.5, 1.0] × min_samples in [3, 5, 10, 20]. Plot all 20 as subplots. For which combinations does DBSCAN correctly find 2 half-moon clusters? What happens at the parameter boundaries?</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p3" target="_blank">→ Applied in: Project 3 (Fraud Detection)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p3" target="_blank">→ Applied in: Project 3 (Fraud Detection)</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Conceptual 05 · Advanced</div><div class="ex-title">K-Means failure modes — visual proof</div></div><span class="badge b-amber">Advanced</span></div>
       <div class="ex-body">Generate: (a) two concentric rings, (b) two half-moons, (c) one elongated + one circular cluster. Run K-Means K=2 on each. Then run DBSCAN. Write 200-word analysis: what geometric assumption does K-Means violate in each case? Why does DBSCAN succeed?</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p3" target="_blank">→ Applied in: Project 3</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p3" target="_blank">→ Applied in: Project 3</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Conceptual 06 · Advanced</div><div class="ex-title">Curse of dimensionality — empirical proof</div></div><span class="badge b-amber">Advanced</span></div>
@@ -1408,7 +1408,7 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Conceptual 07 · Advanced</div><div class="ex-title">Why UMAP-then-HDBSCAN beats K-Means on embeddings</div></div><span class="badge b-amber">Advanced</span></div>
       <div class="ex-body">Take 2,000 sentence embeddings (384-D). Cluster three ways: (a) K-Means directly on 384-D, (b) K-Means on 5-D UMAP, (c) HDBSCAN on 5-D UMAP. Compare silhouette, number of clusters found, and the noise fraction for (c). Write 150 words explaining why direct K-Means underperforms and when you would still prefer it.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p4" target="_blank">→ Applied in: Project 4 (topic discovery)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p4" target="_blank">→ Applied in: Project 4 (topic discovery)</a>
     </div>
   </div>
   <div id="ex-coding" class="tab-content">
@@ -1420,32 +1420,32 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Coding 02 · 45 min · Intermediate</div><div class="ex-title">Multi-metric K selector</div></div><span class="badge b-blue">Intermediate</span></div>
       <div class="ex-body">Write select_k(X, k_range=range(2,15), n_init=10) that runs K-Means for each K, computes WCSS + Silhouette + Calinski-Harabász + Davies-Bouldin, plots all 4 in a 2×2 subplot with recommended K highlighted.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p2" target="_blank">→ Applied in: Project 2 (Step 4 — 4-metric K selection)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p2" target="_blank">→ Applied in: Project 2 (Step 4 — 4-metric K selection)</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Coding 03 · 1 hr · Intermediate</div><div class="ex-title">Bootstrap stability tester</div></div><span class="badge b-blue">Intermediate</span></div>
       <div class="ex-body">Write stability_test(X, K, n_boot=30, sample_frac=0.8) that: resamples data n_boot times, fits K-Means, uses Hungarian algorithm to align labels, computes ARI between all pairs, returns mean ARI + std ARI + distribution plot.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p2" target="_blank">→ Applied in: Project 2 (Step 6 stability test)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p2" target="_blank">→ Applied in: Project 2 (Step 6 stability test)</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Coding 04 · 2 hrs · Advanced</div><div class="ex-title">Production drift monitoring system</div></div><span class="badge b-amber">Advanced</span></div>
       <div class="ex-body">Build a complete cluster drift monitoring system: (1) Fit K-Means on "Jan" data, define baseline metrics. (2) Simulate "Feb" and "Mar" with progressive cluster shift. (3) Weekly: compute PSI per feature, chi-square on cluster sizes, silhouette on 5k sample. (4) Plot monitoring dashboard with alert thresholds. (5) Implement auto-retrain trigger when 2+ metrics breach.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p5" target="_blank">→ Applied in: Project 5 (Step 5 drift monitoring)</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p5" target="_blank">→ Applied in: Project 5 (Step 5 drift monitoring)</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Coding 05 · 3 hrs · Expert</div><div class="ex-title">End-to-end pipeline with MLflow + FastAPI</div></div><span class="badge b-coral">Expert</span></div>
       <div class="ex-body">Build a complete production pipeline on UCI Online Retail: (1) Full EDA → RFM → outlier removal → scaling → K selection → training. (2) Log everything to MLflow: params, metrics, artifact. (3) Register best model. (4) FastAPI /v1/predict endpoint. (5) Write 20 golden test rows with expected cluster assignments that run on every deployment to catch regressions.</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p5" target="_blank">→ This IS Project 5 in miniature form</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p5" target="_blank">→ This IS Project 5 in miniature form</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Coding 06 · 1.5 hrs · Advanced</div><div class="ex-title">BERTopic from its parts</div></div><span class="badge b-amber">Advanced</span></div>
       <div class="ex-body">Reproduce BERTopic manually: SentenceTransformer embeddings → UMAP(5-D, cosine) → HDBSCAN → c-TF-IDF for the top words per cluster. Compare your topics to the actual BERTopic library output on the same corpus. Report agreement (ARI on the overlapping documents).</div>
-      <a class="ex-project-link" href="clustering_projects_guide_v2.html#p4" target="_blank">→ Applied in: Project 4</a>
+      <a class="ex-project-link" href="3_clustering_projects_guide_v2.html#p4" target="_blank">→ Applied in: Project 4</a>
     </div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Coding 07 · 1 hr · Advanced</div><div class="ex-title">Assigning new points when the model has no predict()</div></div><span class="badge b-amber">Advanced</span></div>
       <div class="ex-body">HDBSCAN has no native predict for arbitrary new points. Build two approaches: (a) <code>approximate_predict</code> with <code>prediction_data=True</code>, and (b) a 1-NN classifier trained on the clustered points that labels new arrivals. Benchmark agreement and latency. When does each break?</div>
-      <a class="ex-project-link" href="clustering_complete_reference_v2.html#embeddings" target="_blank">→ Reinforces: Modern embedding stack</a>
+      <a class="ex-project-link" href="2_clustering_complete_reference_v2.html#embeddings" target="_blank">→ Reinforces: Modern embedding stack</a>
     </div>
   </div>
   <div id="ex-design" class="tab-content">
@@ -1464,7 +1464,7 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
     <div class="ex-block">
       <div class="ex-header"><div><div class="ex-num">Design 04 · Expert</div><div class="ex-title">Choose the embedding model for a multilingual catalogue</div></div><span class="badge b-coral">Expert</span></div>
       <div class="ex-body">You must cluster 20M product titles across 8 languages, refreshed daily, with a fixed GPU budget. Design the selection: which embedding model (size vs MTEB score vs multilingual support), how you validate it for <em>clustering</em> (not retrieval), how you cache embeddings across daily runs, and the fallback when a new language appears. Name the two biggest cost drivers.</div>
-      <a class="ex-project-link" href="clustering_complete_reference_v2.html#embeddings" target="_blank">→ Reinforces: Modern embedding stack</a>
+      <a class="ex-project-link" href="2_clustering_complete_reference_v2.html#embeddings" target="_blank">→ Reinforces: Modern embedding stack</a>
     </div>
   </div>
 </div>
@@ -1730,8 +1730,8 @@ X_te_aug = np.hstack([X_test_scaled,  dists_test,  probs_test])</div>
   <div class="container">
     <p style="font-size:13px;color:var(--text3)">Clustering Complete Reference · Beginner to Expert · 2026</p>
     <p style="font-size:12px;color:var(--text3);margin-top:6px">K-Means · DBSCAN · GMM · HDBSCAN · Hierarchical · Spectral · Deep Clustering · MLOps · 80 Q&amp;As</p>
-    <p style="font-size:12px;color:var(--text3);margin-top:6px">Companion: <a href="clustering_projects_guide_v2.html" style="color:var(--accent);text-decoration:none">5 Portfolio Projects Guide →</a></p>
-    <p style="font-size:12px;color:var(--text3);margin-top:6px">New here? Start with the gentle <a href="clustering_intuition_guide.html" style="color:var(--accent2);text-decoration:none">🧒 Intuition Guide →</a></p>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">Companion: <a href="3_clustering_projects_guide_v2.html" style="color:var(--accent);text-decoration:none">5 Portfolio Projects Guide →</a></p>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">New here? Start with the gentle <a href="1_clustering_intuition_guide.html" style="color:var(--accent2);text-decoration:none">🧒 Intuition Guide →</a></p>
   </div>
 </footer>
 </div></div>

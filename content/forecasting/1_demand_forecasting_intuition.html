@@ -334,7 +334,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>A demand forecast is a <strong>probability distribution over future quantities</strong> — not one number, but a whole range of "how likely is each amount." We usually report a middle estimate (point forecast) plus a band of uncertainty (prediction interval), at a specific level (this SKU, this depot, next week), because that's what the stocking decision actually consumes.</p></div></div>
   </div>
   <p class="fun">😄 A forecast is a guess wearing a lab coat. The lab coat is the maths. The guess is still a guess — we just make it an honest, measured one.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#intro" target="_blank">Go deeper → the real definition &amp; when to forecast ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#intro" target="_blank">Go deeper → the real definition &amp; when to forecast ↗</a>
 </div>
 </section>
 
@@ -365,7 +365,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>This is the <strong>seasonal-naive</strong> forecast: ŷ for a period = the actual value one full season ago. It's the mandatory <em>baseline</em> — the floor every model must clear on honest backtesting. It even doubles as the yardstick inside the MASE metric (MASE &lt; 1 means "we beat naive"). Rule one of forecasting: always measure against it.</p></div></div>
   </div>
   <p class="fun">😄 The baseline is the forecasting version of wearing the same outfit because it worked last time. Lazy? Yes. Effective? Also annoyingly yes.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#evaluation" target="_blank">Go deeper → baselines, MASE &amp; honest backtesting ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#evaluation" target="_blank">Go deeper → baselines, MASE &amp; honest backtesting ↗</a>
 </div>
 </section>
 
@@ -398,7 +398,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>This is <strong>time-series decomposition</strong>: y = trend + seasonality + calendar/event effects + noise (additively, or multiplicatively when swings scale with volume). Every model family is really a different bet about which of these dominates and how they interact — and the irreducible "noise" is the hard limit on how good any forecast can ever be.</p></div></div>
   </div>
   <p class="fun">😄 A sales chart looks like a heart-rate monitor during a horror movie. Decomposition is putting on the glasses that reveal it was three calm things wearing a trench coat.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#intro" target="_blank">Go deeper → decomposition, trend &amp; seasonality ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#intro" target="_blank">Go deeper → decomposition, trend &amp; seasonality ↗</a>
 </div>
 </section>
 <section class="section" id="families">
@@ -431,7 +431,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>The "elder" = <strong>classical models</strong> (ETS, ARIMA) — one model per series, few parameters, native uncertainty. The "bazaar" = <strong>cross-learning / global models</strong>, where one model (usually gradient-boosted trees like LightGBM, or deep nets) trains across all series and ingests covariates. Cross-learning swept the M5 retail competition. Above that sit deep architectures and pretrained foundation models — same idea, more horsepower.</p></div></div>
   </div>
   <p class="fun">😄 The wise elder gives you a thoughtful answer about one product. The bazaar gives you a slightly-less-thoughtful answer about a million products before lunch. Guess which one the supply chain prefers.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#methods" target="_blank">Go deeper → the four method tiers, with math &amp; code ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#methods" target="_blank">Go deeper → the four method tiers, with math &amp; code ↗</a>
 </div>
 </section>
 
@@ -462,7 +462,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>This is <strong>intermittent demand</strong>. You classify each item by ADI (how often it sells) and CV² (how erratic the size) into smooth / intermittent / erratic / lumpy, then route to the right method: <strong>Croston</strong> and the de-biased <strong>SBA</strong> for stable intermittency, and <strong>TSB</strong> when obsolescence is a risk — because TSB updates a demand <em>probability</em> every week, so a dying item decays to zero. And never score these with MAPE.</p></div></div>
   </div>
   <p class="fun">😄 Croston is the friend who only texts when they want something. TSB is the friend who notices when you've stopped texting back and gracefully fades away. Be like TSB.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#intermittent" target="_blank">Go deeper → ADI/CV², Croston, SBA, TSB ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#intermittent" target="_blank">Go deeper → ADI/CV², Croston, SBA, TSB ↗</a>
 </div>
 </section>
 
@@ -494,7 +494,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Hierarchical forecasting &amp; reconciliation</strong>. Options: bottom-up (sum the leaves), top-down (split the total), middle-out, and the modern default <strong>MinT</strong> (minimum-trace), which optimally combines forecasts from <em>all</em> levels using their error covariance — usually more accurate <em>and</em> guaranteed coherent. The frontier even reconciles across time frequencies (weekly ⇄ monthly ⇄ yearly) at once.</p></div></div>
   </div>
   <p class="fun">😄 It's the family WhatsApp group of forecasting: everyone has their own version of events, and someone has to make the numbers agree before the meeting.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#hierarchy" target="_blank">Go deeper → bottom-up, top-down, MinT reconciliation ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#hierarchy" target="_blank">Go deeper → bottom-up, top-down, MinT reconciliation ↗</a>
 </div>
 </section>
 <section class="section" id="howwrong">
@@ -521,7 +521,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>Two things you must report together: <strong>magnitude</strong> (use <strong>WMAPE</strong> for retail — total error ÷ total volume, which survives the zeros that break MAPE; <strong>MASE</strong> to compare across series) and <strong>bias</strong> (the signed mean error — is it systematically high or low?). And you measure it with <strong>rolling-origin backtesting</strong>, never one lucky month.</p></div></div>
   </div>
   <p class="fun">😄 Low bias with high noise is a clumsy friend who means well. Low noise with high bias is a friend who lies to you very consistently. The second one is worse.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#evaluation" target="_blank">Go deeper → WMAPE, bias, MASE &amp; backtesting ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#evaluation" target="_blank">Go deeper → WMAPE, bias, MASE &amp; backtesting ↗</a>
 </div>
 </section>
 
@@ -548,7 +548,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Probabilistic forecasting</strong>: predict the whole distribution, summarised as <strong>quantiles</strong> (the P50, P90, P95…). You score it with proper rules like <strong>pinball loss</strong> and <strong>CRPS</strong>, check it's <em>calibrated</em> (does the "90%" band really cover 90%?), and use <strong>conformal prediction</strong> to fix over-confident intervals. The service level you target <em>is</em> the quantile you stock to.</p></div></div>
   </div>
   <p class="fun">😄 "On average the river is one metre deep" is famously poor comfort to the person who drowned crossing it. Forecast the range, not just the middle.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#probabilistic" target="_blank">Go deeper → quantiles, CRPS &amp; conformal prediction ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#probabilistic" target="_blank">Go deeper → quantiles, CRPS &amp; conformal prediction ↗</a>
 </div>
 </section>
 
@@ -579,7 +579,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p>The <strong>newsvendor model</strong>. With under-stock cost C&#8453; and over-stock cost C&#8338;, the optimal order is the demand quantile at the <strong>critical fractile</strong> C&#8453;/(C&#8453;+C&#8338;). So your target service level <em>is</em> that fractile, and the number you forecast should be that quantile — which is exactly why pinball loss at quantile τ equals the inventory cost. Judge the system by fill rate and holding cost, not WMAPE alone.</p></div></div>
   </div>
   <p class="fun">😄 Yes, the textbook decision model in modern AI supply chains is literally named after a kid selling newspapers on a corner. The classics never die — unlike the leftover newspapers.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#decision" target="_blank">Go deeper → newsvendor, critical fractile &amp; safety stock ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#decision" target="_blank">Go deeper → newsvendor, critical fractile &amp; safety stock ↗</a>
 </div>
 </section>
 <section class="section" id="foundation">
@@ -609,7 +609,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
     <div class="rung rung-sci"><div class="rung-emoji">🎓</div><div class="rung-body"><span class="rung-tag">What the scientists call it</span><p><strong>Time-series foundation models</strong> — pretrained on huge corpora to forecast new series <strong>zero-shot</strong> (TimesFM, Chronos/Chronos-2, Moirai, Lag-Llama, TimeGPT). 2025–26 brought a shared benchmark (GIFT-Eval) and covariate-aware versions — plus honest caveats: some leaderboard wins shrink on truly unseen data (benchmark leakage), and their uncertainty isn't always calibrated. Best used as a baseline, cold-start tool, and ensemble member.</p></div></div>
   </div>
   <p class="fun">😄 A foundation model is the friend who's watched every cooking show and confidently tells you how the dish ends. Right 85% of the time. The other 15%, dinner is on fire — so taste before you serve.</p>
-  <a class="deeper" href="demand_forecasting_reference.html#advanced" target="_blank">Go deeper → the 2026 foundation-model frontier ↗</a>
+  <a class="deeper" href="2_demand_forecasting_reference.html#advanced" target="_blank">Go deeper → the 2026 foundation-model frontier ↗</a>
 </div>
 </section>
 
@@ -639,8 +639,8 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
   <h3 style="margin-top:10px">Where to go next</h3>
   <div class="grid3">
     <div class="card"><h4>🧒→🎓 You are here</h4><p style="font-size:13px">The Intuition Guide. Come back any time a concept stops making sense — the green box is always the gentle reset.</p></div>
-    <a class="card" href="demand_forecasting_reference.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--accent)">📘 The Reference →</h4><p style="font-size:13px">Now that the ideas click, this is the rigorous version: the maths, the code, 80 Q&amp;A, 19 sections, all the depth.</p></a>
-    <a class="card" href="demand_forecasting_projects.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--teal)">🛠️ The Projects →</h4><p style="font-size:13px">Ready to build? Five hands-on projects on real data — from classical baselines to a foundation-model harness.</p></a>
+    <a class="card" href="2_demand_forecasting_reference.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--accent)">📘 The Reference →</h4><p style="font-size:13px">Now that the ideas click, this is the rigorous version: the maths, the code, 80 Q&amp;A, 19 sections, all the depth.</p></a>
+    <a class="card" href="3_demand_forecasting_projects.html" target="_blank" style="text-decoration:none"><h4 style="color:var(--teal)">🛠️ The Projects →</h4><p style="font-size:13px">Ready to build? Five hands-on projects on real data — from classical baselines to a foundation-model harness.</p></a>
   </div>
   <div class="alert alert-success" style="margin-top:18px"><strong>The one thing to remember:</strong> a forecast is an honest, measured guess about an uncertain future — and the whole craft is (1) beating the lazy baseline, (2) being honest about how wrong you are, and (3) turning the guess into a good <em>decision</em>. Everything else is detail. Brilliant, fascinating, career-spanning detail — but detail.</div>
 </div>
@@ -649,7 +649,7 @@ code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1
 <footer style="padding:48px 0;text-align:center">
   <div class="container">
     <p style="font-size:14px;color:var(--text2)">The trilogy, in order:</p>
-    <p style="font-size:14px;color:var(--text3);margin-top:6px">🧒 <strong style="color:var(--text)">Intuition</strong> (you're here) &nbsp;→&nbsp; <a class="cite" href="demand_forecasting_reference.html" target="_blank">📘 Reference</a> &nbsp;→&nbsp; <a class="cite" href="demand_forecasting_projects.html" target="_blank">🛠️ Projects</a></p>
+    <p style="font-size:14px;color:var(--text3);margin-top:6px">🧒 <strong style="color:var(--text)">Intuition</strong> (you're here) &nbsp;→&nbsp; <a class="cite" href="2_demand_forecasting_reference.html" target="_blank">📘 Reference</a> &nbsp;→&nbsp; <a class="cite" href="3_demand_forecasting_projects.html" target="_blank">🛠️ Projects</a></p>
     <p style="font-size:12px;color:var(--text3);margin-top:22px">Demand Forecasting · The Intuition Guide · 2026 · explained from age 10 to PhD, one staircase at a time.</p>
   </div>
 </footer>

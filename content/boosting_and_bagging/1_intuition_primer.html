@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bagging &amp; Boosting — Visual Primer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222840;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f2f8;--text2:#b0bace;--text3:#6b7594;--accent:#e08a1e;--accent2:#8b6cf7;--teal:#30d4a8;--coral:#f96e4f;--amber:#f5a623;--green:#4cca78;--red:#e05c5c;--pink:#e86cad;--font-display:'Fraunces',serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;--radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.32)}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#fff;--bg3:#eef1f8;--bg4:#e0e6f0;--border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);--text:#111827;--text2:#374151;--text3:#6b7280;--accent:#c2710a;--accent2:#7c3aed;--teal:#0d9488;--coral:#dc4e2a;--amber:#d97706;--green:#16a34a;--red:#dc2626;--pink:#db2777;--shadow:0 4px 24px rgba(0,0,0,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:200;background:var(--bg3);border:1px solid var(--border2);border-radius:24px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:var(--font-body);color:var(--text2);font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:var(--shadow)}
+.theme-toggle:hover{color:var(--text);border-color:var(--accent)}
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:54px;backdrop-filter:blur(12px)}
+.nav-brand{font-family:var(--font-display);font-size:19px;color:var(--text);margin-right:2rem;white-space:nowrap;font-weight:600}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:54px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.03em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.hero{padding:84px 0 64px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(76,202,120,.10) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--green);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,60px);line-height:1.07;color:var(--text);margin-bottom:18px;font-weight:300}
+.hero h1 em{font-style:italic;color:var(--green);font-weight:600}
+.hero-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 28px;line-height:1.65}
+.hero-stats{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.hero-stat{text-align:center}
+.hero-stat .n{font-family:var(--font-display);font-size:28px;color:var(--green);font-weight:600}
+.hero-stat .l{font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.container{max-width:980px;margin:0 auto;padding:0 2rem}
+.section{padding:60px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--green);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);color:var(--text);margin-bottom:14px;line-height:1.15;font-weight:300}
+.section-sub{font-size:15px;color:var(--text2);max-width:720px;margin-bottom:30px;line-height:1.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:7px}
+p{color:var(--text2);font-size:15.5px;line-height:1.75;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:20px;line-height:1.75}
+li{margin-bottom:6px}strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1);color:var(--accent);padding:2px 6px;border-radius:4px}
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.7;border-left:3px solid}
+.alert-info{background:rgba(91,141,238,.07);border-color:var(--accent)}
+.alert-warn{background:rgba(245,166,35,.07);border-color:var(--amber)}
+.alert-success{background:rgba(76,202,120,.07);border-color:var(--green)}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.compare-table th{background:var(--bg3);color:var(--text2);font-weight:500;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:14px}
+.compare-table tr:last-child td{border-bottom:none}
+.viz-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0}
+.viz-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.viz-svg{width:100%;overflow:visible}
+.viz-caption{font-size:13px;color:var(--text3);margin-top:10px;line-height:1.6;font-style:italic}
+/* primer-specific */
+.climb-meter{display:flex;gap:8px;align-items:center;margin-bottom:22px;flex-wrap:wrap}
+.climb-step{display:flex;align-items:center;gap:7px;font-size:11.5px;font-family:var(--font-mono);color:var(--text3);padding:5px 12px;border-radius:20px;border:1px solid var(--border)}
+.climb-step.active{color:var(--accent);border-color:var(--accent);background:rgba(91,141,238,.08)}
+.climb-arrow{color:var(--text3);font-size:12px}
+.level-badge{display:inline-block;font-size:11px;font-family:var(--font-mono);padding:4px 12px;border-radius:20px;margin-bottom:12px;font-weight:500;letter-spacing:.03em}
+.lvl-kid{background:rgba(76,202,120,.15);color:var(--green)}
+.lvl-trail{background:rgba(91,141,238,.15);color:var(--accent)}
+.analogy-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--green);border-radius:var(--radius-lg);padding:22px 24px;margin-bottom:16px}
+.everywhere{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+@media(max-width:700px){.everywhere{grid-template-columns:1fr}}
+.everywhere-item{background:var(--bg3);border-radius:var(--radius);padding:11px 14px;font-size:13px;color:var(--text2);line-height:1.55}
+.everywhere-item b{color:var(--text);font-weight:600}
+.trail-card{background:var(--bg2);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:var(--radius-lg);padding:20px 24px;margin-bottom:14px}
+.levelup{display:inline-flex;align-items:center;gap:8px;margin-top:6px;padding:10px 16px;background:rgba(139,108,247,.10);border:1px solid rgba(139,108,247,.3);border-radius:10px;font-size:13px;color:var(--accent2);text-decoration:none;font-weight:500;transition:background .2s}
+.levelup:hover{background:rgba(139,108,247,.2)}
+.door{display:block;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:22px 24px;text-decoration:none;transition:border-color .2s,transform .15s}
+.door:hover{border-color:var(--accent);transform:translateY(-2px)}
+.door h3{color:var(--accent)}
+.banner{background:linear-gradient(90deg,rgba(139,108,247,.1),rgba(91,141,238,.06));border:1px solid rgba(139,108,247,.25);border-radius:var(--radius-lg);padding:16px 20px;margin:0 auto;max-width:980px;font-size:14px;color:var(--text2);display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.banner a{color:var(--accent2);font-weight:600;text-decoration:none}.banner a:hover{text-decoration:underline}
+#top-btn{position:fixed;bottom:26px;right:26px;background:var(--green);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(76,202,120,.4)}
+#top-btn.visible{opacity:1}
+@media(min-width:1250px){.main-layout{display:grid;grid-template-columns:220px 1fr}.toc{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:20px 0;border-right:1px solid var(--border);scrollbar-width:thin}.toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 18px 4px;letter-spacing:.08em;text-transform:uppercase}.toc-link{display:block;font-size:13px;color:var(--text3);padding:6px 18px;cursor:pointer;transition:color .15s;border-left:2px solid transparent}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--accent);border-left-color:var(--accent)}}
+.cite{color:var(--accent);font-size:12px;text-decoration:none;font-family:var(--font-mono);padding:2px 7px;background:rgba(91,141,238,.1);border-radius:4px;display:inline-block;margin-top:4px}
+.toc-toggle,.toc-backdrop{display:none}
+.viz-zoom-modal{display:none}
+@media(max-width:1249px){
+  .toc{position:fixed;top:0;left:0;z-index:300;width:82%;max-width:300px;height:100%;background:var(--bg2);border-right:1px solid var(--border2);box-shadow:var(--shadow);padding:62px 0 28px;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(-100%);transition:transform .25s ease}
+  .toc.open{transform:translateX(0)}
+  .toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 20px 4px;letter-spacing:.08em;text-transform:uppercase}
+  .toc-link{display:block;font-size:15px;color:var(--text2);padding:11px 20px;cursor:pointer;border-left:2px solid transparent}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
+  .toc-toggle{display:flex;align-items:center;justify-content:center;position:fixed;bottom:26px;left:20px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+  .toc-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250}
+  .toc-backdrop.open{display:block}
+  .container{padding:0 1.1rem}
+  nav{padding:0 1rem}
+  .section{padding:44px 0}
+  .hero{padding:60px 0 44px}
+  .compare-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13.5px}
+  .viz-container,.viz-svg{cursor:zoom-in}
+}
+.viz-zoom-modal.open{display:flex;position:fixed;inset:0;z-index:400;background:rgba(8,10,16,.95);align-items:flex-start;justify-content:flex-start;padding:56px 12px 12px;overflow:auto;-webkit-overflow-scrolling:touch}
+.viz-zoom-modal .zoom-inner{min-width:560px;width:150%;max-width:none;margin:auto}
+.viz-zoom-modal .zoom-inner svg{width:100%;height:auto}
+.viz-zoom-close{position:fixed;top:12px;right:14px;z-index:401;width:42px;height:42px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+@media (prefers-reduced-motion: reduce){.wire-flow,.node-pulse,.fire,.float,.descend,.rise{animation:none !important}}
+@keyframes flowDash{to{stroke-dashoffset:-24}}
+@keyframes pulseNode{0%,100%{opacity:.35}50%{opacity:1}}
+@keyframes riseFill{0%,100%{height:6px;y:174}50%{height:120px;y:60}}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<button class="toc-toggle" onclick="toggleTOC()" id="toc-toggle" aria-label="Open contents">☰</button>
+<div class="toc-backdrop" id="toc-backdrop" onclick="toggleTOC()"></div>
+<nav>
+  <span class="nav-brand">Bagging &amp; Boosting — Primer</span>
+  <div class="nav-links">
+    <span class="nav-link" onclick="gotoS('howto')">How to climb</span>
+    <span class="nav-link" onclick="gotoS('tree')">One tree</span>
+    <span class="nav-link" onclick="gotoS('forest')">A forest</span>
+    <span class="nav-link" onclick="gotoS('relay')">The relay</span>
+    <span class="nav-link" onclick="gotoS('engines')">The engines</span>
+    <span class="nav-link" onclick="gotoS('check')">Did it work?</span>
+    <span class="nav-link" onclick="gotoS('understand')">You now get it</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">No math to begin · Trees → forests → boosting · 2026</div>
+    <h1>Bagging &amp; Boosting, <em>committees and relays</em></h1>
+    <p class="hero-sub">The models that win most spreadsheet-shaped problems — Random Forest, XGBoost and friends — are just clever ways of combining lots of simple "yes/no" flowcharts. You can understand the whole family with a panel of judges, a relay race, and a game of twenty questions. We start at "explain like I'm 10," climb to the real idea, and leave the math one click away.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">5</div><div class="l">big ideas</div></div>
+      <div class="hero-stat"><div class="n">5</div><div class="l">animated visuals</div></div>
+      <div class="hero-stat"><div class="n">~22</div><div class="l">min read</div></div>
+      <div class="hero-stat"><div class="n">0</div><div class="l">math to start</div></div>
+    </div>
+  </div>
+</div>
+
+<div style="padding:20px 1.1rem 0"><div class="banner">
+  🧗 This is the gentle on-ramp. For the real thing — math, code, a 72-question Q&amp;A — climb to the <a href="2_complete_reference.html">Complete Reference</a>, build it in the <a href="3_projects_guide.html">Projects Guide</a>, or keep the <a href="4_field_card.html">Field Card</a> open while modelling.
+</div></div>
+
+<div class="main-layout">
+<aside class="toc" id="toc">
+  <div class="toc-section">Start</div>
+  <span class="toc-link" onclick="gotoS('howto')">How this climb works</span>
+  <div class="toc-section">The Big Ideas</div>
+  <span class="toc-link" onclick="gotoS('tree')">1 · A tree is twenty questions</span>
+  <span class="toc-link" onclick="gotoS('forest')">2 · A forest is a panel of judges</span>
+  <span class="toc-link" onclick="gotoS('relay')">3 · Boosting is a relay of fixers</span>
+  <span class="toc-link" onclick="gotoS('engines')">4 · XGBoost &amp; the racing engines</span>
+  <span class="toc-link" onclick="gotoS('check')">5 · Did it work? Which clues mattered?</span>
+  <div class="toc-section">Finish</div>
+  <span class="toc-link" onclick="gotoS('understand')">What you now understand</span>
+</aside>
+<div style="overflow:hidden"><div class="container">
+
+<section class="section" id="howto">
+  <div class="section-eyebrow">Read me first · 2 min</div>
+  <h2 class="section-title">How this climb works</h2>
+  <p class="section-sub">Every idea below is told at three heights. Stop wherever you like — base camp is a fine place to enjoy the view.</p>
+  <div class="grid3">
+    <div class="card"><h3>🧒 Base camp</h3><p style="margin:0">A plain everyday picture — a panel of judges, a relay race — with no symbols at all.</p></div>
+    <div class="card"><h3>🎓 The trail</h3><p style="margin:0">The same idea with its real name and how it actually works, still in words.</p></div>
+    <div class="card"><h3>🔬 The summit</h3><p style="margin:0">The full math and code, which live in the <a class="cite" href="2_complete_reference.html">Reference</a>. Each idea has a "level up" button to it.</p></div>
+  </div>
+  <div class="alert alert-success">By the end you'll know what a decision tree is, the two big ways to team them up (<strong>bagging</strong> = a panel voting, <strong>boosting</strong> = a relay of fixers), what makes XGBoost/LightGBM/CatBoost special, and how to tell whether your model actually worked — all before touching a single equation.</div>
+</section>
+<section class="section" id="tree">
+  <div class="section-eyebrow">Big idea 1</div>
+  <h2 class="section-title">A tree is twenty questions</h2>
+  <div class="climb-meter"><span class="climb-step active">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step active">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit</span></div>
+  <span class="level-badge lvl-kid">🧒 Explain like I'm 10</span>
+  <div class="analogy-card">
+    <p>A <strong>decision tree</strong> is the game of <strong>twenty questions</strong>. To guess whether an order will arrive late, it asks: "Is the lead time more than 3 days?" → if yes, "Is the carrier the slow one?" → and so on, funnelling down a flowchart until it lands on an answer at the bottom.</p>
+    <p style="margin-bottom:0">Each question is chosen to <strong>split the pile as cleanly as possible</strong> — the question that best separates the "late" orders from the "on-time" ones. Follow the yes/no path and you reach a little box that says "probably late" or "probably fine." That's the whole model: a learned flowchart.</p>
+    <div class="everywhere">
+      <div class="everywhere-item"><b>Troubleshooter:</b> "Is it plugged in? → Is the cable broken? → …"</div>
+      <div class="everywhere-item"><b>"Which dog breed" quiz:</b> a chain of yes/no questions.</div>
+      <div class="everywhere-item"><b>Symptom checker:</b> narrows to a likely cause step by step.</div>
+    </div>
+  </div>
+  <div class="viz-container">
+    <div class="viz-label">A learned flowchart of yes/no questions</div>
+    <svg viewBox="0 0 600 200" class="viz-svg" style="max-height:200px">
+      <rect x="230" y="14" width="140" height="32" rx="8" fill="rgba(224,138,30,.14)" stroke="var(--accent)"/><text x="300" y="34" text-anchor="middle" fill="var(--text)" font-size="12">lead time &gt; 3 days?</text>
+      <line class="wire-flow" x1="260" y1="46" x2="150" y2="78" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 6" style="animation:flowDash 1s linear infinite"/><text x="190" y="66" fill="var(--text3)" font-size="11">no</text>
+      <line x1="340" y1="46" x2="450" y2="78" stroke="var(--text3)" stroke-width="1.4"/><text x="405" y="66" fill="var(--text3)" font-size="11">yes</text>
+      <rect x="80" y="80" width="140" height="32" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="150" y="100" text-anchor="middle" fill="var(--text2)" font-size="12">big order?</text>
+      <rect x="382" y="80" width="136" height="32" rx="8" fill="rgba(224,92,92,.14)" stroke="var(--red)"/><text x="450" y="100" text-anchor="middle" fill="var(--text2)" font-size="12">⚠ likely LATE</text>
+      <line class="wire-flow" x1="120" y1="112" x2="70" y2="150" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="6 6" style="animation:flowDash 1s linear infinite"/><line x1="180" y1="112" x2="230" y2="150" stroke="var(--text3)"/>
+      <rect x="6" y="152" width="128" height="32" rx="8" fill="rgba(76,202,120,.14)" stroke="var(--green)"/><text x="70" y="172" text-anchor="middle" fill="var(--text2)" font-size="12">✓ on time</text>
+      <rect x="168" y="152" width="128" height="32" rx="8" fill="rgba(224,92,92,.14)" stroke="var(--red)"/><text x="232" y="172" text-anchor="middle" fill="var(--text2)" font-size="12">⚠ late</text>
+    </svg>
+    <div class="viz-caption">The glowing path is one order finding its answer. Train = learn which questions to ask, and in what order, to separate the outcomes best.</div>
+  </div>
+  <span class="level-badge lvl-trail">🎓 One step up the trail</span>
+  <div class="trail-card">
+    <p style="margin-bottom:0">This is a <strong>decision tree</strong>. It picks each split to most reduce the "mixed-up-ness" (<em>impurity</em>) of the groups. Its superpower is capturing combinations of conditions automatically; its weakness is that a deep tree just <strong>memorises</strong> the training data (great on practice, shaky on new data), and a tiny change in data can redraw it completely. One tree alone is unreliable — which is exactly why we build teams of them.</p>
+  </div>
+  <a class="levelup" href="2_complete_reference.html#trees">🔬 Level up — impurity, CART &amp; pruning in the Reference</a>
+</section>
+
+<section class="section" id="forest">
+  <div class="section-eyebrow">Big idea 2 · bagging</div>
+  <h2 class="section-title">A forest is a panel of judges</h2>
+  <div class="climb-meter"><span class="climb-step active">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step active">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit</span></div>
+  <span class="level-badge lvl-kid">🧒 Explain like I'm 10</span>
+  <div class="analogy-card">
+    <p>One judge can be quirky — maybe they over-weight one detail. So don't trust one. Assemble a <strong>panel of 500 judges</strong>, give each a slightly different slice of the evidence, and take the <strong>majority vote</strong>. The individual quirks point in random directions and cancel out, leaving a verdict far steadier than any single judge.</p>
+    <p style="margin-bottom:0">That's a <strong>Random Forest</strong>: hundreds of decision trees, each grown on a random sample of the data (and even a random subset of the clues), all voting. No single shaky tree dominates — the crowd is wise.</p>
+    <div class="everywhere">
+      <div class="everywhere-item"><b>"Ask the audience":</b> the crowd's majority is usually right.</div>
+      <div class="everywhere-item"><b>Jellybean jar:</b> average many guesses → uncannily close.</div>
+      <div class="everywhere-item"><b>Review aggregator:</b> 500 ratings beat one critic.</div>
+    </div>
+  </div>
+  <div class="viz-container">
+    <div class="viz-label">Many different trees → a vote</div>
+    <svg viewBox="0 0 600 180" class="viz-svg" style="max-height:180px">
+      <defs><marker id="fv" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+      <g>
+        <circle class="node-pulse" cx="70" cy="40" r="13" fill="var(--bg4)" stroke="var(--green)" style="animation:pulseNode 2.4s ease-in-out infinite"/><text x="70" y="44" text-anchor="middle" fill="var(--text2)" font-size="11">🌳</text>
+        <circle class="node-pulse" cx="70" cy="90" r="13" fill="var(--bg4)" stroke="var(--green)" style="animation:pulseNode 2.4s ease-in-out infinite .4s"/><text x="70" y="94" text-anchor="middle" fill="var(--text2)" font-size="11">🌳</text>
+        <circle class="node-pulse" cx="70" cy="140" r="13" fill="var(--bg4)" stroke="var(--green)" style="animation:pulseNode 2.4s ease-in-out infinite .8s"/><text x="70" y="144" text-anchor="middle" fill="var(--text2)" font-size="11">🌳</text>
+        <text x="70" y="166" text-anchor="middle" fill="var(--text3)" font-size="10">…500 trees…</text>
+      </g>
+      <text x="150" y="20" fill="var(--text3)" font-size="11">each saw different data</text>
+      <line class="wire-flow" x1="92" y1="40" x2="270" y2="80" stroke="var(--green)" stroke-width="1.4" stroke-dasharray="6 6" style="animation:flowDash 1.1s linear infinite" marker-end="url(#fv)"/>
+      <line class="wire-flow" x1="92" y1="90" x2="270" y2="90" stroke="var(--green)" stroke-width="1.4" stroke-dasharray="6 6" style="animation:flowDash 1.1s linear infinite" marker-end="url(#fv)"/>
+      <line class="wire-flow" x1="92" y1="140" x2="270" y2="100" stroke="var(--green)" stroke-width="1.4" stroke-dasharray="6 6" style="animation:flowDash 1.1s linear infinite" marker-end="url(#fv)"/>
+      <rect x="275" y="62" width="150" height="56" rx="10" fill="rgba(224,138,30,.12)" stroke="var(--accent)"/><text x="350" y="86" text-anchor="middle" fill="var(--text)" font-size="12" font-weight="600">majority vote</text><text x="350" y="104" text-anchor="middle" fill="var(--text3)" font-size="10">quirks cancel out</text>
+      <line x1="425" y1="90" x2="468" y2="90" stroke="var(--text3)" marker-end="url(#fv)"/>
+      <rect x="470" y="64" width="120" height="52" rx="10" fill="rgba(76,202,120,.14)" stroke="var(--green)"/><text x="530" y="94" text-anchor="middle" fill="var(--text)" font-size="12">steady answer</text>
+    </svg>
+    <div class="viz-caption">Because each tree saw different evidence, they make <em>different</em> mistakes — and different mistakes average away. Add more judges and the verdict only gets steadier.</div>
+  </div>
+  <span class="level-badge lvl-trail">🎓 One step up the trail</span>
+  <div class="trail-card">
+    <p style="margin-bottom:0">This is <strong>bagging</strong>, and the panel of trees is a <strong>Random Forest</strong>. Each tree trains on a random "bootstrap" sample plus a random subset of features, so the trees are <em>decorrelated</em> — they err independently, and averaging cancels that error (this is the <em>variance</em> half of the famous bias–variance pair). Random Forest is the robust, low-fuss model you reach for first.</p>
+  </div>
+  <a class="levelup" href="2_complete_reference.html#rf">🔬 Level up — Random Forest, OOB &amp; the variance math</a>
+</section>
+
+<section class="section" id="relay">
+  <div class="section-eyebrow">Big idea 3 · boosting</div>
+  <h2 class="section-title">Boosting is a relay of fixers</h2>
+  <div class="climb-meter"><span class="climb-step active">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step active">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit</span></div>
+  <span class="level-badge lvl-kid">🧒 Explain like I'm 10</span>
+  <div class="analogy-card">
+    <p>The panel works because everyone votes <em>independently</em>. Boosting does the opposite — it lines the helpers up in a <strong>relay</strong>. The first makes a rough guess. The second looks <em>only at what the first got wrong</em> and fixes those. The third fixes whatever's still wrong. Each runner is mediocre on their own, but the hand-off chain ends up excellent.</p>
+    <p style="margin-bottom:0">Crucially, each fixer takes only a <strong>small, careful step</strong> (the "learning rate") so the team doesn't overcorrect. Add enough careful steps and the leftover error melts away.</p>
+    <div class="everywhere">
+      <div class="everywhere-item"><b>Editing in passes:</b> each read-through fixes the remaining typos.</div>
+      <div class="everywhere-item"><b>A tutor:</b> drills the exact questions you keep missing.</div>
+      <div class="everywhere-item"><b>Sculpting:</b> rough block → refine → refine → detail.</div>
+    </div>
+  </div>
+  <div class="viz-container">
+    <div class="viz-label">Each fixer shrinks the leftover error</div>
+    <svg viewBox="0 0 600 180" class="viz-svg" style="max-height:180px">
+      <defs><marker id="rv" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+      <text x="300" y="18" text-anchor="middle" fill="var(--text3)" font-size="11">rough guess → fix → fix → … → great answer</text>
+      <rect x="20" y="40" width="86" height="40" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="63" y="58" text-anchor="middle" fill="var(--text2)" font-size="11">fixer 1</text><text x="63" y="73" text-anchor="middle" fill="var(--text3)" font-size="10">rough</text>
+      <line x1="106" y1="60" x2="138" y2="60" stroke="var(--text3)" marker-end="url(#rv)"/>
+      <rect x="140" y="40" width="86" height="40" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="183" y="58" text-anchor="middle" fill="var(--text2)" font-size="11">fixer 2</text><text x="183" y="73" text-anchor="middle" fill="var(--text3)" font-size="10">fix errors</text>
+      <line x1="226" y1="60" x2="258" y2="60" stroke="var(--text3)" marker-end="url(#rv)"/>
+      <rect x="260" y="40" width="86" height="40" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="303" y="58" text-anchor="middle" fill="var(--text2)" font-size="11">fixer 3</text><text x="303" y="73" text-anchor="middle" fill="var(--text3)" font-size="10">fix more</text>
+      <line x1="346" y1="60" x2="378" y2="60" stroke="var(--text3)" marker-end="url(#rv)"/>
+      <text x="410" y="64" fill="var(--text3)" font-size="14">…</text>
+      <rect x="450" y="40" width="130" height="40" rx="8" fill="rgba(76,202,120,.14)" stroke="var(--green)"/><text x="515" y="64" text-anchor="middle" fill="var(--text)" font-size="12">great answer</text>
+      <text x="300" y="108" text-anchor="middle" fill="var(--text3)" font-size="11">leftover error after each hand-off</text>
+      <rect x="40" y="120" width="40" height="48" fill="var(--red)" opacity="0.8"/><rect x="160" y="134" width="40" height="34" fill="var(--coral)" opacity="0.7"/><rect x="280" y="148" width="40" height="20" fill="var(--amber)" opacity="0.7"/><rect x="490" y="160" width="40" height="8" fill="var(--green)" opacity="0.8"/>
+    </svg>
+    <div class="viz-caption">Unlike the panel (everyone at once), the relay is strictly one-after-another — each runner needs the previous one's mistakes to know what to fix.</div>
+  </div>
+  <span class="level-badge lvl-trail">🎓 One step up the trail</span>
+  <div class="trail-card">
+    <p style="margin-bottom:0">This is <strong>boosting</strong>. Each new little tree is trained on the <strong>leftover errors</strong> (residuals) of the team so far, then added in scaled by a small learning rate. Stacking many gentle corrections erases <em>bias</em> — the other half of the bias–variance pair. The catch: keep adding past the point of usefulness and it starts memorising noise, so you watch a validation score and <strong>stop early</strong>.</p>
+  </div>
+  <a class="levelup" href="2_complete_reference.html#gbm">🔬 Level up — gradient boosting, residuals &amp; learning rate</a>
+</section>
+<section class="section" id="engines">
+  <div class="section-eyebrow">Big idea 4 · the famous names</div>
+  <h2 class="section-title">XGBoost &amp; the racing engines</h2>
+  <div class="climb-meter"><span class="climb-step active">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step active">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit</span></div>
+  <span class="level-badge lvl-kid">🧒 Explain like I'm 10</span>
+  <div class="analogy-card">
+    <p>Boosting (the relay of fixers) is the <em>idea</em>. <strong>XGBoost</strong>, <strong>LightGBM</strong> and <strong>CatBoost</strong> are three souped-up <strong>race cars</strong> built on that same engine. They'd all win the race; they're just engineered for different tracks.</p>
+    <p style="margin-bottom:0">One is the <strong>reliable all-rounder</strong> everyone trusts. One is built for <strong>pure speed</strong> on enormous tracks. One is best when the data is full of <strong>labels and categories</strong> (cities, brands, regions) and you don't want to do much prep. Same sport, three pro teams with different styles.</p>
+    <div class="everywhere">
+      <div class="everywhere-item"><b>Same recipe, three ovens</b> — each bakes a little differently.</div>
+      <div class="everywhere-item"><b>Same sport, three teams</b> — different strengths, all elite.</div>
+      <div class="everywhere-item"><b>Same road, three cars</b> — pick for the terrain.</div>
+    </div>
+  </div>
+  <div class="viz-container">
+    <div class="viz-label">Same engine (boosting), three builds</div>
+    <svg viewBox="0 0 600 160" class="viz-svg" style="max-height:160px">
+      <rect x="20" y="30" width="170" height="100" rx="12" fill="rgba(91,141,238,.10)" stroke="#5b8dee"/><text x="105" y="58" text-anchor="middle" fill="#7aabff" font-size="14" font-weight="600">XGBoost</text><text x="105" y="84" text-anchor="middle" fill="var(--text2)" font-size="11">the all-rounder</text><text x="105" y="104" text-anchor="middle" fill="var(--text3)" font-size="10.5">trusted · careful</text><text x="105" y="119" text-anchor="middle" fill="var(--text3)" font-size="10.5">works everywhere</text>
+      <rect x="215" y="30" width="170" height="100" rx="12" fill="rgba(224,138,30,.10)" stroke="var(--accent)"/><text x="300" y="58" text-anchor="middle" fill="var(--accent)" font-size="14" font-weight="600">LightGBM</text><text x="300" y="84" text-anchor="middle" fill="var(--text2)" font-size="11">the speed demon</text><text x="300" y="104" text-anchor="middle" fill="var(--text3)" font-size="10.5">fastest on</text><text x="300" y="119" text-anchor="middle" fill="var(--text3)" font-size="10.5">huge datasets</text>
+      <rect x="410" y="30" width="170" height="100" rx="12" fill="rgba(139,108,247,.10)" stroke="var(--accent2)"/><text x="495" y="58" text-anchor="middle" fill="var(--accent2)" font-size="14" font-weight="600">CatBoost</text><text x="495" y="84" text-anchor="middle" fill="var(--text2)" font-size="11">the category whisperer</text><text x="495" y="104" text-anchor="middle" fill="var(--text3)" font-size="10.5">loves labels ·</text><text x="495" y="119" text-anchor="middle" fill="var(--text3)" font-size="10.5">great defaults</text>
+    </svg>
+    <div class="viz-caption">They're only a few lines of code apart, so the pro move is to try all three on your data and keep whichever wins.</div>
+  </div>
+  <span class="level-badge lvl-trail">🎓 One step up the trail</span>
+  <div class="trail-card">
+    <p style="margin-bottom:0"><strong>XGBoost</strong> is the battle-tested standard with the widest tooling. <strong>LightGBM</strong> grows trees a faster way ("leaf-wise") with clever sampling tricks, so it flies on large data. <strong>CatBoost</strong> handles category columns natively and resists a sneaky bias ("ordered boosting"), giving excellent results out of the box on small or category-heavy data. All three are gradient boosting under the hood.</p>
+  </div>
+  <a class="levelup" href="2_complete_reference.html#xgboost">🔬 Level up — what each engine actually does differently</a>
+</section>
+
+<section class="section" id="check">
+  <div class="section-eyebrow">Big idea 5 · the two questions that matter</div>
+  <h2 class="section-title">Did it work? Which clues mattered?</h2>
+  <div class="climb-meter"><span class="climb-step active">🧒 Base camp</span><span class="climb-arrow">→</span><span class="climb-step active">🎓 Trail</span><span class="climb-arrow">→</span><span class="climb-step">🔬 Summit</span></div>
+  <span class="level-badge lvl-kid">🧒 Explain like I'm 10</span>
+  <div class="analogy-card">
+    <p>You always ask two things. First, <strong>"did it actually work?"</strong> — don't be fooled because it aced the practice questions; test it on questions it has <em>never seen</em>. And beware rare events: a model that says "no fraud" every time is "99% right" while catching <strong>zero</strong> fraud.</p>
+    <p style="margin-bottom:0">Second, <strong>"which clues mattered?"</strong> A good tree model can hand you a <strong>receipt</strong> for each prediction: "I said LATE mostly because the lead time was long (+), partly because the carrier was slow (+), even though the order was small (−)." That explainability is why banks and planners trust these models.</p>
+    <div class="everywhere">
+      <div class="everywhere-item"><b>Ace homework, flunk the exam:</b> memorised, didn't learn (overfitting).</div>
+      <div class="everywhere-item"><b>"Right 90% of the time":</b> …because it rarely rains.</div>
+      <div class="everywhere-item"><b>Nutrition label:</b> shows where the calories came from (attribution).</div>
+    </div>
+  </div>
+  <div class="viz-container">
+    <div class="viz-label">Test on unseen data · and read the receipt</div>
+    <svg viewBox="0 0 600 175" class="viz-svg" style="max-height:175px">
+      <text x="150" y="20" text-anchor="middle" fill="var(--text2)" font-size="12">Did it work?</text>
+      <line x1="40" y1="120" x2="280" y2="120" stroke="var(--text3)"/><line x1="40" y1="35" x2="40" y2="120" stroke="var(--text3)"/>
+      <path d="M45,95 C110,70 200,55 275,48" fill="none" stroke="#5b8dee" stroke-width="2"/><text x="210" y="58" fill="#7aabff" font-size="10">practice ✓</text>
+      <path d="M45,98 C110,92 200,100 275,108" fill="none" stroke="var(--coral)" stroke-width="2"/><text x="200" y="118" fill="var(--coral)" font-size="10">unseen ✗ = memorised</text>
+      <line x1="320" y1="30" x2="320" y2="150" stroke="var(--border2)" stroke-dasharray="3 3"/>
+      <text x="460" y="20" text-anchor="middle" fill="var(--text2)" font-size="12">Which clues mattered? (the receipt)</text>
+      <line x1="455" y1="40" x2="455" y2="150" stroke="var(--border2)" stroke-dasharray="3 3"/>
+      <text x="360" y="58" fill="var(--text2)" font-size="11">lead time</text><rect x="455" y="48" width="110" height="14" rx="3" fill="var(--coral)"/>
+      <text x="360" y="84" fill="var(--text2)" font-size="11">carrier</text><rect x="455" y="74" width="64" height="14" rx="3" fill="var(--coral)"/>
+      <text x="360" y="110" fill="var(--text2)" font-size="11">order size</text><rect x="397" y="100" width="58" height="14" rx="3" fill="#5b8dee"/>
+      <text x="360" y="136" fill="var(--text2)" font-size="11">region</text><rect x="455" y="126" width="26" height="14" rx="3" fill="var(--coral)"/>
+      <text x="505" y="158" text-anchor="middle" fill="var(--text3)" font-size="9">← lowers · raises →</text>
+    </svg>
+    <div class="viz-caption">Left: if it nails practice but misses unseen data, it memorised. Right: the "receipt" (a SHAP plot) shows which clues pushed this prediction up (red) or down (blue).</div>
+  </div>
+  <span class="level-badge lvl-trail">🎓 One step up the trail</span>
+  <div class="trail-card">
+    <p style="margin-bottom:0">"Did it work?" means evaluating on <strong>held-out data</strong> with the <strong>right metric</strong> — for rare events use precision/recall and PR-AUC, never plain accuracy. "Which clues mattered?" means <strong>SHAP</strong> values, which attribute each prediction to its features with both size and direction. Together they turn a powerful model into a <em>trustworthy</em> one.</p>
+  </div>
+  <a class="levelup" href="2_complete_reference.html#evaluation">🔬 Level up — metrics, early stopping, SHAP &amp; calibration</a>
+</section>
+
+<section class="section" id="understand">
+  <div class="section-eyebrow">The payoff</div>
+  <h2 class="section-title">What you now understand</h2>
+  <p class="section-sub">Every everyday picture above has a real name in the field. Here's the full translation.</p>
+  <table class="compare-table">
+    <tr><th>The everyday idea</th><th>Its real name</th><th>One-line meaning</th></tr>
+    <tr><td>Twenty questions / a flowchart</td><td>Decision tree</td><td>Yes/no splits funnelling to a prediction.</td></tr>
+    <tr><td>Pick the question that splits cleanest</td><td>Impurity (Gini / entropy)</td><td>How the tree chooses each split.</td></tr>
+    <tr><td>A panel of judges voting</td><td>Bagging / Random Forest</td><td>Average many independent trees → cuts variance.</td></tr>
+    <tr><td>Each judge saw different evidence</td><td>Bootstrap + random features</td><td>What makes the trees disagree usefully.</td></tr>
+    <tr><td>A relay of fixers</td><td>Boosting</td><td>Sequential trees, each fixing the leftover error → cuts bias.</td></tr>
+    <tr><td>Small careful steps</td><td>Learning rate (shrinkage)</td><td>How gently each fixer is added.</td></tr>
+    <tr><td>Souped-up boosting race cars</td><td>XGBoost · LightGBM · CatBoost</td><td>Fast, regularised implementations of boosting.</td></tr>
+    <tr><td>Test on unseen questions</td><td>Held-out / cross-validation</td><td>The honest measure of "did it work?"</td></tr>
+    <tr><td>"99% right but caught nothing"</td><td>Class imbalance</td><td>Why accuracy lies; use PR-AUC / recall.</td></tr>
+    <tr><td>A receipt for each prediction</td><td>SHAP attribution</td><td>Which features pushed it up or down.</td></tr>
+  </table>
+  <h3 style="margin-top:30px">Three doors onward</h3>
+  <div class="grid3">
+    <a class="door" href="2_complete_reference.html"><h3>🔬 The Reference</h3><p style="margin:0">The real thing: math, code, evaluation, SHAP, tuning, pitfalls, a 72-question Q&amp;A bank, and a cheat-sheet.</p></a>
+    <a class="door" href="3_projects_guide.html"><h3>🛠️ The Projects</h3><p style="margin:0">Learn by building — from your first Random Forest to an XGBoost/LightGBM/CatBoost bake-off and a supply-chain capstone.</p></a>
+    <a class="door" href="4_field_card.html"><h3>🃏 The Field Card</h3><p style="margin:0">The keep-it-open reference: per-library knobs, the cross-library map, and a "which algorithm / which metric" index.</p></a>
+  </div>
+</section>
+<footer style="padding:46px 0 64px;text-align:center">
+  <p style="color:var(--text3);font-size:13px;max-width:640px;margin:0 auto 8px">Visual Primer · the gentle on-ramp to Bagging &amp; Boosting. Part of a set with the <a class="cite" href="2_complete_reference.html">Reference</a>, <a class="cite" href="3_projects_guide.html">Projects</a>, and <a class="cite" href="4_field_card.html">Field Card</a> — keep them in the same folder so links work.</p>
+  <p style="color:var(--text3);font-size:12px;font-family:var(--font-mono)">Base camp → trail → summit · 2026</p>
+</footer>
+</div></div></div>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<script>
+function toggleTheme(){const d=document.documentElement,b=document.getElementById('theme-btn');const light=d.getAttribute('data-theme')!=='light';d.setAttribute('data-theme',light?'light':'dark');b.textContent=light?'☀️ Light':'🌙 Dark';try{localStorage.setItem('theme',light?'light':'dark');}catch(e){}}
+(function(){try{const t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');const b=document.getElementById('theme-btn');if(b)b.textContent='☀️ Light';}}catch(e){}})();
+function gotoS(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});closeTOC();}
+const sids=['howto','tree','forest','relay','engines','check','understand'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
+});
+function toggleTOC(){const t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(!t)return;const open=t.classList.toggle('open');if(b)b.classList.toggle('open',open);}
+function closeTOC(){const t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(t)t.classList.remove('open');if(b)b.classList.remove('open');}
+(function(){
+  if(!window.matchMedia||!window.matchMedia('(max-width:1249px)').matches)return;
+  function openZoom(svg){
+    const m=document.createElement('div');m.className='viz-zoom-modal open';
+    const inner=document.createElement('div');inner.className='zoom-inner';
+    inner.innerHTML=svg.outerHTML;
+    const close=document.createElement('button');close.className='viz-zoom-close';close.textContent='✕';
+    close.setAttribute('aria-label','Close');
+    const dismiss=()=>document.body.removeChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)dismiss();});
+    close.addEventListener('click',dismiss);
+    m.appendChild(close);m.appendChild(inner);document.body.appendChild(m);
+  }
+  document.querySelectorAll('.viz-container').forEach(c=>{
+    const svg=c.querySelector('svg');if(!svg)return;
+    c.addEventListener('click',()=>openZoom(svg));
+  });
+})();
+</script>
+</body></html>

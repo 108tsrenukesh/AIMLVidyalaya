@@ -1,0 +1,999 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Linear &amp; Logistic Regression — Projects Guide</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0f14;--bg2:#13161f;--bg3:#1a1e2a;--bg4:#222840;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.14);--text:#f0f2f8;--text2:#b0bace;--text3:#6b7594;--accent:#5b8dee;--accent2:#8b6cf7;--teal:#30d4a8;--coral:#f96e4f;--amber:#f5a623;--green:#4cca78;--red:#e05c5c;--pink:#e86cad;--font-display:'Fraunces',serif;--font-body:'Inter',sans-serif;--font-mono:'JetBrains Mono',monospace;--radius:10px;--radius-lg:16px;--shadow:0 4px 24px rgba(0,0,0,.32)}
+[data-theme="light"]{--bg:#f4f6fb;--bg2:#fff;--bg3:#eef1f8;--bg4:#e0e6f0;--border:rgba(0,0,0,.09);--border2:rgba(0,0,0,.16);--text:#111827;--text2:#374151;--text3:#6b7280;--accent:#2563eb;--accent2:#7c3aed;--teal:#0d9488;--coral:#dc4e2a;--amber:#d97706;--green:#16a34a;--red:#dc2626;--pink:#db2777;--shadow:0 4px 24px rgba(0,0,0,.10)}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:16px;line-height:1.75;transition:background .3s,color .3s}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:var(--bg)}::-webkit-scrollbar-thumb{background:var(--bg4);border-radius:3px}
+.theme-toggle{position:fixed;top:14px;right:20px;z-index:200;background:var(--bg3);border:1px solid var(--border2);border-radius:24px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:var(--font-body);color:var(--text2);font-weight:500;display:flex;align-items:center;gap:7px;transition:all .2s;box-shadow:var(--shadow)}
+.theme-toggle:hover{color:var(--text);border-color:var(--accent)}
+nav{position:sticky;top:0;z-index:100;background:var(--bg);border-bottom:1px solid var(--border);padding:0 2rem;display:flex;align-items:center;height:54px;backdrop-filter:blur(12px)}
+.nav-brand{font-family:var(--font-display);font-size:19px;color:var(--text);margin-right:2rem;white-space:nowrap;font-weight:600}
+.nav-links{display:flex;overflow-x:auto;scrollbar-width:none;flex:1}
+.nav-links::-webkit-scrollbar{display:none}
+.nav-link{font-size:12px;font-weight:500;color:var(--text3);padding:0 12px;height:54px;display:flex;align-items:center;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:color .2s,border-color .2s;letter-spacing:.03em;text-transform:uppercase}
+.nav-link:hover{color:var(--text)}.nav-link.active{color:var(--accent);border-bottom-color:var(--accent)}
+.hero{padding:84px 0 56px;text-align:center;border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 80% 60% at 50% 0%,rgba(91,141,238,.10) 0%,transparent 70%);pointer-events:none}
+.hero-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.15em;text-transform:uppercase;margin-bottom:18px}
+.hero h1{font-family:var(--font-display);font-size:clamp(34px,6vw,60px);line-height:1.07;color:var(--text);margin-bottom:18px;font-weight:300}
+.hero h1 em{font-style:italic;color:var(--accent);font-weight:600}
+.hero-sub{font-size:17px;color:var(--text2);max-width:680px;margin:0 auto 28px;line-height:1.65}
+.hero-stats{display:flex;gap:30px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+.hero-stat{text-align:center}.hero-stat .n{font-family:var(--font-display);font-size:28px;color:var(--accent);font-weight:600}
+.hero-stat .l{font-size:11px;color:var(--text3);font-family:var(--font-mono);letter-spacing:.05em;text-transform:uppercase;margin-top:2px}
+.container{max-width:1080px;margin:0 auto;padding:0 2rem}
+.section{padding:60px 0;border-bottom:1px solid var(--border)}
+.section-eyebrow{font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:10px}
+.section-title{font-family:var(--font-display);font-size:clamp(26px,4vw,40px);color:var(--text);margin-bottom:14px;line-height:1.15;font-weight:300}
+.section-sub{font-size:15px;color:var(--text2);max-width:760px;margin-bottom:30px;line-height:1.7}
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px}
+.card-sm{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;margin-bottom:10px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px}
+@media(max-width:760px){.grid2,.grid3{grid-template-columns:1fr}}
+.badge{display:inline-block;font-size:10px;font-family:var(--font-mono);font-weight:500;padding:3px 9px;border-radius:20px;margin-right:5px;margin-bottom:5px;letter-spacing:.04em;text-transform:uppercase}
+.b-blue{background:rgba(91,141,238,.15);color:#7aabff;border:1px solid rgba(91,141,238,.25)}
+.b-teal{background:rgba(48,212,168,.12);color:#30d4a8;border:1px solid rgba(48,212,168,.2)}
+.b-green{background:rgba(76,202,120,.12);color:#4cca78;border:1px solid rgba(76,202,120,.2)}
+.b-amber{background:rgba(245,166,35,.12);color:#f5a623;border:1px solid rgba(245,166,35,.2)}
+.b-coral{background:rgba(249,110,79,.12);color:#f96e4f;border:1px solid rgba(249,110,79,.2)}
+.b-purple{background:rgba(139,108,247,.12);color:#b09aff;border:1px solid rgba(139,108,247,.2)}
+h3{font-size:18px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.4}
+h4{font-size:15px;font-weight:500;color:var(--text);margin-bottom:7px}
+h5{font-size:12px;font-weight:500;color:var(--text2);letter-spacing:.04em;text-transform:uppercase;margin-bottom:5px}
+p{color:var(--text2);font-size:15px;line-height:1.7;margin-bottom:10px}
+ul,ol{color:var(--text2);font-size:15px;padding-left:20px;line-height:1.75}
+li{margin-bottom:6px}strong{color:var(--text);font-weight:600}
+code{font-family:var(--font-mono);font-size:12.5px;background:rgba(91,141,238,.1);color:var(--accent);padding:2px 6px;border-radius:4px}
+.code-block{background:#0a0d14;border:1px solid var(--border);border-radius:var(--radius);padding:18px 20px;font-family:var(--font-mono);font-size:12.5px;color:#c9d1d9;overflow-x:auto;-webkit-overflow-scrolling:touch;max-width:100%;white-space:pre;margin:14px 0;line-height:1.7;position:relative}
+[data-theme="light"] .code-block{background:#1e2330;color:#e2e8f5}
+.code-block .kw{color:#ff7b72}.code-block .fn{color:#d2a8ff}.code-block .st{color:#a5d6ff}.code-block .cm{color:#5d6580;font-style:italic}.code-block .num{color:#f2cc60}
+.copy-btn{position:absolute;top:10px;right:10px;background:var(--bg4);color:var(--text3);border:1px solid var(--border);border-radius:6px;padding:4px 10px;font-size:11px;font-family:var(--font-mono);cursor:pointer;transition:all .2s}
+.copy-btn:hover{color:var(--text);border-color:var(--accent)}
+.alert{padding:14px 18px;border-radius:var(--radius);margin-bottom:14px;font-size:14px;color:var(--text2);line-height:1.7;border-left:3px solid}
+.alert-info{background:rgba(91,141,238,.07);border-color:var(--accent)}
+.alert-warn{background:rgba(245,166,35,.07);border-color:var(--amber)}
+.alert-success{background:rgba(76,202,120,.07);border-color:var(--green)}
+.alert-danger{background:rgba(224,92,92,.07);border-color:var(--red)}
+.pipeline{position:relative;padding-left:36px}
+.pipeline::before{content:'';position:absolute;left:12px;top:8px;bottom:8px;width:1px;background:linear-gradient(to bottom,var(--accent),var(--accent2));opacity:.3}
+.pipe-item{position:relative;margin-bottom:18px}
+.pipe-dot{position:absolute;left:-29px;top:5px;width:13px;height:13px;border-radius:50%;background:var(--bg4);border:2px solid var(--accent)}
+.pipe-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.pipe-body{font-size:14px;color:var(--text2);line-height:1.6}
+.pipe-time{font-family:var(--font-mono);font-size:11px;color:var(--text3)}
+.formula{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:12px 18px;font-family:var(--font-mono);font-size:14px;color:var(--teal);text-align:center;margin:12px 0;overflow-x:auto}
+.tab-nav{display:flex;border-bottom:1px solid var(--border);margin-bottom:20px;overflow-x:auto;scrollbar-width:none}
+.tab-nav::-webkit-scrollbar{display:none}
+.tab-btn{font-size:13px;font-weight:500;color:var(--text3);padding:10px 16px;cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;transition:color .2s,border-color .2s;font-family:var(--font-body)}
+.tab-btn:hover{color:var(--text)}.tab-btn.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none}.tab-content.active{display:block}
+.compare-table{width:100%;border-collapse:collapse;font-size:14px;margin-bottom:18px}
+.compare-table th{background:var(--bg3);color:var(--text2);font-weight:500;padding:11px 14px;text-align:left;border-bottom:2px solid var(--border2);font-size:12px;letter-spacing:.04em;text-transform:uppercase}
+.compare-table td{padding:11px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:top;font-size:14px}
+.compare-table tr:last-child td{border-bottom:none}
+.compare-table tr:hover td{background:rgba(255,255,255,.02)}
+.proj-row{cursor:pointer}
+.proj-row:hover td{background:rgba(91,141,238,.06)!important}
+.ex-block{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 22px;margin-bottom:14px}
+.ex-num{font-family:var(--font-mono);font-size:11px;color:var(--accent)}
+.ex-title{font-size:16px;font-weight:600;color:var(--text);margin:4px 0 8px}
+.ex-body{font-size:14px;color:var(--text2);line-height:1.7}
+.ex-project-link{display:inline-flex;align-items:center;gap:7px;margin-top:10px;padding:7px 14px;background:rgba(91,141,238,.10);border:1px solid rgba(91,141,238,.25);border-radius:8px;font-size:13px;color:var(--accent);cursor:pointer;transition:all .2s;text-decoration:none;font-weight:500;margin-right:8px}
+.ex-project-link:hover{background:rgba(91,141,238,.18)}
+.ref-card{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;display:flex;gap:14px;margin-bottom:10px;cursor:pointer;transition:border-color .2s;text-decoration:none}
+.ref-card:hover{border-color:var(--accent)}
+.ref-num{font-family:var(--font-mono);font-size:11px;color:var(--text3);min-width:26px;padding-top:2px}
+.ref-title{font-size:14px;font-weight:500;color:var(--text);margin-bottom:3px}
+.ref-meta{font-size:12px;color:var(--text3);line-height:1.5}
+.ref-tag{font-size:10px;font-family:var(--font-mono);color:var(--accent);background:rgba(91,141,238,.1);padding:2px 7px;border-radius:10px;display:inline-block;margin-top:5px;margin-right:4px}
+.dataset-card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px 22px;margin-bottom:12px}
+.dataset-card h4{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.ds-link{font-size:12px;font-family:var(--font-mono);color:var(--accent);text-decoration:none;background:rgba(91,141,238,.1);padding:4px 10px;border-radius:8px;white-space:nowrap}
+.ds-link:hover{background:rgba(91,141,238,.2)}
+.timeline{position:relative;padding-left:30px}
+.timeline::before{content:'';position:absolute;left:8px;top:6px;bottom:6px;width:1px;background:var(--border2)}
+.tl-item{position:relative;margin-bottom:18px}
+.tl-dot{position:absolute;left:-26px;top:5px;width:11px;height:11px;border-radius:50%;background:var(--accent)}
+.tl-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:3px}
+.tl-body{font-size:14px;color:var(--text2);line-height:1.6}
+.viz-container{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px 24px;margin:16px 0}
+.viz-label{font-family:var(--font-mono);font-size:10px;color:var(--text3);letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px}
+.viz-svg{width:100%;overflow:visible}
+.progress-wrap{background:var(--bg3);border:1px solid var(--border);border-radius:var(--radius);padding:14px 18px;margin-bottom:20px}
+.progress-track{height:8px;background:var(--bg4);border-radius:4px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--teal));width:0%;transition:width .3s}
+.cite{color:var(--accent);font-size:12px;text-decoration:none;font-family:var(--font-mono);padding:2px 7px;background:rgba(91,141,238,.1);border-radius:4px;display:inline-block;margin-top:4px}
+.banner{background:linear-gradient(90deg,rgba(139,108,247,.1),rgba(91,141,238,.06));border:1px solid rgba(139,108,247,.25);border-radius:var(--radius-lg);padding:16px 20px;margin:0 auto;max-width:1080px;font-size:14px;color:var(--text2);display:flex;gap:12px;align-items:center;flex-wrap:wrap;justify-content:center}
+.banner a{color:var(--accent2);font-weight:600;text-decoration:none}.banner a:hover{text-decoration:underline}
+#top-btn{position:fixed;bottom:26px;right:26px;background:var(--accent);color:#fff;border:none;width:44px;height:44px;border-radius:50%;font-size:18px;cursor:pointer;opacity:0;transition:opacity .3s;z-index:99;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(91,141,238,.4)}
+#top-btn.visible{opacity:1}
+@media(min-width:1250px){.main-layout{display:grid;grid-template-columns:210px 1fr}.toc{position:sticky;top:54px;height:calc(100vh - 54px);overflow-y:auto;padding:20px 0;border-right:1px solid var(--border);scrollbar-width:thin}.toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 18px 4px;letter-spacing:.08em;text-transform:uppercase}.toc-link{display:block;font-size:13px;color:var(--text3);padding:5px 18px;cursor:pointer;transition:color .15s;border-left:2px solid transparent}.toc-link:hover{color:var(--text)}.toc-link.active{color:var(--accent);border-left-color:var(--accent)}}
+.toc-toggle,.toc-backdrop{display:none}
+.viz-zoom-modal{display:none}
+@media(max-width:1249px){
+  .toc{position:fixed;top:0;left:0;z-index:300;width:82%;max-width:300px;height:100%;background:var(--bg2);border-right:1px solid var(--border2);box-shadow:var(--shadow);padding:62px 0 28px;overflow-y:auto;-webkit-overflow-scrolling:touch;transform:translateX(-100%);transition:transform .25s ease}
+  .toc.open{transform:translateX(0)}
+  .toc-section{font-size:10px;font-family:var(--font-mono);color:var(--text3);padding:14px 20px 4px;letter-spacing:.08em;text-transform:uppercase}
+  .toc-link{display:block;font-size:15px;color:var(--text2);padding:11px 20px;cursor:pointer;border-left:2px solid transparent}
+  .toc-link.active{color:var(--accent);border-left-color:var(--accent);background:var(--bg3)}
+  .toc-toggle{display:flex;align-items:center;justify-content:center;position:fixed;bottom:26px;left:20px;z-index:120;width:46px;height:46px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:20px;cursor:pointer;box-shadow:var(--shadow)}
+  .toc-backdrop{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:250}
+  .toc-backdrop.open{display:block}
+  .container{padding:0 1.1rem}
+  nav{padding:0 1rem}
+  .section{padding:44px 0}
+  .hero{padding:60px 0 44px}
+  .compare-table{display:block;overflow-x:auto;-webkit-overflow-scrolling:touch;font-size:13.5px}
+  .code-block{white-space:pre-wrap;word-break:break-word;font-size:12px;padding:14px 14px}
+  .viz-container,.viz-svg{cursor:zoom-in}
+  .tab-btn{padding:11px 14px}
+}
+.viz-zoom-modal.open{display:flex;position:fixed;inset:0;z-index:400;background:rgba(8,10,16,.95);align-items:flex-start;justify-content:flex-start;padding:56px 12px 12px;overflow:auto;-webkit-overflow-scrolling:touch}
+.viz-zoom-modal .zoom-inner{min-width:560px;width:150%;max-width:none;margin:auto}
+.viz-zoom-modal .zoom-inner svg{width:100%;height:auto}
+.viz-zoom-close{position:fixed;top:12px;right:14px;z-index:401;width:42px;height:42px;border-radius:50%;background:var(--bg3);color:var(--text);border:1px solid var(--border2);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+</style>
+</head>
+<body>
+<button class="theme-toggle" onclick="toggleTheme()" id="theme-btn">🌙 Dark</button>
+<button class="toc-toggle" onclick="toggleTOC()" id="toc-toggle" aria-label="Open contents">☰</button>
+<div class="toc-backdrop" id="toc-backdrop" onclick="toggleTOC()"></div>
+<nav>
+  <span class="nav-brand">Regression — Projects</span>
+  <div class="nav-links">
+    <span class="nav-link" onclick="gotoS('overview')">Overview</span>
+    <span class="nav-link" onclick="gotoS('datasets')">Datasets</span>
+    <span class="nav-link" onclick="gotoS('p1')">P1</span>
+    <span class="nav-link" onclick="gotoS('p2')">P2</span>
+    <span class="nav-link" onclick="gotoS('p3')">P3</span>
+    <span class="nav-link" onclick="gotoS('p4')">P4</span>
+    <span class="nav-link" onclick="gotoS('p5')">P5</span>
+    <span class="nav-link" onclick="gotoS('p6')">P6</span>
+    <span class="nav-link" onclick="gotoS('exercises')">Exercises</span>
+    <span class="nav-link" onclick="gotoS('publish')">Publish</span>
+    <span class="nav-link" onclick="gotoS('next')">What's Next</span>
+    <span class="nav-link" onclick="gotoS('refs')">References</span>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">Six projects · Beginner to Expert · Real datasets · 2026</div>
+    <h1>Linear &amp; Logistic Regression, <em>built by hand</em></h1>
+    <p class="hero-sub">Theory sticks when you build. Six progressively harder projects take you from your first house-price model to a production-shaped supply-chain breach-risk classifier — each with a real, downloadable dataset, production-grade code, realistic expected results, and the specific errors to expect. Every project links back to the exact Reference section behind it.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="n">6</div><div class="l">projects</div></div>
+      <div class="hero-stat"><div class="n">~23h</div><div class="l">total build</div></div>
+      <div class="hero-stat"><div class="n">6</div><div class="l">datasets</div></div>
+      <div class="hero-stat"><div class="n">5</div><div class="l">cross exercises</div></div>
+    </div>
+  </div>
+</div>
+
+<div style="padding:20px 1.1rem 0"><div class="banner">
+  🧗 New to the topic? Start gentle in the <a href="1_intuition_primer.html">Visual Primer</a>. Want the theory behind a step? Jump to the <a href="2_complete_reference.html">Complete Reference</a> — every project links to the exact section.
+</div></div>
+
+<div class="main-layout">
+<aside class="toc" id="toc">
+  <div class="toc-section">Start Here</div>
+  <span class="toc-link" onclick="gotoS('overview')">Project overview</span>
+  <span class="toc-link" onclick="gotoS('datasets')">Datasets hub</span>
+  <div class="toc-section">The Projects</div>
+  <span class="toc-link" onclick="gotoS('p1')">P1 · House prices</span>
+  <span class="toc-link" onclick="gotoS('p2')">P2 · OLS from scratch</span>
+  <span class="toc-link" onclick="gotoS('p3')">P3 · Tumour classifier</span>
+  <span class="toc-link" onclick="gotoS('p4')">P4 · Titanic (messy data)</span>
+  <span class="toc-link" onclick="gotoS('p5')">P5 · Price elasticity</span>
+  <span class="toc-link" onclick="gotoS('p6')">P6 · Breach-risk</span>
+  <div class="toc-section">Wrap Up</div>
+  <span class="toc-link" onclick="gotoS('exercises')">Cross exercises</span>
+  <span class="toc-link" onclick="gotoS('publish')">Publish your work</span>
+  <span class="toc-link" onclick="gotoS('next')">What's next</span>
+  <span class="toc-link" onclick="gotoS('refs')">References</span>
+</aside>
+<div style="overflow:hidden"><div class="container">
+
+<section class="section" id="overview">
+  <div class="section-eyebrow">Start here · 4 min</div>
+  <h2 class="section-title">Project overview</h2>
+  <p class="section-sub">Work them in order — each builds a skill the next one assumes. Tap any row to jump to that project. Tick them off as you go (saved in your browser).</p>
+
+  <div class="progress-wrap">
+    <div style="display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--text2)"><span id="prog-label">0 of 6 projects complete</span><span style="font-family:var(--font-mono);color:var(--text3)">progress saved locally</span></div>
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+  </div>
+
+  <table class="compare-table">
+    <tr><th>✓</th><th>#</th><th>Project</th><th>Difficulty</th><th>Dataset</th><th>Skills you build</th><th>Reinforces</th></tr>
+    <tr class="proj-row" onclick="gotoS('p1')"><td><input type="checkbox" onclick="event.stopPropagation();toggleDone('p1',this)" id="cb-p1"></td><td>P1</td><td><strong>House prices</strong></td><td><span class="badge b-green">Beginner</span></td><td>California housing</td><td>Pipeline, train/test, RMSE/R², beat a baseline</td><td>Ref §Linear, §Eval</td></tr>
+    <tr class="proj-row" onclick="gotoS('p2')"><td><input type="checkbox" onclick="event.stopPropagation();toggleDone('p2',this)" id="cb-p2"></td><td>P2</td><td><strong>OLS from scratch</strong></td><td><span class="badge b-green">Beginner+</span></td><td>Diabetes</td><td>Normal equation &amp; gradient descent in NumPy</td><td>Ref §Linear math, §Tuning</td></tr>
+    <tr class="proj-row" onclick="gotoS('p3')"><td><input type="checkbox" onclick="event.stopPropagation();toggleDone('p3',this)" id="cb-p3"></td><td>P3</td><td><strong>Tumour classifier</strong></td><td><span class="badge b-blue">Intermediate</span></td><td>Breast cancer</td><td>Logistic, ROC-AUC/PR-AUC/Brier, calibration</td><td>Ref §Logistic, §Eval</td></tr>
+    <tr class="proj-row" onclick="gotoS('p4')"><td><input type="checkbox" onclick="event.stopPropagation();toggleDone('p4',this)" id="cb-p4"></td><td>P4</td><td><strong>Titanic survival</strong></td><td><span class="badge b-blue">Intermediate</span></td><td>Titanic (OpenML)</td><td>Missing data, encoding, ElasticNet, odds ratios</td><td>Ref §Pitfalls, §Logistic</td></tr>
+    <tr class="proj-row" onclick="gotoS('p5')"><td><input type="checkbox" onclick="event.stopPropagation();toggleDone('p5',this)" id="cb-p5"></td><td>P5</td><td><strong>Price elasticity</strong></td><td><span class="badge b-amber">Advanced</span></td><td>Online Retail II</td><td>Log-log regression, elasticity, association vs cause</td><td>Ref §Advanced, §Use cases</td></tr>
+    <tr class="proj-row" onclick="gotoS('p6')"><td><input type="checkbox" onclick="event.stopPropagation();toggleDone('p6',this)" id="cb-p6"></td><td>P6</td><td><strong>Breach-risk classifier</strong></td><td><span class="badge b-coral">Advanced+</span></td><td>DataCo Supply Chain</td><td>Imbalance, leakage, cost threshold, deployment</td><td>Ref §Production, §Pitfalls</td></tr>
+  </table>
+  <div class="alert alert-info">Every project uses the same backbone you'll see repeated until it's muscle memory: <strong>split first → build a Pipeline → cross-validate → evaluate on a held-out set → interpret</strong>. By P6 you'll be doing it without thinking, which is the whole point.</div>
+</section>
+
+<section class="section" id="datasets">
+  <div class="section-eyebrow">Datasets hub · all links verified</div>
+  <h2 class="section-title">The datasets</h2>
+  <p class="section-sub">Four load straight from scikit-learn (no download). Two are real public datasets you fetch once. Keep raw files in a <code>data/</code> folder next to your notebooks.</p>
+
+  <div class="dataset-card"><h4>California Housing <a class="ds-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.fetch_california_housing.html" target="_blank">sklearn ↗</a></h4><p style="margin:0">20,640 rows, 8 numeric features, continuous target (median house value). Loads via <code>fetch_california_housing()</code>. The standard first regression dataset. <strong>Used in P1.</strong></p></div>
+  <div class="dataset-card"><h4>Diabetes <a class="ds-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_diabetes.html" target="_blank">sklearn ↗</a></h4><p style="margin:0">442 rows, 10 pre-scaled features, continuous target (disease progression). Loads via <code>load_diabetes()</code>. Small enough to hand-compute on. <strong>Used in P2.</strong></p></div>
+  <div class="dataset-card"><h4>Breast Cancer Wisconsin <a class="ds-link" href="https://scikit-learn.org/stable/modules/generated/sklearn.datasets.load_breast_cancer.html" target="_blank">sklearn ↗</a></h4><p style="margin:0">569 rows, 30 features, binary target (malignant/benign). Loads via <code>load_breast_cancer()</code>. Clean, mildly imbalanced — ideal first classifier. <strong>Used in P3.</strong></p></div>
+  <div class="dataset-card"><h4>Titanic <a class="ds-link" href="https://www.openml.org/d/40945" target="_blank">OpenML ↗</a></h4><p style="margin:0">1,309 passengers, mixed numeric/categorical with real missing values, binary target (survived). Loads via <code>fetch_openml('titanic', version=1, as_frame=True)</code>. The classic messy-data project. <strong>Used in P4.</strong></p></div>
+  <div class="dataset-card"><h4>Online Retail II <a class="ds-link" href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" target="_blank">UCI ↗</a></h4><p style="margin:0">~1M transactions (2009–2011), UK online gift retailer, with price &amp; quantity per SKU — perfect for elasticity. CC-BY. Load via <code>pip install ucimlrepo</code> then <code>fetch_ucirepo(id=502)</code>, or download the Excel. <strong>Used in P5.</strong></p></div>
+  <div class="dataset-card"><h4>DataCo Smart Supply Chain <a class="ds-link" href="https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis" target="_blank">Kaggle ↗</a></h4><p style="margin:0">~180,500 order rows, 53 features, with a ready-made binary <code>Late_delivery_risk</code> target. Needs a free Kaggle account to download. Watch for leakage columns (see P6). <strong>Used in P6.</strong></p></div>
+</section>
+<section class="section" id="p1">
+  <div class="section-eyebrow">Project 1 · Beginner · ~2 hours</div>
+  <h2 class="section-title">P1 — Predict house prices</h2>
+  <p class="section-sub">Your first end-to-end regression. Build the pipeline backbone you'll reuse in every later project, and prove it beats a dumb baseline.</p>
+  <div class="tab-nav" id="p1-tabs">
+    <button class="tab-btn active" onclick="switchTab('p1-tabs','p1-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p1-tabs','p1-steps')">Steps</button>
+    <button class="tab-btn" onclick="switchTab('p1-tabs','p1-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p1-tabs','p1-results')">Expected results</button>
+    <button class="tab-btn" onclick="switchTab('p1-tabs','p1-pitfalls')">Common errors</button>
+    <button class="tab-btn" onclick="switchTab('p1-tabs','p1-stretch')">Deliverables &amp; stretch</button>
+  </div>
+  <div class="tab-content active" id="p1-about">
+    <p><strong>What you'll build:</strong> a scikit-learn <code>Pipeline</code> (scaler + LinearRegression) that predicts median house value in California districts, cross-validated and tested on held-out data, with its coefficients interpreted.</p>
+    <p><strong>Why it matters / real-world analogue:</strong> this is the exact shape of any "predict a continuous KPI from features" task you'll meet at work — freight cost per lane, expected demand, lead time. The dataset changes; the backbone doesn't.</p>
+    <p><strong>Dataset:</strong> California Housing (<code>fetch_california_housing</code>, no download). <strong>Difficulty:</strong> Beginner. <strong>Time:</strong> ~2h.</p>
+    <div class="viz-container"><div class="viz-label">What you'll build</div>
+      <svg viewBox="0 0 620 90" class="viz-svg" style="max-height:90px">
+        <defs><marker id="j1" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <rect x="6" y="28" width="104" height="38" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="58" y="51" text-anchor="middle" fill="var(--text2)" font-size="11">Load + split</text>
+        <line x1="110" y1="47" x2="132" y2="47" stroke="var(--text3)" marker-end="url(#j1)"/>
+        <rect x="134" y="28" width="120" height="38" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="194" y="46" text-anchor="middle" fill="var(--text2)" font-size="11">Pipeline</text><text x="194" y="60" text-anchor="middle" fill="var(--text3)" font-size="10">scale + LR</text>
+        <line x1="254" y1="47" x2="276" y2="47" stroke="var(--text3)" marker-end="url(#j1)"/>
+        <rect x="278" y="28" width="104" height="38" rx="8" fill="rgba(91,141,238,.10)" stroke="var(--accent)"/><text x="330" y="51" text-anchor="middle" fill="var(--text2)" font-size="11">5-fold CV</text>
+        <line x1="382" y1="47" x2="404" y2="47" stroke="var(--text3)" marker-end="url(#j1)"/>
+        <rect x="406" y="28" width="104" height="38" rx="8" fill="rgba(48,212,168,.10)" stroke="var(--teal)"/><text x="458" y="46" text-anchor="middle" fill="var(--text2)" font-size="11">Test RMSE/R²</text><text x="458" y="60" text-anchor="middle" fill="var(--text3)" font-size="10">vs baseline</text>
+        <line x1="510" y1="47" x2="532" y2="47" stroke="var(--text3)" marker-end="url(#j1)"/>
+        <rect x="534" y="28" width="80" height="38" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="574" y="51" text-anchor="middle" fill="var(--text2)" font-size="11">Interpret</text>
+      </svg>
+    </div>
+    <a class="ex-project-link" href="2_complete_reference.html#linear">📖 Theory: §Linear regression</a>
+    <a class="ex-project-link" href="2_complete_reference.html#evaluation">📖 Theory: §Evaluation</a>
+  </div>
+  <div class="tab-content" id="p1-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Load &amp; explore <span class="pipe-time">· 20 min</span></div><div class="tl-body">Load the data, check shapes, plot the target distribution and target-vs-MedInc. Notice the target is capped at 5.0.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Split first <span class="pipe-time">· 10 min</span></div><div class="tl-body">80/20 train/test with a fixed random_state. Touch the test set only once, at the very end.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Build the Pipeline <span class="pipe-time">· 20 min</span></div><div class="tl-body">StandardScaler + LinearRegression. The pipeline guarantees the scaler is fit on training folds only.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Cross-validate &amp; baseline <span class="pipe-time">· 30 min</span></div><div class="tl-body">5-fold CV RMSE on the training set; compare against a DummyRegressor (predict-the-mean).</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Test &amp; interpret <span class="pipe-time">· 40 min</span></div><div class="tl-body">Fit on all training data, score once on test, then read the standardised coefficients to see which features drive value.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p1-code">
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># 1. Load and split — always split before anything else</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> fetch_california_housing
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+X, y = fetch_california_housing(return_X_y=<span class="kw">True</span>, as_frame=<span class="kw">True</span>)
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=<span class="num">0.2</span>, random_state=<span class="num">42</span>)</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># 2. Pipeline + cross-validation (no test-set peeking)</span>
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> cross_val_score
+pipe = Pipeline([(<span class="st">"scale"</span>, StandardScaler()), (<span class="st">"lr"</span>, LinearRegression())])
+cv = -cross_val_score(pipe, X_tr, y_tr, cv=<span class="num">5</span>, scoring=<span class="st">"neg_root_mean_squared_error"</span>)
+<span class="fn">print</span>(<span class="st">f"CV RMSE {cv.mean():.3f} ± {cv.std():.3f}"</span>)</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># 3. Beat the dumb baseline, then score on test ONCE</span>
+<span class="kw">from</span> sklearn.dummy <span class="kw">import</span> DummyRegressor
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> mean_squared_error, r2_score
+base = DummyRegressor(strategy=<span class="st">"mean"</span>).fit(X_tr, y_tr)
+pipe.fit(X_tr, y_tr)
+<span class="fn">print</span>(<span class="st">"baseline R²:"</span>, r2_score(y_te, base.predict(X_te)))   <span class="cm"># ~0.0</span>
+pred = pipe.predict(X_te)
+<span class="fn">print</span>(<span class="st">f"model RMSE {mean_squared_error(y_te, pred, squared=False):.3f}  R² {r2_score(y_te, pred):.3f}"</span>)</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># 4. Interpret — coefficients on standardised features are comparable</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+coefs = pd.Series(pipe.named_steps[<span class="st">"lr"</span>].coef_, index=X.columns).sort_values()
+<span class="fn">print</span>(coefs)   <span class="cm"># MedInc dominates; latitude/longitude matter too</span></div>
+  </div>
+  <div class="tab-content" id="p1-results">
+    <ul>
+      <li><strong>CV RMSE</strong> around <strong>0.72–0.75</strong> (target is in units of $100k, so ≈ $73k typical error).</li>
+      <li><strong>Test R²</strong> around <strong>0.58–0.61</strong> — plain linear regression explains ~60% of the variance here.</li>
+      <li><strong>Baseline R²</strong> ≈ <strong>0.0</strong> by construction; if your model isn't comfortably above it, something's wrong.</li>
+      <li><strong>Biggest coefficient:</strong> median income (<code>MedInc</code>) by a wide margin — the dominant driver, which matches intuition.</li>
+    </ul>
+    <div class="alert alert-success">If you see test R² near 0.60 and MedInc as the top feature, you've done it right. Don't chase a higher R² with plain OLS here — that's what P2's feature ideas and later models are for.</div>
+  </div>
+  <div class="tab-content" id="p1-pitfalls">
+    <ul>
+      <li><strong>Scaling before the split</strong> leaks test statistics into training. Always scale <em>inside</em> the pipeline.</li>
+      <li><strong>Reading raw (unscaled) coefficients</strong> to compare importance — scale first, or you're comparing rupees to ratios.</li>
+      <li><strong>The target is censored at 5.0</strong> (values clipped). The model can't predict above it; note this rather than "fixing" it.</li>
+      <li><strong>Tuning on the test set.</strong> All model choices happen via CV on training data; test is touched once.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p1-stretch">
+    <p><strong>Deliverables:</strong> a notebook with CV + test scores, the baseline comparison, and a sorted coefficient plot. Self-check: can you state, in one sentence each, what the top three coefficients mean?</p>
+    <p><strong>Stretch challenges:</strong></p>
+    <ul>
+      <li><span class="badge b-green">Easy</span> Swap RMSE for MAE and explain how the story changes (see cross-exercise X1).</li>
+      <li><span class="badge b-blue">Medium</span> Add <code>PolynomialFeatures(degree=2)</code> and watch CV error — does it help or overfit?</li>
+      <li><span class="badge b-amber">Harder</span> Replace LinearRegression with <code>RidgeCV</code>; does regularisation change the coefficient story?</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="p2">
+  <div class="section-eyebrow">Project 2 · Beginner+ · ~3 hours</div>
+  <h2 class="section-title">P2 — Linear regression from scratch</h2>
+  <p class="section-sub">Open the black box. Implement OLS two ways — the closed-form normal equation and gradient descent — and prove they agree with scikit-learn.</p>
+  <div class="tab-nav" id="p2-tabs">
+    <button class="tab-btn active" onclick="switchTab('p2-tabs','p2-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p2-tabs','p2-steps')">Steps</button>
+    <button class="tab-btn" onclick="switchTab('p2-tabs','p2-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p2-tabs','p2-results')">Expected results</button>
+    <button class="tab-btn" onclick="switchTab('p2-tabs','p2-pitfalls')">Common errors</button>
+    <button class="tab-btn" onclick="switchTab('p2-tabs','p2-stretch')">Deliverables &amp; stretch</button>
+  </div>
+  <div class="tab-content active" id="p2-about">
+    <p><strong>What you'll build:</strong> a from-scratch NumPy implementation of linear regression via (a) the normal equation <code>β = (XᵀX)⁻¹Xᵀy</code> and (b) batch gradient descent, verified against <code>sklearn.LinearRegression</code> to floating-point tolerance.</p>
+    <p><strong>Why it matters:</strong> once you've coded the gradient yourself, the math in the Reference stops being abstract — and you gain a debugging template for when a fitted model misbehaves.</p>
+    <p><strong>Dataset:</strong> Diabetes (<code>load_diabetes</code>, pre-scaled, 442 rows). <strong>Difficulty:</strong> Beginner+. <strong>Time:</strong> ~3h.</p>
+    <div class="viz-container"><div class="viz-label">Two routes to the same weights</div>
+      <svg viewBox="0 0 620 110" class="viz-svg" style="max-height:110px">
+        <defs><marker id="j2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <rect x="240" y="10" width="140" height="34" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="310" y="32" text-anchor="middle" fill="var(--text2)" font-size="11">X, y (diabetes)</text>
+        <line x1="290" y1="44" x2="180" y2="64" stroke="var(--text3)" marker-end="url(#j2)"/>
+        <line x1="330" y1="44" x2="440" y2="64" stroke="var(--text3)" marker-end="url(#j2)"/>
+        <rect x="60" y="66" width="200" height="36" rx="8" fill="rgba(48,212,168,.10)" stroke="var(--teal)"/><text x="160" y="89" text-anchor="middle" fill="var(--text2)" font-size="11">Normal eqn (one shot)</text>
+        <rect x="360" y="66" width="200" height="36" rx="8" fill="rgba(245,166,35,.10)" stroke="var(--amber)"/><text x="460" y="89" text-anchor="middle" fill="var(--text2)" font-size="11">Gradient descent (iterate)</text>
+        <text x="310" y="92" text-anchor="middle" fill="var(--accent)" font-size="12">≟ same β</text>
+      </svg>
+    </div>
+    <a class="ex-project-link" href="2_complete_reference.html#linear">📖 Theory: §Linear math</a>
+    <a class="ex-project-link" href="2_complete_reference.html#tuning">📖 Theory: §Tuning &amp; gradient descent</a>
+  </div>
+  <div class="tab-content" id="p2-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Set up X with an intercept column <span class="pipe-time">· 20 min</span></div><div class="tl-body">Prepend a column of 1s so β₀ rides along as a weight.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Normal equation in NumPy <span class="pipe-time">· 30 min</span></div><div class="tl-body">Compute <code>(XᵀX)⁻¹Xᵀy</code> (use <code>np.linalg.solve</code>, not explicit inverse) and compare to sklearn.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Implement gradient descent <span class="pipe-time">· 50 min</span></div><div class="tl-body">Loop: predict, compute gradient <code>−(2/n)Xᵀ(y−Xβ)</code>, step. Track the loss each iteration.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Tune the learning rate <span class="pipe-time">· 40 min</span></div><div class="tl-body">Plot loss curves for too-small, good, and too-large η; show divergence vs slow vs clean descent.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Verify all three agree <span class="pipe-time">· 20 min</span></div><div class="tl-body">Normal equation ≈ converged GD ≈ sklearn coefficients.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p2-code">
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Normal equation — solve, don't invert (more stable)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_diabetes
+X, y = load_diabetes(return_X_y=<span class="kw">True</span>)
+Xb = np.c_[np.ones(<span class="fn">len</span>(X)), X]               <span class="cm"># add intercept column</span>
+beta_ne = np.linalg.solve(Xb.T @ Xb, Xb.T @ y)  <span class="cm"># (XᵀX)β = Xᵀy</span></div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Batch gradient descent</span>
+<span class="kw">def</span> <span class="fn">gd</span>(Xb, y, eta=<span class="num">0.5</span>, iters=<span class="num">5000</span>):
+    n, p = Xb.shape
+    beta = np.zeros(p); loss = []
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(iters):
+        err = Xb @ beta - y
+        grad = (<span class="num">2</span>/n) * Xb.T @ err
+        beta -= eta * grad
+        loss.append((err**<span class="num">2</span>).mean())
+    <span class="kw">return</span> beta, loss
+beta_gd, loss = gd(Xb, y)</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Verify against scikit-learn</span>
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+sk = LinearRegression().fit(X, y)
+<span class="fn">print</span>(<span class="st">"intercept match:"</span>, np.allclose(beta_ne[<span class="num">0</span>], sk.intercept_, atol=<span class="num">1e-6</span>))
+<span class="fn">print</span>(<span class="st">"coef match (NE):"</span>, np.allclose(beta_ne[<span class="num">1</span>:], sk.coef_, atol=<span class="num">1e-6</span>))
+<span class="fn">print</span>(<span class="st">"coef close (GD):"</span>, np.allclose(beta_gd[<span class="num">1</span>:], sk.coef_, atol=<span class="num">1e-1</span>))</div>
+  </div>
+  <div class="tab-content" id="p2-results">
+    <ul>
+      <li><strong>Normal equation</strong> matches sklearn to ~1e-6 — they solve the same system.</li>
+      <li><strong>Gradient descent</strong> converges to the same coefficients given enough iterations and a sensible η (~0.1–0.5 on this pre-scaled data).</li>
+      <li><strong>Loss curves:</strong> too-large η diverges (loss explodes), too-small crawls, good η drops smoothly and flattens.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p2-pitfalls">
+    <ul>
+      <li><strong>Using <code>np.linalg.inv</code></strong> explicitly — numerically worse than <code>solve</code>; and it blows up on collinear features.</li>
+      <li><strong>Forgetting the intercept column</strong> — your line is forced through the origin and won't match sklearn.</li>
+      <li><strong>GD on unscaled features</strong> — needs a tiny η and crawls; this data is pre-scaled, but remember the lesson.</li>
+      <li><strong>Too few iterations</strong> — GD looks "wrong" when it just hasn't converged. Plot the loss to tell the difference.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p2-stretch">
+    <p><strong>Deliverables:</strong> a notebook showing the three coefficient vectors side by side and the three loss curves. Self-check: can you explain why the normal equation needs no learning rate?</p>
+    <p><strong>Stretch challenges:</strong></p>
+    <ul>
+      <li><span class="badge b-blue">Medium</span> Add an L2 penalty term to your GD and watch coefficients shrink (you've built Ridge).</li>
+      <li><span class="badge b-amber">Harder</span> Implement mini-batch SGD and compare convergence noise vs batch GD.</li>
+      <li><span class="badge b-amber">Harder</span> Add degree-2 polynomial features and observe overfitting (cross-exercise X2).</li>
+    </ul>
+  </div>
+</section>
+<section class="section" id="p3">
+  <div class="section-eyebrow">Project 3 · Intermediate · ~3 hours</div>
+  <h2 class="section-title">P3 — Your first classifier (tumour)</h2>
+  <p class="section-sub">Cross the bridge from numbers to probabilities. Build a logistic regression that outputs a calibrated chance, and learn to judge it with the metrics that actually matter.</p>
+  <div class="tab-nav" id="p3-tabs">
+    <button class="tab-btn active" onclick="switchTab('p3-tabs','p3-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p3-tabs','p3-steps')">Steps</button>
+    <button class="tab-btn" onclick="switchTab('p3-tabs','p3-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p3-tabs','p3-results')">Expected results</button>
+    <button class="tab-btn" onclick="switchTab('p3-tabs','p3-pitfalls')">Common errors</button>
+    <button class="tab-btn" onclick="switchTab('p3-tabs','p3-stretch')">Deliverables &amp; stretch</button>
+  </div>
+  <div class="tab-content active" id="p3-about">
+    <p><strong>What you'll build:</strong> a logistic-regression pipeline that predicts whether a tumour is malignant, scored with ROC-AUC, PR-AUC and the Brier score, checked with a calibration curve, and turned into a decision with a deliberately chosen threshold.</p>
+    <p><strong>Why it matters:</strong> this is the template for every binary risk score you'll build at work — "will this order breach OTIF?", "is this lead worth chasing?". The decision to convert a probability into an action with a chosen cutoff is the whole game.</p>
+    <p><strong>Dataset:</strong> Breast Cancer Wisconsin (<code>load_breast_cancer</code>). <strong>Difficulty:</strong> Intermediate. <strong>Time:</strong> ~3h.</p>
+    <div class="viz-container"><div class="viz-label">Probability → threshold → decision</div>
+      <svg viewBox="0 0 620 90" class="viz-svg" style="max-height:90px">
+        <defs><marker id="j3" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <rect x="6" y="28" width="120" height="38" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="66" y="51" text-anchor="middle" fill="var(--text2)" font-size="11">scale + logistic</text>
+        <line x1="126" y1="47" x2="148" y2="47" stroke="var(--text3)" marker-end="url(#j3)"/>
+        <rect x="150" y="28" width="130" height="38" rx="8" fill="rgba(91,141,238,.10)" stroke="var(--accent)"/><text x="215" y="46" text-anchor="middle" fill="var(--text2)" font-size="11">P(malignant)</text><text x="215" y="60" text-anchor="middle" fill="var(--text3)" font-size="10">e.g. 0.83</text>
+        <line x1="280" y1="47" x2="302" y2="47" stroke="var(--text3)" marker-end="url(#j3)"/>
+        <rect x="304" y="28" width="150" height="38" rx="8" fill="rgba(245,166,35,.10)" stroke="var(--amber)"/><text x="379" y="46" text-anchor="middle" fill="var(--text2)" font-size="11">threshold (pick!)</text><text x="379" y="60" text-anchor="middle" fill="var(--text3)" font-size="10">recall-first here</text>
+        <line x1="454" y1="47" x2="476" y2="47" stroke="var(--text3)" marker-end="url(#j3)"/>
+        <rect x="478" y="28" width="136" height="38" rx="8" fill="rgba(48,212,168,.10)" stroke="var(--teal)"/><text x="546" y="51" text-anchor="middle" fill="var(--text2)" font-size="11">flag / clear</text>
+      </svg>
+    </div>
+    <a class="ex-project-link" href="2_complete_reference.html#logistic">📖 Theory: §Logistic regression</a>
+    <a class="ex-project-link" href="2_complete_reference.html#evaluation">📖 Theory: §Evaluation</a>
+  </div>
+  <div class="tab-content" id="p3-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Load, split, check balance <span class="pipe-time">· 20 min</span></div><div class="tl-body">Stratified 80/20 split. Note ~63% benign / 37% malignant — mild imbalance.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Pipeline + CV on ROC-AUC <span class="pipe-time">· 30 min</span></div><div class="tl-body">StandardScaler + LogisticRegression(max_iter=1000); 5-fold CV scoring roc_auc.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Evaluate properly <span class="pipe-time">· 40 min</span></div><div class="tl-body">On test: ROC-AUC, PR-AUC, Brier, confusion matrix at 0.5. Discuss why accuracy alone is thin.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Calibration curve <span class="pipe-time">· 30 min</span></div><div class="tl-body">Are predicted 0.8s actually right ~80% of the time? Plot reliability.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Choose a threshold <span class="pipe-time">· 40 min</span></div><div class="tl-body">A missed malignant tumour is far worse than a false alarm — move the cutoff to favour recall, and quantify the trade.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p3-code">
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Load, stratified split, pipeline, CV</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_breast_cancer
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+X, y = load_breast_cancer(return_X_y=<span class="kw">True</span>)   <span class="cm"># y: 1 = benign, 0 = malignant</span>
+X_tr, X_te, y_tr, y_te = train_test_split(X, y, test_size=<span class="num">0.2</span>, stratify=y, random_state=<span class="num">42</span>)
+pipe = Pipeline([(<span class="st">"sc"</span>, StandardScaler()), (<span class="st">"lr"</span>, LogisticRegression(max_iter=<span class="num">1000</span>))])
+<span class="fn">print</span>(<span class="st">"CV AUC:"</span>, cross_val_score(pipe, X_tr, y_tr, cv=<span class="num">5</span>, scoring=<span class="st">"roc_auc"</span>).mean())</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Evaluate with the metrics that matter — not just accuracy</span>
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score, average_precision_score, brier_score_loss
+pipe.fit(X_tr, y_tr)
+proba = pipe.predict_proba(X_te)[:, <span class="num">1</span>]
+<span class="fn">print</span>(<span class="st">f"ROC-AUC {roc_auc_score(y_te, proba):.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"PR-AUC  {average_precision_score(y_te, proba):.3f}"</span>)
+<span class="fn">print</span>(<span class="st">f"Brier   {brier_score_loss(y_te, proba):.3f}"</span>)  <span class="cm"># lower = better calibrated</span></div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Move the threshold to favour catching malignant cases (class 0)</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> recall_score, precision_score
+p_malig = <span class="num">1</span> - proba                      <span class="cm"># probability tumour is malignant</span>
+<span class="kw">for</span> t <span class="kw">in</span> [<span class="num">0.3</span>, <span class="num">0.5</span>, <span class="num">0.7</span>]:
+    flag = (p_malig >= t).astype(<span class="kw">int</span>)
+    rec = recall_score(<span class="num">1</span>-y_te, flag); prec = precision_score(<span class="num">1</span>-y_te, flag)
+    <span class="fn">print</span>(<span class="st">f"t={t}: recall {rec:.2f}  precision {prec:.2f}"</span>)</div>
+  </div>
+  <div class="tab-content" id="p3-results">
+    <ul>
+      <li><strong>ROC-AUC ≈ 0.99</strong>, PR-AUC similarly high — this is a famously <em>easy</em> dataset, so don't read your near-perfect score as proof your process generalises.</li>
+      <li><strong>Brier ≈ 0.03–0.06</strong> — well calibrated out of the box; the calibration curve hugs the diagonal.</li>
+      <li><strong>Lowering the malignant-flag threshold</strong> raises recall (catch more cancers) at the cost of precision (more false alarms) — exactly the trade you want to make consciously.</li>
+    </ul>
+    <div class="alert alert-info">The lesson here isn't the 0.99 — it's that you produced a <em>probability</em>, checked it was <em>calibrated</em>, and chose a <em>threshold</em> for the real cost of each error. That discipline is what transfers to P6.</div>
+  </div>
+  <div class="tab-content" id="p3-pitfalls">
+    <ul>
+      <li><strong>Reporting accuracy on imbalanced data</strong> — it hides which class you're failing. Lead with PR-AUC and recall for the costly class.</li>
+      <li><strong>Defaulting to a 0.5 threshold</strong> — 0.5 is a modelling artefact, not a business decision. Choose it from costs.</li>
+      <li><strong>Using <code>predict()</code></strong> when you need <code>predict_proba()</code> — you throw away the probability you worked to produce.</li>
+      <li><strong>Mixing up the positive class</strong> — confirm which label is 1; here benign is 1, so malignant probability is <code>1 − proba</code>.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p3-stretch">
+    <p><strong>Deliverables:</strong> notebook with ROC + PR curves, a calibration plot, and a short note recommending a threshold with its recall/precision at that point. Self-check: can you justify your threshold in one sentence about cost?</p>
+    <p><strong>Stretch challenges:</strong></p>
+    <ul>
+      <li><span class="badge b-blue">Medium</span> Build an explicit cost matrix and pick the threshold that minimises expected cost (cross-exercise X3).</li>
+      <li><span class="badge b-amber">Harder</span> Wrap the model in <code>CalibratedClassifierCV</code> and compare Brier before/after.</li>
+      <li><span class="badge b-amber">Harder</span> Compare against a RidgeClassifier and a small tree — does AUC change, does calibration?</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="p4">
+  <div class="section-eyebrow">Project 4 · Intermediate · ~4 hours</div>
+  <h2 class="section-title">P4 — Titanic survival on messy data</h2>
+  <p class="section-sub">Real data is dirty. Handle missing values and categoricals the leak-proof way with a ColumnTransformer, regularise with ElasticNet, and read the model as odds ratios — while dodging a famous leakage trap.</p>
+  <div class="tab-nav" id="p4-tabs">
+    <button class="tab-btn active" onclick="switchTab('p4-tabs','p4-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p4-tabs','p4-steps')">Steps</button>
+    <button class="tab-btn" onclick="switchTab('p4-tabs','p4-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p4-tabs','p4-results')">Expected results</button>
+    <button class="tab-btn" onclick="switchTab('p4-tabs','p4-pitfalls')">Common errors</button>
+    <button class="tab-btn" onclick="switchTab('p4-tabs','p4-stretch')">Deliverables &amp; stretch</button>
+  </div>
+  <div class="tab-content active" id="p4-about">
+    <p><strong>What you'll build:</strong> a penalised logistic model predicting passenger survival, with a <code>ColumnTransformer</code> that imputes + scales numeric features and imputes + one-hot-encodes categoricals — all inside one pipeline so nothing leaks across the split. You'll tune C and the L1/L2 mix and interpret coefficients as odds ratios.</p>
+    <p><strong>Why it matters:</strong> the messy-data plumbing here (mixed types, NaNs, unseen categories) is 80% of real applied work. Get this pattern solid and you can point it at any tabular dataset.</p>
+    <p><strong>Dataset:</strong> Titanic (<code>fetch_openml('titanic', version=1)</code>). <strong>Difficulty:</strong> Intermediate. <strong>Time:</strong> ~4h.</p>
+    <div class="viz-container"><div class="viz-label">One ColumnTransformer, two cleaning paths</div>
+      <svg viewBox="0 0 620 130" class="viz-svg" style="max-height:130px">
+        <defs><marker id="j4" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <rect x="6" y="48" width="96" height="34" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="54" y="69" text-anchor="middle" fill="var(--text2)" font-size="11">raw rows</text>
+        <line x1="102" y1="55" x2="150" y2="32" stroke="var(--text3)" marker-end="url(#j4)"/>
+        <line x1="102" y1="75" x2="150" y2="98" stroke="var(--text3)" marker-end="url(#j4)"/>
+        <rect x="152" y="14" width="220" height="36" rx="8" fill="rgba(48,212,168,.10)" stroke="var(--teal)"/><text x="262" y="36" text-anchor="middle" fill="var(--text2)" font-size="11">numeric: impute median + scale</text>
+        <rect x="152" y="80" width="220" height="36" rx="8" fill="rgba(245,166,35,.10)" stroke="var(--amber)"/><text x="262" y="102" text-anchor="middle" fill="var(--text2)" font-size="11">categorical: impute + one-hot</text>
+        <line x1="372" y1="32" x2="420" y2="56" stroke="var(--text3)" marker-end="url(#j4)"/>
+        <line x1="372" y1="98" x2="420" y2="74" stroke="var(--text3)" marker-end="url(#j4)"/>
+        <rect x="422" y="48" width="120" height="34" rx="8" fill="rgba(91,141,238,.10)" stroke="var(--accent)"/><text x="482" y="69" text-anchor="middle" fill="var(--text2)" font-size="11">logistic + CV</text>
+      </svg>
+    </div>
+    <a class="ex-project-link" href="2_complete_reference.html#pitfalls">📖 Theory: §Pitfalls (leakage)</a>
+    <a class="ex-project-link" href="2_complete_reference.html#logistic">📖 Theory: §Logistic regression</a>
+  </div>
+  <div class="tab-content" id="p4-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Fetch &amp; drop leakage columns <span class="pipe-time">· 30 min</span></div><div class="tl-body">Remove <code>boat</code>, <code>body</code>, <code>home.dest</code>, <code>name</code>, <code>ticket</code> — <code>boat</code>/<code>body</code> all but reveal the outcome.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Define column groups <span class="pipe-time">· 30 min</span></div><div class="tl-body">Numeric: age, fare, sibsp, parch. Categorical: pclass, sex, embarked.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Build the ColumnTransformer pipeline <span class="pipe-time">· 50 min</span></div><div class="tl-body">Two sub-pipelines + logistic with <code>penalty="elasticnet"</code>, <code>solver="saga"</code>.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Tune C and l1_ratio <span class="pipe-time">· 50 min</span></div><div class="tl-body">GridSearchCV on ROC-AUC; let regularisation prune weak features.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Interpret as odds ratios <span class="pipe-time">· 40 min</span></div><div class="tl-body">Exponentiate coefficients: being female and 1st-class multiply survival odds sharply.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p4-code">
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Fetch and drop the leakage / id columns</span>
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> fetch_openml
+df = fetch_openml(<span class="st">"titanic"</span>, version=<span class="num">1</span>, as_frame=<span class="kw">True</span>).frame
+y = (df[<span class="st">"survived"</span>].astype(<span class="kw">int</span>))
+leak = [<span class="st">"survived"</span>, <span class="st">"boat"</span>, <span class="st">"body"</span>, <span class="st">"home.dest"</span>, <span class="st">"name"</span>, <span class="st">"ticket"</span>, <span class="st">"cabin"</span>]
+X = df.drop(columns=leak)</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># ColumnTransformer: clean numeric and categorical separately, no leakage</span>
+<span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, OneHotEncoder
+num = [<span class="st">"age"</span>, <span class="st">"fare"</span>, <span class="st">"sibsp"</span>, <span class="st">"parch"</span>]
+cat = [<span class="st">"pclass"</span>, <span class="st">"sex"</span>, <span class="st">"embarked"</span>]
+pre = ColumnTransformer([
+    (<span class="st">"num"</span>, Pipeline([(<span class="st">"imp"</span>, SimpleImputer(strategy=<span class="st">"median"</span>)), (<span class="st">"sc"</span>, StandardScaler())]), num),
+    (<span class="st">"cat"</span>, Pipeline([(<span class="st">"imp"</span>, SimpleImputer(strategy=<span class="st">"most_frequent"</span>)),
+                     (<span class="st">"oh"</span>, OneHotEncoder(handle_unknown=<span class="st">"ignore"</span>))]), cat)])</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Penalised logistic + grid search, then odds ratios</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, GridSearchCV
+clf = Pipeline([(<span class="st">"pre"</span>, pre),
+    (<span class="st">"lr"</span>, LogisticRegression(penalty=<span class="st">"elasticnet"</span>, solver=<span class="st">"saga"</span>, max_iter=<span class="num">5000</span>))])
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=<span class="num">0.2</span>, stratify=y, random_state=<span class="num">42</span>)
+grid = GridSearchCV(clf, {<span class="st">"lr__C"</span>: [<span class="num">0.1</span>, <span class="num">1</span>, <span class="num">10</span>], <span class="st">"lr__l1_ratio"</span>: [<span class="num">0.2</span>, <span class="num">0.5</span>, <span class="num">0.8</span>]},
+                    scoring=<span class="st">"roc_auc"</span>, cv=<span class="num">5</span>).fit(Xtr, ytr)
+names = grid.best_estimator_.named_steps[<span class="st">"pre"</span>].get_feature_names_out()
+odds = np.exp(grid.best_estimator_.named_steps[<span class="st">"lr"</span>].coef_[<span class="num">0</span>])
+<span class="kw">for</span> n, o <span class="kw">in</span> <span class="fn">sorted</span>(<span class="fn">zip</span>(names, odds), key=<span class="kw">lambda</span> t: -t[<span class="num">1</span>])[:<span class="num">6</span>]:
+    <span class="fn">print</span>(<span class="st">f"{n:24s} odds ×{o:.2f}"</span>)</div>
+  </div>
+  <div class="tab-content" id="p4-results">
+    <ul>
+      <li><strong>Test ROC-AUC ≈ 0.83–0.87</strong> once leakage columns are removed — a solid, honest score.</li>
+      <li><strong>Odds ratios:</strong> being female multiplies survival odds several-fold; 1st class well above 3rd; higher fare and younger age help.</li>
+      <li><strong>The trap:</strong> leave <code>boat</code> in and AUC jumps toward <strong>0.97+</strong> — that's leakage, not skill (a recorded lifeboat ≈ survived).</li>
+    </ul>
+    <div class="alert alert-warn">If your AUC looks suspiciously great, hunt for a column that's only known <em>after</em> the outcome. That instinct is the single most valuable thing in this project — and it's exactly what P6 tests at scale.</div>
+  </div>
+  <div class="tab-content" id="p4-pitfalls">
+    <ul>
+      <li><strong>Keeping <code>boat</code>/<code>body</code></strong> — textbook target leakage; inflates every metric and collapses live.</li>
+      <li><strong>One-hot encoding before the split</strong> or imputing on the full dataset — leaks distribution info. Do it inside the pipeline.</li>
+      <li><strong>No <code>handle_unknown="ignore"</code></strong> — a category present only in test crashes prediction.</li>
+      <li><strong>Reading raw coefficients as probabilities</strong> — exponentiate to odds ratios; logistic coefficients are on the log-odds scale.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p4-stretch">
+    <p><strong>Deliverables:</strong> a notebook with the tuned pipeline, an odds-ratio bar chart, and a paragraph on which columns you dropped for leakage and why. Self-check: can you explain "odds ×3.4 for female" in plain English?</p>
+    <p><strong>Stretch challenges:</strong></p>
+    <ul>
+      <li><span class="badge b-blue">Medium</span> Deliberately re-introduce <code>boat</code> and measure the AUC inflation — document the leak.</li>
+      <li><span class="badge b-amber">Harder</span> Engineer a <code>family_size = sibsp + parch + 1</code> feature; does it help?</li>
+      <li><span class="badge b-amber">Harder</span> Add a calibration curve and a chosen threshold as in P3.</li>
+    </ul>
+  </div>
+</section>
+<section class="section" id="p5">
+  <div class="section-eyebrow">Project 5 · Advanced · ~5 hours</div>
+  <h2 class="section-title">P5 — Price &amp; promo elasticity</h2>
+  <p class="section-sub">Put regression to work on a real planning question: how much does demand move when price moves? Estimate own-price elasticity per SKU with a log-log model — and confront the gap between association and causation.</p>
+  <div class="tab-nav" id="p5-tabs">
+    <button class="tab-btn active" onclick="switchTab('p5-tabs','p5-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p5-tabs','p5-steps')">Steps</button>
+    <button class="tab-btn" onclick="switchTab('p5-tabs','p5-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p5-tabs','p5-results')">Expected results</button>
+    <button class="tab-btn" onclick="switchTab('p5-tabs','p5-pitfalls')">Common errors</button>
+    <button class="tab-btn" onclick="switchTab('p5-tabs','p5-stretch')">Deliverables &amp; stretch</button>
+  </div>
+  <div class="tab-content active" id="p5-about">
+    <p><strong>What you'll build:</strong> a log-log linear regression (<code>log quantity ~ log price</code>) whose slope <em>is</em> the price elasticity of demand, estimated overall and per-SKU with regularisation to stabilise thin-data items.</p>
+    <p><strong>Why it matters:</strong> elasticity drives promo ROI and price decisions directly. This is the closest project to day-job planning analytics — and the one where "the model says so" can mislead most expensively if you ignore confounding.</p>
+    <p><strong>Dataset:</strong> Online Retail II (UCI id=502, ~1M transactions). <strong>Difficulty:</strong> Advanced. <strong>Time:</strong> ~5h.</p>
+    <div class="viz-container"><div class="viz-label">Slope of log-log line = elasticity</div>
+      <svg viewBox="0 0 620 200" class="viz-svg" style="max-height:200px">
+        <line x1="70" y1="170" x2="560" y2="170" stroke="var(--text3)"/><line x1="70" y1="20" x2="70" y2="170" stroke="var(--text3)"/>
+        <text x="315" y="194" text-anchor="middle" fill="var(--text3)" font-size="12">log(price) →</text>
+        <text x="40" y="95" text-anchor="middle" fill="var(--text3)" font-size="12" transform="rotate(-90 40 95)">log(quantity) →</text>
+        <line x1="90" y1="50" x2="540" y2="150" stroke="var(--coral)" stroke-width="2.5"/>
+        <circle cx="120" cy="62" r="4" fill="var(--accent)"/><circle cx="190" cy="78" r="4" fill="var(--accent)"/><circle cx="270" cy="92" r="4" fill="var(--accent)"/><circle cx="340" cy="110" r="4" fill="var(--accent)"/><circle cx="420" cy="128" r="4" fill="var(--accent)"/><circle cx="500" cy="142" r="4" fill="var(--accent)"/>
+        <text x="360" y="95" fill="var(--coral)" font-size="12">slope ≈ −1.4  → elasticity</text>
+        <text x="360" y="113" fill="var(--text3)" font-size="11">+1% price ≈ −1.4% quantity</text>
+      </svg>
+    </div>
+    <a class="ex-project-link" href="2_complete_reference.html#advanced">📖 Theory: §Advanced topics</a>
+    <a class="ex-project-link" href="2_complete_reference.html#usecases">📖 Theory: §Use cases</a>
+  </div>
+  <div class="tab-content" id="p5-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Load &amp; clean transactions <span class="pipe-time">· 60 min</span></div><div class="tl-body">Drop cancellations (Invoice starting "C"), negative/zero quantities and prices, missing StockCode.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Build a SKU-week panel <span class="pipe-time">· 50 min</span></div><div class="tl-body">Aggregate to weekly total quantity and average price per StockCode.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Pooled log-log regression <span class="pipe-time">· 40 min</span></div><div class="tl-body">Regress log(qty) on log(price) across all SKUs for an average elasticity benchmark.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Per-SKU elasticities <span class="pipe-time">· 60 min</span></div><div class="tl-body">Fit per high-volume SKU; shrink noisy estimates toward the pooled value (regularise).</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Sanity &amp; caveats <span class="pipe-time">· 50 min</span></div><div class="tl-body">Flag positive or wild slopes; write the association-vs-causation caveat explicitly.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p5-code">
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Load Online Retail II and clean</span>
+<span class="kw">from</span> ucimlrepo <span class="kw">import</span> fetch_ucirepo
+<span class="kw">import</span> pandas <span class="kw">as</span> pd, numpy <span class="kw">as</span> np
+raw = fetch_ucirepo(id=<span class="num">502</span>).data.features
+df = raw.rename(columns=<span class="kw">lambda</span> c: c.strip())
+df = df[(df[<span class="st">"Quantity"</span>] > <span class="num">0</span>) &amp; (df[<span class="st">"Price"</span>] > <span class="num">0</span>)]            <span class="cm"># drop returns/zeros</span>
+df = df[~df[<span class="st">"Invoice"</span>].astype(<span class="kw">str</span>).str.startswith(<span class="st">"C"</span>)]        <span class="cm"># drop cancellations</span>
+df[<span class="st">"week"</span>] = pd.to_datetime(df[<span class="st">"InvoiceDate"</span>]).dt.to_period(<span class="st">"W"</span>)</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># SKU-week panel: weekly quantity and average price</span>
+panel = (df.groupby([<span class="st">"StockCode"</span>, <span class="st">"week"</span>])
+           .agg(qty=(<span class="st">"Quantity"</span>, <span class="st">"sum"</span>), price=(<span class="st">"Price"</span>, <span class="st">"mean"</span>))
+           .reset_index())
+panel[<span class="st">"lq"</span>] = np.log(panel[<span class="st">"qty"</span>]); panel[<span class="st">"lp"</span>] = np.log(panel[<span class="st">"price"</span>])</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Pooled elasticity = slope of log(qty) on log(price)</span>
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LinearRegression
+m = LinearRegression().fit(panel[[<span class="st">"lp"</span>]], panel[<span class="st">"lq"</span>])
+<span class="fn">print</span>(<span class="st">f"pooled elasticity ≈ {m.coef_[0]:.2f}"</span>)   <span class="cm"># expect negative</span></div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Per-SKU elasticities for high-volume items (need ≥ ~12 weeks)</span>
+out = {}
+<span class="kw">for</span> sku, g <span class="kw">in</span> panel.groupby(<span class="st">"StockCode"</span>):
+    <span class="kw">if</span> g[<span class="st">"week"</span>].nunique() &gt;= <span class="num">12</span> <span class="kw">and</span> g[<span class="st">"lp"</span>].std() &gt; <span class="num">0.05</span>:
+        out[sku] = LinearRegression().fit(g[[<span class="st">"lp"</span>]], g[<span class="st">"lq"</span>]).coef_[<span class="num">0</span>]
+el = pd.Series(out).sort_values()
+<span class="fn">print</span>(el.describe())   <span class="cm"># most should be negative; investigate any &gt; 0</span></div>
+  </div>
+  <div class="tab-content" id="p5-results">
+    <ul>
+      <li><strong>Pooled elasticity</strong> typically lands negative, often in the <strong>−0.5 to −2.5</strong> range depending on cleaning and aggregation.</li>
+      <li><strong>Per-SKU spread is wide:</strong> staples look inelastic (near 0 to −1), discretionary gift items more elastic (&lt; −1.5).</li>
+      <li><strong>Some SKUs show positive or absurd slopes</strong> — that's confounding (price raised <em>because</em> demand was high), not a real upward demand curve.</li>
+    </ul>
+    <div class="alert alert-warn">A regression slope is an <em>association</em>. Calling it the causal elasticity assumes price moved for reasons unrelated to demand — rarely true without an experiment. State this caveat next to every number you report.</div>
+  </div>
+  <div class="tab-content" id="p5-pitfalls">
+    <ul>
+      <li><strong>Logging zeros/negatives</strong> — <code>log</code> is undefined; you must clean returns and zero-price rows first.</li>
+      <li><strong>Wrong aggregation level</strong> — transaction-line vs SKU-week changes the elasticity; pick one and justify it.</li>
+      <li><strong>Endogeneity (the big one)</strong> — price is often set in response to demand, biasing the slope. Acknowledge it; ideally use promo-driven price variation.</li>
+      <li><strong>Extrapolating beyond observed prices</strong> — an elasticity fit on ±10% price moves says nothing about a 50%-off blowout.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p5-stretch">
+    <p><strong>Deliverables:</strong> a table of per-SKU elasticities with confidence flags, the pooled benchmark, and an explicit causation caveat. Self-check: can you name one reason a slope might be biased here?</p>
+    <p><strong>Stretch challenges:</strong></p>
+    <ul>
+      <li><span class="badge b-amber">Harder</span> Add a promo dummy and re-estimate elasticity from promo-driven variation only.</li>
+      <li><span class="badge b-amber">Harder</span> Turn elasticities into a promo-depth what-if revenue model (cross-exercise X5).</li>
+      <li><span class="badge b-purple">Expert</span> Add cross-price terms for paired SKUs to spot cannibalisation.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section" id="p6">
+  <div class="section-eyebrow">Project 6 · Advanced+ · ~6 hours</div>
+  <h2 class="section-title">P6 — Late-delivery / OTIF breach risk</h2>
+  <p class="section-sub">The capstone: a production-shaped classifier on imbalanced operational data, defusing a notorious leakage trap, choosing a threshold by cost, and sketching how you'd actually deploy and monitor it.</p>
+  <div class="tab-nav" id="p6-tabs">
+    <button class="tab-btn active" onclick="switchTab('p6-tabs','p6-about')">About</button>
+    <button class="tab-btn" onclick="switchTab('p6-tabs','p6-steps')">Steps</button>
+    <button class="tab-btn" onclick="switchTab('p6-tabs','p6-code')">Key code</button>
+    <button class="tab-btn" onclick="switchTab('p6-tabs','p6-results')">Expected results</button>
+    <button class="tab-btn" onclick="switchTab('p6-tabs','p6-pitfalls')">Common errors</button>
+    <button class="tab-btn" onclick="switchTab('p6-tabs','p6-stretch')">Deliverables &amp; stretch</button>
+  </div>
+  <div class="tab-content active" id="p6-about">
+    <p><strong>What you'll build:</strong> a logistic classifier predicting <code>Late_delivery_risk</code> at order time — leakage-free, imbalance-aware (<code>class_weight</code>), calibrated, with a cost-chosen threshold and a one-page deployment/monitoring plan.</p>
+    <p><strong>Why it matters:</strong> this is what an OTIF-risk model looks like in the wild. The dataset is famous for a leakage trap: naive models hit ~97% AUC by accident. Removing the leak to reach an honest score is the core skill — and the most career-relevant one in this guide.</p>
+    <p><strong>Dataset:</strong> DataCo Smart Supply Chain (Kaggle, ~180k orders, has <code>Late_delivery_risk</code>). <strong>Difficulty:</strong> Advanced+. <strong>Time:</strong> ~6h.</p>
+    <div class="viz-container"><div class="viz-label">The leakage gate decides whether your score is real</div>
+      <svg viewBox="0 0 620 120" class="viz-svg" style="max-height:120px">
+        <defs><marker id="j6" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="var(--text3)"/></marker></defs>
+        <rect x="6" y="44" width="120" height="36" rx="8" fill="var(--bg2)" stroke="var(--border2)"/><text x="66" y="66" text-anchor="middle" fill="var(--text2)" font-size="11">180k orders</text>
+        <line x1="126" y1="62" x2="158" y2="62" stroke="var(--text3)" marker-end="url(#j6)"/>
+        <rect x="160" y="40" width="150" height="44" rx="8" fill="rgba(224,92,92,.10)" stroke="var(--red)"/><text x="235" y="60" text-anchor="middle" fill="var(--text)" font-size="11" font-weight="600">🚧 leakage gate</text><text x="235" y="76" text-anchor="middle" fill="var(--text3)" font-size="10">drop post-outcome cols</text>
+        <line x1="310" y1="50" x2="346" y2="32" stroke="var(--text3)" marker-end="url(#j6)"/>
+        <line x1="310" y1="74" x2="346" y2="92" stroke="var(--text3)" marker-end="url(#j6)"/>
+        <rect x="348" y="12" width="170" height="38" rx="8" fill="rgba(245,166,35,.10)" stroke="var(--amber)"/><text x="433" y="30" text-anchor="middle" fill="var(--text2)" font-size="11">keep leak → AUC ~0.97</text><text x="433" y="44" text-anchor="middle" fill="var(--text3)" font-size="10">fake genius</text>
+        <rect x="348" y="74" width="170" height="38" rx="8" fill="rgba(48,212,168,.10)" stroke="var(--teal)"/><text x="433" y="92" text-anchor="middle" fill="var(--text2)" font-size="11">remove leak → honest</text><text x="433" y="106" text-anchor="middle" fill="var(--text3)" font-size="10">deployable model</text>
+      </svg>
+    </div>
+    <a class="ex-project-link" href="2_complete_reference.html#production">📖 Theory: §Production</a>
+    <a class="ex-project-link" href="2_complete_reference.html#pitfalls">📖 Theory: §Pitfalls</a>
+    <a class="ex-project-link" href="2_complete_reference.html#usecases">📖 Theory: §Use cases</a>
+  </div>
+  <div class="tab-content" id="p6-steps">
+    <div class="timeline">
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">1 · Load &amp; frame the target <span class="pipe-time">· 40 min</span></div><div class="tl-body">Target = <code>Late_delivery_risk</code>. Decide which features are known <em>at order time</em> — that's your constraint.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">2 · Hunt &amp; remove leakage <span class="pipe-time">· 70 min</span></div><div class="tl-body">Drop <code>Days for shipping (real)</code>, <code>Delivery Status</code>, and anything else only known post-shipment. These encode the answer.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">3 · Encode + class_weight <span class="pipe-time">· 60 min</span></div><div class="tl-body">ColumnTransformer; LogisticRegression(class_weight="balanced") for the minority late class.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">4 · Evaluate on PR-AUC + calibrate <span class="pipe-time">· 70 min</span></div><div class="tl-body">Lead with PR-AUC/recall, not accuracy; calibrate probabilities for cost decisions.</div></div>
+      <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">5 · Cost threshold + deployment note <span class="pipe-time">· 80 min</span></div><div class="tl-body">Set the cutoff from the cost of a missed breach vs a false alarm; write how you'd batch-score and monitor drift.</div></div>
+    </div>
+  </div>
+  <div class="tab-content" id="p6-code">
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Load and frame — keep ONLY order-time features</span>
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+df = pd.read_csv(<span class="st">"DataCoSupplyChainDataset.csv"</span>, encoding=<span class="st">"latin-1"</span>)
+y = df[<span class="st">"Late_delivery_risk"</span>].astype(<span class="kw">int</span>)
+<span class="cm"># LEAKAGE: these are only known after the order ships — drop them</span>
+leak = [<span class="st">"Late_delivery_risk"</span>, <span class="st">"Days for shipping (real)"</span>, <span class="st">"Delivery Status"</span>,
+        <span class="st">"Order Item Total"</span>, <span class="st">"shipping date (DateOrders)"</span>]
+X = df.drop(columns=[c <span class="kw">for</span> c <span class="kw">in</span> leak <span class="kw">if</span> c <span class="kw">in</span> df.columns])</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Imbalance-aware logistic in a leak-proof pipeline</span>
+<span class="kw">from</span> sklearn.compose <span class="kw">import</span> ColumnTransformer
+<span class="kw">from</span> sklearn.pipeline <span class="kw">import</span> Pipeline
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, OneHotEncoder
+<span class="kw">from</span> sklearn.impute <span class="kw">import</span> SimpleImputer
+<span class="kw">from</span> sklearn.linear_model <span class="kw">import</span> LogisticRegression
+num = X.select_dtypes(<span class="st">"number"</span>).columns.tolist()
+cat = [c <span class="kw">for</span> c <span class="kw">in</span> [<span class="st">"Shipping Mode"</span>, <span class="st">"Customer Segment"</span>, <span class="st">"Order Region"</span>] <span class="kw">if</span> c <span class="kw">in</span> X.columns]
+pre = ColumnTransformer([
+    (<span class="st">"num"</span>, Pipeline([(<span class="st">"i"</span>, SimpleImputer()), (<span class="st">"s"</span>, StandardScaler())]), num),
+    (<span class="st">"cat"</span>, OneHotEncoder(handle_unknown=<span class="st">"ignore"</span>, min_frequency=<span class="num">50</span>), cat)])
+clf = Pipeline([(<span class="st">"pre"</span>, pre),
+    (<span class="st">"lr"</span>, LogisticRegression(class_weight=<span class="st">"balanced"</span>, max_iter=<span class="num">2000</span>))])</div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Evaluate the RIGHT way + prove the leak exists</span>
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> roc_auc_score, average_precision_score
+Xtr, Xte, ytr, yte = train_test_split(X, y, test_size=<span class="num">0.2</span>, stratify=y, random_state=<span class="num">42</span>)
+clf.fit(Xtr, ytr); p = clf.predict_proba(Xte)[:, <span class="num">1</span>]
+<span class="fn">print</span>(<span class="st">f"honest ROC-AUC {roc_auc_score(yte, p):.3f}  PR-AUC {average_precision_score(yte, p):.3f}"</span>)
+<span class="cm"># Re-run WITHOUT dropping 'Days for shipping (real)' → AUC rockets to ~0.97 (leakage!)</span></div>
+    <div class="code-block"><button class="copy-btn" onclick="copyCode(this)">Copy</button><span class="cm"># Pick the threshold from cost, not from 0.5</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+C_miss, C_false = <span class="num">100</span>, <span class="num">10</span>          <span class="cm"># cost of a missed breach vs a false alarm</span>
+ts = np.linspace(<span class="num">0.05</span>, <span class="num">0.95</span>, <span class="num">19</span>)
+cost = [((yte==<span class="num">1</span>)&amp;(p&lt;t)).sum()*C_miss + ((yte==<span class="num">0</span>)&amp;(p&gt;=t)).sum()*C_false <span class="kw">for</span> t <span class="kw">in</span> ts]
+<span class="fn">print</span>(<span class="st">"cost-optimal threshold:"</span>, <span class="fn">round</span>(ts[<span class="fn">int</span>(np.argmin(cost))], <span class="num">2</span>))</div>
+  </div>
+  <div class="tab-content" id="p6-results">
+    <ul>
+      <li><strong>With the leak left in</strong> (days-shipped-real), ROC-AUC sits near <strong>0.97</strong> — the trap that fools many published notebooks.</li>
+      <li><strong>Leak removed,</strong> an honest logistic lands far lower (often <strong>~0.62–0.72</strong> ROC-AUC) — modest, but real and deployable.</li>
+      <li><strong><code>class_weight="balanced"</code></strong> lifts recall on the minority late class at some precision cost; the cost-based threshold then sets the operating point.</li>
+    </ul>
+    <div class="alert alert-danger">The 0.97 model is worse than useless in production: it "works" only because it peeks at a value that doesn't exist when you actually need the prediction. Shipping that model is how analytics teams lose credibility. The honest 0.68 is the win.</div>
+  </div>
+  <div class="tab-content" id="p6-pitfalls">
+    <ul>
+      <li><strong>The leakage trap</strong> — any feature describing what happened <em>after</em> dispatch (actual days, delivery status) leaks the label. This is the whole project.</li>
+      <li><strong>Accuracy on imbalanced classes</strong> — "always on-time" scores high and catches nothing. Use PR-AUC and recall.</li>
+      <li><strong>Random splits on time-ordered data</strong> — prefer a time-based split so you train on the past and test on the future.</li>
+      <li><strong>Uncalibrated probabilities feeding a cost rule</strong> — calibrate before you threshold by cost.</li>
+    </ul>
+  </div>
+  <div class="tab-content" id="p6-stretch">
+    <p><strong>Deliverables:</strong> a notebook showing the leaked vs honest AUC side by side, a PR curve, a cost-threshold plot, and a one-page deployment note (batch scoring cadence, inputs available at order time, drift monitoring). Self-check: can you list every feature you dropped for leakage and say why?</p>
+    <p><strong>Stretch challenges:</strong></p>
+    <ul>
+      <li><span class="badge b-amber">Harder</span> Systematically hunt the highest-leakage column and quantify each one's AUC contribution (cross-exercise X4).</li>
+      <li><span class="badge b-purple">Expert</span> Add a time-based split and compare to the random split's optimism.</li>
+      <li><span class="badge b-purple">Expert</span> Benchmark against gradient boosting — does the honest gap close, and is the logistic still worth it for interpretability?</li>
+    </ul>
+  </div>
+</section>
+<section class="section" id="exercises">
+  <div class="section-eyebrow">Cross-cutting exercises</div>
+  <h2 class="section-title">Tie it together</h2>
+  <p class="section-sub">Five short exercises that connect a project to the theory behind it. Each links to both the project to extend and the Reference section to read. Do them after the matching project.</p>
+
+  <div class="ex-block">
+    <div class="ex-num">Exercise X1 · builds on P1</div>
+    <div class="ex-title">MAE vs RMSE — same model, different story</div>
+    <div class="ex-body">Re-score your P1 housing model with mean absolute error alongside RMSE. RMSE punishes large misses more (it squares them), so a few expensive districts pull it up. Explain in two sentences which metric you'd report to a planner who cares about typical error vs one who fears big surprises.</div>
+    <span class="ex-project-link" onclick="gotoS('p1')">🛠️ Extend P1</span>
+    <a class="ex-project-link" href="2_complete_reference.html#evaluation">📖 §Evaluation</a>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-num">Exercise X2 · builds on P2</div>
+    <div class="ex-title">Watch overfitting happen</div>
+    <div class="ex-body">Add polynomial features (degree 2, then 5) to your from-scratch P2 model. Track training error vs cross-validation error as degree rises. You'll see training error keep falling while CV error turns back up — the classic overfitting U. Then add an L2 penalty and watch it tame the high-degree model.</div>
+    <span class="ex-project-link" onclick="gotoS('p2')">🛠️ Extend P2</span>
+    <a class="ex-project-link" href="2_complete_reference.html#pitfalls">📖 §Pitfalls</a>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-num">Exercise X3 · builds on P3</div>
+    <div class="ex-title">Threshold by cost, not by 0.5</div>
+    <div class="ex-body">For the P3 tumour model, write a cost matrix (a missed malignant case costs far more than a false alarm). Sweep thresholds, compute expected cost at each, and pick the minimiser. Compare its recall/precision to the default 0.5 cutoff and state the operating point you'd ship.</div>
+    <span class="ex-project-link" onclick="gotoS('p3')">🛠️ Extend P3</span>
+    <a class="ex-project-link" href="2_complete_reference.html#evaluation">📖 §Evaluation</a>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-num">Exercise X4 · builds on P6</div>
+    <div class="ex-title">Hunt the leak</div>
+    <div class="ex-body">In the P6 breach dataset, add back one suspected post-outcome column at a time and record the ROC-AUC each time. Rank columns by how much they inflate the score. The one that single-handedly pushes AUC toward 0.97 is your prime leak. Write the rule you'd use to catch such columns automatically in future projects.</div>
+    <span class="ex-project-link" onclick="gotoS('p6')">🛠️ Extend P6</span>
+    <a class="ex-project-link" href="2_complete_reference.html#pitfalls">📖 §Pitfalls</a>
+  </div>
+
+  <div class="ex-block">
+    <div class="ex-num">Exercise X5 · builds on P5</div>
+    <div class="ex-title">From elasticity to a promo what-if</div>
+    <div class="ex-body">Take a per-SKU elasticity from P5 and build a tiny what-if: for a proposed price cut of X%, predict the quantity lift (elasticity × −X%) and the resulting revenue change. Identify the break-even discount where extra volume just offsets lower margin — and note loudly where you're extrapolating past observed prices.</div>
+    <span class="ex-project-link" onclick="gotoS('p5')">🛠️ Extend P5</span>
+    <a class="ex-project-link" href="2_complete_reference.html#usecases">📖 §Use cases</a>
+  </div>
+</section>
+
+<section class="section" id="publish">
+  <div class="section-eyebrow">Show your work</div>
+  <h2 class="section-title">Publish what you built</h2>
+  <p class="section-sub">A finished project no one can see is half a project. Here's a lightweight way to package each one so it reads well and proves the discipline behind it.</p>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Notebook structure</h3>
+      <ol style="margin:0">
+        <li><strong>Problem &amp; data</strong> — one paragraph: the question, the dataset, the target.</li>
+        <li><strong>Setup</strong> — load, split first, quick EDA.</li>
+        <li><strong>Model</strong> — pipeline, CV, the one key decision you made.</li>
+        <li><strong>Evaluation</strong> — held-out metrics vs a baseline, plus a plot.</li>
+        <li><strong>Interpretation</strong> — what the coefficients/odds say in plain words.</li>
+        <li><strong>Limits</strong> — leakage checked, caveats, what you'd do next.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Write-up template</h3>
+      <p style="margin-bottom:6px">A 150-word README that answers:</p>
+      <ul style="margin:0">
+        <li>What question does this answer, for whom?</li>
+        <li>What's the headline number, vs what baseline?</li>
+        <li>What's the single most important caveat?</li>
+        <li>One sentence: what would make it production-ready?</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3 style="margin-top:24px">Pre-publish checklist</h3>
+  <div class="alert alert-success" style="margin-bottom:8px">✓ Split happens before any fitting or scaling · ✓ All preprocessing lives inside the pipeline · ✓ Reported metric matches the problem (RMSE/R² for regression, PR-AUC/recall for imbalanced classification)</div>
+  <div class="alert alert-success" style="margin-bottom:8px">✓ Compared against a baseline (DummyRegressor / majority class) · ✓ Leakage explicitly checked and documented · ✓ Threshold (if any) justified by cost, not left at 0.5</div>
+  <div class="alert alert-success">✓ Random seeds set for reproducibility · ✓ Coefficients/odds interpreted in plain language · ✓ Caveats and next steps stated honestly</div>
+
+  <h3 style="margin-top:24px">Where to publish</h3>
+  <p>A public <strong>GitHub repo</strong> (one folder per project, a clean notebook + README + <code>requirements.txt</code>) is the standard portfolio. Render notebooks on <strong>nbviewer</strong> or export to HTML for a quick share. For supply-chain framings, a short <strong>LinkedIn write-up</strong> with one chart and the headline-vs-baseline number travels well with peers.</p>
+</section>
+
+<section class="section" id="next">
+  <div class="section-eyebrow">Where to go from here</div>
+  <h2 class="section-title">What's next</h2>
+  <p class="section-sub">You now own the regression backbone. Here's a sensible path onward and the natural extensions once linear and logistic feel automatic.</p>
+
+  <h3>A 4-stage roadmap</h3>
+  <div class="timeline">
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 1 · Cement the backbone</div><div class="tl-body">Repeat the split → pipeline → CV → evaluate → interpret loop on two datasets of your own until it's reflex. Most of the value of this guide is here.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 2 · Regularisation fluency</div><div class="tl-body">Ridge, Lasso, ElasticNet — when each helps, how the coefficient paths move, why Lasso zeroes features. Tie back to the Reference's tuning section.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 3 · Generalised &amp; robust</div><div class="tl-body">Poisson/Gamma GLMs for counts and skewed costs (freight!), robust losses for outliers, and quantile regression for ranges.</div></div>
+    <div class="tl-item"><div class="tl-dot"></div><div class="tl-title">Stage 4 · Beyond linear, with eyes open</div><div class="tl-body">Gradient boosting as the tabular workhorse — but keep a regularised logistic as your interpretable, well-calibrated baseline. Always.</div></div>
+  </div>
+
+  <h3 style="margin-top:24px">Natural extensions</h3>
+  <div class="grid2">
+    <div class="card-sm"><strong>GLMs</strong> — same linear core, different link/distribution: Poisson for counts, Gamma for positive skewed costs. The Reference's alternatives section is the on-ramp.</div>
+    <div class="card-sm"><strong>GAMs</strong> — let each feature bend smoothly while staying interpretable; a gentle step past straight lines.</div>
+    <div class="card-sm"><strong>Conformal prediction</strong> — wrap any model to output honest prediction intervals / set-valued classifications with coverage guarantees.</div>
+    <div class="card-sm"><strong>Causal methods</strong> — the real answer to P5's elasticity caveat: instruments, diff-in-diff, uplift modelling for "what if we change price?"</div>
+  </div>
+</section>
+
+<section class="section" id="refs">
+  <div class="section-eyebrow">References &amp; links</div>
+  <h2 class="section-title">References</h2>
+  <p class="section-sub">The datasets, the key docs, and the rest of the trio. For full theory references and the formula cheat-sheet, see the Reference guide.</p>
+
+  <h3>Datasets</h3>
+  <a class="ref-card" href="https://scikit-learn.org/stable/datasets/real_world.html" target="_blank"><div class="ref-num">D1</div><div><div class="ref-title">scikit-learn built-in datasets (California housing, diabetes, breast cancer)</div><div class="ref-meta">Load with one function call, no download. <span class="ref-tag">P1</span><span class="ref-tag">P2</span><span class="ref-tag">P3</span></div></div></a>
+  <a class="ref-card" href="https://www.openml.org/d/40945" target="_blank"><div class="ref-num">D2</div><div><div class="ref-title">Titanic — OpenML id 40945</div><div class="ref-meta">Mixed-type passenger data with real missing values. <span class="ref-tag">P4</span></div></div></a>
+  <a class="ref-card" href="https://archive.ics.uci.edu/dataset/502/online+retail+ii" target="_blank"><div class="ref-num">D3</div><div><div class="ref-title">Online Retail II — UCI id 502 (CC-BY)</div><div class="ref-meta">~1M UK retail transactions; price &amp; quantity per SKU. <span class="ref-tag">P5</span></div></div></a>
+  <a class="ref-card" href="https://www.kaggle.com/datasets/shashwatwork/dataco-smart-supply-chain-for-big-data-analysis" target="_blank"><div class="ref-num">D4</div><div><div class="ref-title">DataCo Smart Supply Chain — Kaggle</div><div class="ref-meta">~180k orders with a ready <code>Late_delivery_risk</code> target (free account needed). <span class="ref-tag">P6</span></div></div></a>
+
+  <h3 style="margin-top:20px">Key documentation</h3>
+  <a class="ref-card" href="https://scikit-learn.org/stable/modules/compose.html" target="_blank"><div class="ref-num">R1</div><div><div class="ref-title">scikit-learn — Pipelines &amp; ColumnTransformer</div><div class="ref-meta">The leak-proof plumbing used in every project here.</div></div></a>
+  <a class="ref-card" href="https://scikit-learn.org/stable/modules/calibration.html" target="_blank"><div class="ref-num">R2</div><div><div class="ref-title">scikit-learn — Probability calibration</div><div class="ref-meta">Reliability curves and CalibratedClassifierCV (P3, P6).</div></div></a>
+
+  <h3 style="margin-top:20px">The rest of the trio</h3>
+  <a class="ref-card" href="2_complete_reference.html"><div class="ref-num">📘</div><div><div class="ref-title">The Complete Reference</div><div class="ref-meta">Full theory, derivations, code, evaluation, pitfalls, 64-question Q&amp;A and cheat-sheet.</div></div></a>
+  <a class="ref-card" href="1_intuition_primer.html"><div class="ref-num">🧗</div><div><div class="ref-title">The Visual Primer</div><div class="ref-meta">The intuition-first on-ramp — pizza, dimmer switches, walking downhill in fog.</div></div></a>
+</section>
+<footer style="padding:46px 0 64px;text-align:center">
+  <p style="color:var(--text3);font-size:13px;max-width:640px;margin:0 auto 8px">Projects Guide · build linear &amp; logistic regression by hand, beginner to expert. Part of a trio with the <a class="cite" href="2_complete_reference.html">Reference</a> and the <a class="cite" href="1_intuition_primer.html">Visual Primer</a> — keep all three in the same folder so the links work.</p>
+  <p style="color:var(--text3);font-size:12px;font-family:var(--font-mono)">Split first · pipeline · cross-validate · evaluate · interpret · 2026</p>
+</footer>
+</div></div></div>
+<button id="top-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+<script>
+function toggleTheme(){const d=document.documentElement,b=document.getElementById('theme-btn');const light=d.getAttribute('data-theme')!=='light';d.setAttribute('data-theme',light?'light':'dark');b.textContent=light?'☀️ Light':'🌙 Dark';try{localStorage.setItem('theme',light?'light':'dark');}catch(e){}}
+(function(){try{const t=localStorage.getItem('theme');if(t==='light'){document.documentElement.setAttribute('data-theme','light');const b=document.getElementById('theme-btn');if(b)b.textContent='☀️ Light';}}catch(e){}})();
+function gotoS(id){const el=document.getElementById(id);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});closeTOC();}
+function switchTab(group,id){
+  const wrap=document.getElementById(group);if(!wrap)return;
+  wrap.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  const sec=wrap.parentElement;
+  sec.querySelectorAll(':scope > .tab-content').forEach(c=>c.classList.remove('active'));
+  const btn=[...wrap.querySelectorAll('.tab-btn')].find(b=>(b.getAttribute('onclick')||'').includes("'"+id+"'"));
+  if(btn)btn.classList.add('active');
+  const panel=document.getElementById(id);if(panel)panel.classList.add('active');
+}
+function copyCode(btn){
+  const block=btn.parentElement;const text=block.innerText.replace(/^Copy\n/,'');
+  navigator.clipboard.writeText(text).then(()=>{btn.textContent='Copied!';setTimeout(()=>btn.textContent='Copy',1400);}).catch(()=>{btn.textContent='Copy';});
+}
+const sids=['overview','datasets','p1','p2','p3','p4','p5','p6','exercises','publish','next','refs'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sids.forEach(id=>{const el=document.getElementById(id);if(el&&window.scrollY>=el.offsetTop-80)cur=id;});
+  document.querySelectorAll('.nav-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.querySelectorAll('.toc-link').forEach(l=>l.classList.toggle('active',(l.getAttribute('onclick')||'').includes("'"+cur+"'")));
+  document.getElementById('top-btn').classList.toggle('visible',window.scrollY>400);
+});
+function toggleTOC(){const t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(!t)return;const open=t.classList.toggle('open');if(b)b.classList.toggle('open',open);}
+function closeTOC(){const t=document.getElementById('toc'),b=document.getElementById('toc-backdrop');if(t)t.classList.remove('open');if(b)b.classList.remove('open');}
+/* progress tracker — localStorage, try/catch */
+const PKEY='llr_projects_done';
+function loadDone(){try{return JSON.parse(localStorage.getItem(PKEY)||'{}');}catch(e){return {};}}
+function saveDone(o){try{localStorage.setItem(PKEY,JSON.stringify(o));}catch(e){}}
+function refreshProgress(){
+  const done=loadDone();const ids=['p1','p2','p3','p4','p5','p6'];
+  const n=ids.filter(i=>done[i]).length;
+  const fill=document.getElementById('prog-fill'),lab=document.getElementById('prog-label');
+  if(fill)fill.style.width=(n/6*100)+'%';
+  if(lab)lab.textContent=n+' of 6 projects complete';
+}
+function toggleDone(id,box){const done=loadDone();done[id]=box.checked;saveDone(done);refreshProgress();}
+(function(){const done=loadDone();['p1','p2','p3','p4','p5','p6'].forEach(i=>{const cb=document.getElementById('cb-'+i);if(cb&&done[i])cb.checked=true;});refreshProgress();})();
+/* tap-to-zoom SVGs on mobile */
+(function(){
+  if(!window.matchMedia||!window.matchMedia('(max-width:1249px)').matches)return;
+  function openZoom(svg){
+    const m=document.createElement('div');m.className='viz-zoom-modal open';
+    const inner=document.createElement('div');inner.className='zoom-inner';inner.innerHTML=svg.outerHTML;
+    const close=document.createElement('button');close.className='viz-zoom-close';close.textContent='✕';close.setAttribute('aria-label','Close');
+    const dismiss=()=>document.body.removeChild(m);
+    m.addEventListener('click',e=>{if(e.target===m)dismiss();});close.addEventListener('click',dismiss);
+    m.appendChild(close);m.appendChild(inner);document.body.appendChild(m);
+  }
+  document.querySelectorAll('.viz-container').forEach(c=>{const svg=c.querySelector('svg');if(!svg)return;c.addEventListener('click',()=>openZoom(svg));});
+})();
+</script>
+</body></html>
