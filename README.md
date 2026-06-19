@@ -4,7 +4,7 @@
 
 ### AI & Machine Learning — actually explained, actually free, actually works on your phone.
 
-*Picture-first lessons on Neural Networks, Clustering, and Demand Forecasting. Readable on a bus. Installable like an app. No login, no ads, no "Oops, paywall."*
+*Picture-first lessons on Neural Networks, Clustering, Demand Forecasting, Boosting & Bagging, and Linear & Logistic Regression. Readable on a bus. Installable like an app. No login, no ads, no "Oops, paywall."*
 
 [**🚀 Open Vidyalaya →**](https://108tsrenukesh.github.io/AIMLVidyalaya/)
 
@@ -31,7 +31,7 @@ Think of it as your **cheat code for understanding AI**, except it's legal, free
 
 1. Open **[the app](https://108tsrenukesh.github.io/AIMLVidyalaya/)** in any browser.
 2. Tap the big **Welcome** button. (Yes, it's that dramatic.)
-3. Pick a **track** — ANN, Clustering, or Forecasting.
+3. Pick a **track** — ANN, Clustering, Forecasting, Boosting & Bagging, or Linear & Logistic.
 4. Start with the **first lesson** in the track. It's always the gentle, visual one.
 
 > 💡 **Pro tip:** Don't just bookmark it. Install it. (Next section. Keep reading.)
@@ -64,7 +64,7 @@ Click the little **install icon** in the address bar, or use the in-app **Instal
 
 ---
 
-## 📚 What's inside? Three tracks, one learning system.
+## 📚 What's inside? Five tracks, one learning system.
 
 Every track follows the same **three-layer path**. Learn the pattern once, apply it everywhere.
 
@@ -74,7 +74,7 @@ Every track follows the same **three-layer path**. Learn the pattern once, apply
 | 📖 **Complete Reference** | The deep dive — math, code, edge cases, the works. | When you want to *actually* understand. |
 | 🛠️ **Projects Guide** | Hands-on blueprints with datasets and checkpoints. | When you're ready to build stuff. |
 
-### The three tracks
+### The five tracks
 
 **🧠 Artificial Neural Networks (ANN)**
 
@@ -93,6 +93,18 @@ K-Means, hierarchical, density-based, embedding methods — grouping data that d
 Predict what people will buy, when, and how much. Classical time-series meets modern ML.
 
 *Intuition → Reference → Projects*
+
+**🌲 Boosting & Bagging**
+
+Combine many weak models into one strong one — bagging, forests, and boosting.
+
+*Intuition Primer → Complete Reference → Projects Guide → Field Card*
+
+**📊 Linear & Logistic Regression**
+
+The two workhorse models — predicting numbers and predicting classes.
+
+*Intuition Primer → Complete Reference → Projects Guide*
 
 ---
 
@@ -130,7 +142,7 @@ The lessons are packed with features you might miss on the first pass:
 
 **🌱 Complete beginner**
 
-Read only the **Intuition / Visual Primer** of all three tracks first. Skip the math. Build the big picture. Then go deep when you're ready.
+Read only the **Intuition / Visual Primer** of all five tracks first. Skip the math. Build the big picture. Then go deep when you're ready.
 
 **🎓 Exam / interview prep**
 
