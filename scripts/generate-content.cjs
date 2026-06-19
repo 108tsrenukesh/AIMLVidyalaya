@@ -28,7 +28,7 @@ function toTitleCase(str) {
 function formatFileName(filename) {
   const cleaned = filename
     .replace('.html', '')
-    .replace(/^\d+[\.\-\s]*/, '')
+    .replace(/^\d+[\s._-]*/, '')
     .replace(/[-_]/g, ' ')
     .trim();
   return toTitleCase(cleaned);
@@ -148,12 +148,13 @@ function scanContentDir(dir) {
     const files = readdirSync(topicDir)
       .filter(f => f.endsWith('.html'))
       .sort((a, b) => {
-        const aBase = a.replace('.html', '').toLowerCase();
-        const bBase = b.replace('.html', '').toLowerCase();
-        const aIsFirst = aBase.includes('visual_primer') || aBase.includes('intuition');
-        const bIsFirst = bBase.includes('visual_primer') || bBase.includes('intuition');
-        if (aIsFirst && !bIsFirst) return -1;
-        if (!aIsFirst && bIsFirst) return 1;
+        const na = parseInt(a.match(/^(\d+)/)?.[1] ?? '', 10);
+        const nb = parseInt(b.match(/^(\d+)/)?.[1] ?? '', 10);
+        const aHas = !Number.isNaN(na);
+        const bHas = !Number.isNaN(nb);
+        if (aHas && bHas) return na - nb;
+        if (aHas) return -1;
+        if (bHas) return 1;
         return a.localeCompare(b);
       });
 
