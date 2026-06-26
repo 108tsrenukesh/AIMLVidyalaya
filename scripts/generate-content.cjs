@@ -208,10 +208,43 @@ function copyContentToPublic(srcDir, destDir) {
   }
 }
 
+// Scaffold-drift guard: warn (don't fail) when a lesson introduces navigation/overlay
+// "chrome" classes the app viewer (LESSON_INJECT_CSS in ContentViewer.tsx) doesn't yet
+// hide or normalize — that's what causes a leaking burger, grey backdrop, or horizontal
+// overflow in-app. Keeps new tracks consistent with the scaffold the viewer expects.
+const HANDLED_SCAFFOLD = new Set([
+  'nav', 'topbar', 'theme-toggle', 'toc-toggle', 'toc-backdrop', 'toc',
+  'menu-btn', 'backdrop', 'shell', 'main-layout', 'container', 'content',
+]);
+const CHROME_CLASS_RE = /^(burger|hamburger|menu-?btn|menu-?toggle|drawer|off-?canvas|side-?bar|side-?nav|backdrop|scrim|overlay|navbar|topbar|app-?bar|shell|layout)/i;
+
+function checkScaffoldDrift(dir) {
+  if (!existsSync(dir)) return;
+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
+    const p = join(dir, entry.name);
+    if (entry.isDirectory()) { checkScaffoldDrift(p); continue; }
+    if (!entry.name.endsWith('.html')) continue;
+    const html = fs.readFileSync(p, 'utf8');
+    const seen = new Set();
+    for (const m of html.matchAll(/class="([^"]+)"/g)) {
+      for (const c of m[1].trim().split(/\s+/)) seen.add(c);
+    }
+    const drift = [...seen].filter(
+      (c) => CHROME_CLASS_RE.test(c) && !HANDLED_SCAFFOLD.has(c) && !c.startsWith('toc') && !c.startsWith('vy-')
+    );
+    if (drift.length) {
+      console.warn(`  \u26a0  scaffold drift: ${p}`);
+      console.warn(`      chrome class(es) the app viewer may not hide/normalize: ${drift.map((c) => '.' + c).join(', ')}`);
+      console.warn(`      -> add them to LESSON_INJECT_CSS in src/content/ContentViewer.tsx`);
+    }
+  }
+}
+
 console.log('Scanning content/ folder...');
 validateContentIds(CONTENT_DIR);
 const allHtml = collectAllHtmlFiles(CONTENT_DIR);
 validateContentStructure(CONTENT_DIR, allHtml);
+checkScaffoldDrift(CONTENT_DIR);
 const { topics, manifest } = scanContentDir(CONTENT_DIR);
 
 writeFileSync(MANIFEST_PATH, JSON.stringify({ topics, topicMeta: manifest }, null, 2));
