@@ -1,98 +1,79 @@
-diff --git a/scripts/generate-content.cjs b/scripts/generate-content.cjs
-index e6e8188..45a34a4 100644
---- a/scripts/generate-content.cjs
-+++ b/scripts/generate-content.cjs
-@@ -208,10 +208,43 @@ function copyContentToPublic(srcDir, destDir) {
-   }
- }
- 
-+// Scaffold-drift guard: warn (don't fail) when a lesson introduces navigation/overlay
-+// "chrome" classes the app viewer (LESSON_INJECT_CSS in ContentViewer.tsx) doesn't yet
-+// hide or normalize — that's what causes a leaking burger, grey backdrop, or horizontal
-+// overflow in-app. Keeps new tracks consistent with the scaffold the viewer expects.
-+const HANDLED_SCAFFOLD = new Set([
-+  'nav', 'topbar', 'theme-toggle', 'toc-toggle', 'toc-backdrop', 'toc',
-+  'menu-btn', 'backdrop', 'shell', 'main-layout', 'container', 'content',
-+]);
-+const CHROME_CLASS_RE = /^(burger|hamburger|menu-?btn|menu-?toggle|drawer|off-?canvas|side-?bar|side-?nav|backdrop|scrim|overlay|navbar|topbar|app-?bar|shell|layout)/i;
-+
-+function checkScaffoldDrift(dir) {
-+  if (!existsSync(dir)) return;
-+  for (const entry of readdirSync(dir, { withFileTypes: true })) {
-+    const p = join(dir, entry.name);
-+    if (entry.isDirectory()) { checkScaffoldDrift(p); continue; }
-+    if (!entry.name.endsWith('.html')) continue;
-+    const html = fs.readFileSync(p, 'utf8');
-+    const seen = new Set();
-+    for (const m of html.matchAll(/class="([^"]+)"/g)) {
-+      for (const c of m[1].trim().split(/\s+/)) seen.add(c);
-+    }
-+    const drift = [...seen].filter(
-+      (c) => CHROME_CLASS_RE.test(c) && !HANDLED_SCAFFOLD.has(c) && !c.startsWith('toc') && !c.startsWith('vy-')
-+    );
-+    if (drift.length) {
-+      console.warn(`  \u26a0  scaffold drift: ${p}`);
-+      console.warn(`      chrome class(es) the app viewer may not hide/normalize: ${drift.map((c) => '.' + c).join(', ')}`);
-+      console.warn(`      -> add them to LESSON_INJECT_CSS in src/content/ContentViewer.tsx`);
-+    }
-+  }
-+}
-+
- console.log('Scanning content/ folder...');
- validateContentIds(CONTENT_DIR);
- const allHtml = collectAllHtmlFiles(CONTENT_DIR);
- validateContentStructure(CONTENT_DIR, allHtml);
-+checkScaffoldDrift(CONTENT_DIR);
- const { topics, manifest } = scanContentDir(CONTENT_DIR);
- 
- writeFileSync(MANIFEST_PATH, JSON.stringify({ topics, topicMeta: manifest }, null, 2));
 diff --git a/src/content/ContentViewer.tsx b/src/content/ContentViewer.tsx
-index 34accbe..263ed95 100644
+index 263ed95..5d76b03 100644
 --- a/src/content/ContentViewer.tsx
 +++ b/src/content/ContentViewer.tsx
-@@ -23,12 +23,23 @@ interface Section {
+@@ -118,8 +118,24 @@ function readAppTheme(): string {
+   return 'dark'
+ }
  
- const LESSON_INJECT_CSS = `
-   nav,
-+  .topbar,
-   .theme-toggle,
-   .toc-toggle,
-   .toc-backdrop,
--  .toc { display: none !important; }
-+  .toc,
-+  .menu-btn,
-+  .backdrop { display: none !important; }
-   .main-layout { grid-template-columns: 1fr !important; }
- 
-+  /* CNN/RNN scaffold: collapse the lesson's own 2-column shell (its sidebar is
-+     hidden above), contain the page horizontally, and cap wide diagrams/tables
-+     so nothing forces a horizontal scroll on mobile. */
-+  html, body { overflow-x: hidden !important; }
-+  .shell { display: block !important; max-width: 100% !important; }
-+  img, svg, canvas, video, iframe { max-width: 100% !important; height: auto; }
-+  table, pre, .table-wrap { max-width: 100% !important; overflow-x: auto; }
-+
-   /* Softer, shaded light theme (overrides the lesson's pure-white defaults). */
-   html[data-theme="light"] {
-     --bg:      #e7ebf1;
-@@ -115,7 +126,19 @@ function withInjectedCss(html: string): string {
- 
- function deriveLabel(section: Element, id: string): string {
-   const heading = section.querySelector('h1, h2, h3, h4, .section-title, [class*="title"]')
--  const text = heading?.textContent?.replace(/\s+/g, ' ').trim()
-+  let text = ''
-+  if (heading) {
-+    // Some lessons nest a section number and/or a level badge inside the heading,
-+    // e.g. <h2><span class="sec-no">01</span>Title<span class="lvl b">Beginner</span></h2>.
-+    // Clone and drop those decorative spans so the label reads as the title alone.
-+    const clone = heading.cloneNode(true) as Element
-+    clone
-+      .querySelectorAll('.sec-no, .toc-num, .lvl, .badge, .kicker, .eyebrow, .chip, .tag, .pill')
-+      .forEach((n) => n.remove())
-+    text = (clone.textContent || '').replace(/\s+/g, ' ').trim()
-+    // Safety net: strip a leading "1." / "2)" / "3 -" style number if one slips through.
-+    text = text.replace(/^\d{1,3}[.):\-–—]+\s*/, '').trim()
++const DARK_DIAGRAM_LIGHT_FIX = `
++  /* Diagrams that hardcode dark-mode colors (no CSS variables) become unreadable on a
++     light page — render them on a dark figure surface so labels stay legible. */
++  html[data-theme="light"] .viz-container {
++    background: #0f1722 !important;
++    border: 1px solid rgba(255,255,255,0.10) !important;
++    border-radius: 10px;
 +  }
++`
++
+ function withInjectedCss(html: string): string {
+-  const style = `<style id="vidyalaya-shell">${LESSON_INJECT_CSS}</style>`
++  let css = LESSON_INJECT_CSS
++  // Lessons whose SVG diagrams hardcode dark-mode colors (they don't use CSS variables
++  // like the other tracks) are unreadable in light mode — patch them on a dark surface.
++  if (/<svg[\s>]/i.test(html) && !/fill="var\(--/.test(html)) {
++    css += DARK_DIAGRAM_LIGHT_FIX
++  }
++  const style = `<style id="vidyalaya-shell">${css}</style>`
+   if (html.includes('</head>')) return html.replace('</head>', `${style}</head>`)
+   return style + html
+ }
+@@ -130,14 +146,16 @@ function deriveLabel(section: Element, id: string): string {
+   if (heading) {
+     // Some lessons nest a section number and/or a level badge inside the heading,
+     // e.g. <h2><span class="sec-no">01</span>Title<span class="lvl b">Beginner</span></h2>.
+-    // Clone and drop those decorative spans so the label reads as the title alone.
++    // Keep the difficulty badge (.lvl) as a " · Level" suffix; drop the rest as decoration.
+     const clone = heading.cloneNode(true) as Element
++    const level = clone.querySelector('.lvl')?.textContent?.replace(/\s+/g, ' ').trim() || ''
+     clone
+       .querySelectorAll('.sec-no, .toc-num, .lvl, .badge, .kicker, .eyebrow, .chip, .tag, .pill')
+       .forEach((n) => n.remove())
+-    text = (clone.textContent || '').replace(/\s+/g, ' ').trim()
++    let title = (clone.textContent || '').replace(/\s+/g, ' ').trim()
+     // Safety net: strip a leading "1." / "2)" / "3 -" style number if one slips through.
+-    text = text.replace(/^\d{1,3}[.):\-–—]+\s*/, '').trim()
++    title = title.replace(/^\d{1,3}[.):\-–—]+\s*/, '').trim()
++    text = level ? `${title} · ${level}` : title
+   }
    if (text) return text.slice(0, 80)
    return id.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase())
- }
+@@ -247,6 +265,28 @@ export default function ContentViewer() {
+     doc.addEventListener(
+       'click',
+       (e) => {
++        // App-controlled diagram zoom — works even if the lesson's inline onclick
++        // is blocked. Only acts on CNN/RNN-style figures (#zoomOverlay present);
++        // other tracks keep their own zoom.
++        const zoomBtn = (e.target as HTMLElement).closest('.viz-zoom')
++        if (zoomBtn) {
++          const overlay = doc.getElementById('zoomOverlay')
++          const holder = doc.getElementById('zoomHolder')
++          const svg = zoomBtn.closest('.viz-container')?.querySelector('svg')
++          if (overlay && holder && svg) {
++            e.preventDefault()
++            e.stopPropagation()
++            holder.innerHTML = ''
++            holder.appendChild(svg.cloneNode(true))
++            overlay.classList.add('show')
++          }
++          return
++        }
++        if ((e.target as HTMLElement).closest('#zoomOverlay, .zoom-close')) {
++          doc.getElementById('zoomOverlay')?.classList.remove('show')
++          return
++        }
++
+         const target = (e.target as HTMLElement).closest('a')
+         if (!target) return
+         const href = target.getAttribute('href')

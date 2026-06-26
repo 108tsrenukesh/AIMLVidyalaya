@@ -128,15 +128,11 @@ function deriveLabel(section: Element, id: string): string {
   const heading = section.querySelector('h1, h2, h3, h4, .section-title, [class*="title"]')
   let text = ''
   if (heading) {
-    // Some lessons nest a section number and/or a level badge inside the heading,
-    // e.g. <h2><span class="sec-no">01</span>Title<span class="lvl b">Beginner</span></h2>.
-    // Clone and drop those decorative spans so the label reads as the title alone.
     const clone = heading.cloneNode(true) as Element
     clone
       .querySelectorAll('.sec-no, .toc-num, .lvl, .badge, .kicker, .eyebrow, .chip, .tag, .pill')
       .forEach((n) => n.remove())
     text = (clone.textContent || '').replace(/\s+/g, ' ').trim()
-    // Safety net: strip a leading "1." / "2)" / "3 -" style number if one slips through.
     text = text.replace(/^\d{1,3}[.):\-–—]+\s*/, '').trim()
   }
   if (text) return text.slice(0, 80)
