@@ -26,8 +26,18 @@ const LESSON_INJECT_CSS = `
   .theme-toggle,
   .toc-toggle,
   .toc-backdrop,
-  .toc { display: none !important; }
+  .toc,
+  .menu-btn,
+  .backdrop { display: none !important; }
   .main-layout { grid-template-columns: 1fr !important; }
+
+  /* CNN/RNN scaffold: collapse the lesson's own 2-column shell (its sidebar is
+     hidden above), contain the page horizontally, and cap wide diagrams/tables
+     so nothing forces a horizontal scroll on mobile. */
+  html, body { overflow-x: hidden !important; }
+  .shell { display: block !important; max-width: 100% !important; }
+  img, svg, canvas, video, iframe { max-width: 100% !important; height: auto; }
+  table, pre, .table-wrap { max-width: 100% !important; overflow-x: auto; }
 
   /* Softer, shaded light theme (overrides the lesson's pure-white defaults). */
   html[data-theme="light"] {
