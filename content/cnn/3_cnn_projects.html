@@ -1,0 +1,913 @@
+<!DOCTYPE html><html data-theme="dark" lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CNN — Projects</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --accent:#6c7bff; --accent-2:#4dd0e1; --accent-soft:rgba(108,123,255,.14);
+  --bg:#0e1116; --bg-2:#151a22; --surface:#171d27; --surface-2:#1d2530;
+  --border:#283142; --border-2:#36425a;
+  --text:#e7ecf3; --text-dim:#aab4c4; --text-faint:#7c889b;
+  --good:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+  --code-bg:#0c1017; --code-border:#222c3a;
+  --shadow:0 8px 30px rgba(0,0,0,.38);
+  --radius:14px; --radius-sm:9px;
+  --maxw:1080px;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--display:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f6f7f9; --bg-2:#eef1f5; --surface:#ffffff; --surface-2:#f3f5f9;
+  --border:#e2e7ee; --border-2:#d2dae6;
+  --text:#1a2030; --text-dim:#4a566b; --text-faint:#7a879c;
+  --accent-soft:rgba(108,123,255,.12);
+  --code-bg:#0f1420; --code-border:#1f2a3a;
+  --shadow:0 8px 26px rgba(30,45,80,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:74px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16.5px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:11px 18px;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+}
+.topbar .brand{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:0;display:flex;align-items:center;gap:9px}
+.topbar .brand .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent)}
+.topbar .spacer{flex:1}
+.topbar .crumbs{color:var(--text-faint);font-size:13px;font-weight:500}
+.topbar button{
+  background:var(--surface);color:var(--text);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;
+  display:inline-flex;align-items:center;gap:6px;transition:.15s;
+}
+.topbar button:hover{border-color:var(--accent);color:var(--accent)}
+.menu-btn{display:none}
+@media(max-width:1250px){.menu-btn{display:inline-flex}}
+
+/* ============ LAYOUT ============ */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;max-width:1480px;margin:0 auto}
+.toc{
+  position:sticky;top:55px;align-self:start;height:calc(100vh - 55px);overflow-y:auto;
+  padding:22px 14px 60px 22px;border-right:1px solid var(--border);font-size:13.5px;
+}
+.toc h4{margin:0 0 8px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-faint)}
+.toc a{display:block;color:var(--text-dim);text-decoration:none;padding:5px 11px;border-radius:7px;border-left:2px solid transparent;line-height:1.4;transition:.13s}
+.toc a:hover{background:var(--surface);color:var(--text)}
+.toc a.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.toc .toc-num{color:var(--text-faint);font-family:var(--mono);font-size:11px;margin-right:7px}
+.backdrop{display:none}
+@media(max-width:1250px){
+  .shell{grid-template-columns:1fr}
+  .toc{position:fixed;top:0;left:0;height:100vh;width:300px;max-width:84vw;z-index:90;
+    background:var(--bg-2);transform:translateX(-105%);transition:transform .26s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow);padding-top:18px}
+  .toc.open{transform:translateX(0)}
+  .backdrop.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:80}
+}
+
+/* ============ CONTENT ============ */
+.content{padding:34px clamp(16px,4vw,52px) 120px;max-width:var(--maxw);margin:0 auto;width:100%}
+.hero{margin:6px 0 30px}
+.hero .kicker{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+.hero h1{font-family:var(--display);font-weight:300;font-size:clamp(30px,5vw,46px);line-height:1.1;margin:10px 0 14px;letter-spacing:0}
+.hero p.lead{font-size:18px;color:var(--text-dim);margin:0 0 18px;max-width:64ch}
+.hero .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 14px;font-size:13px}
+.stat b{color:var(--accent);font-size:24px;font-family:var(--display);font-weight:600;display:block;line-height:1.2}
+.stat span{color:var(--text-faint)}
+
+section.section{padding:30px 0;border-top:1px solid var(--border);scroll-margin-top:70px}
+section.section:first-of-type{border-top:none}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.4vw,32px);letter-spacing:0;margin:.2em 0 .5em;line-height:1.18}
+h2 .sec-no{font-family:var(--mono);font-size:15px;color:var(--accent);margin-right:12px;opacity:.85}
+h3{font-size:20px;margin:1.5em 0 .5em;color:var(--text)}
+h4{font-size:16.5px;margin:1.2em 0 .4em;color:var(--text-dim);letter-spacing:.2px}
+p{margin:.7em 0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:.13s}
+.content a:hover{border-bottom-color:var(--accent)}
+strong{color:var(--text);font-weight:680}
+em{color:var(--text-dim)}
+ul,ol{padding-left:1.3em}li{margin:.34em 0}
+hr{border:none;border-top:1px solid var(--border);margin:1.6em 0}
+.reading-time{color:var(--text-faint);font-size:13px;margin:0 0 4px}
+
+/* ============ CALLOUTS ============ */
+.box{border:1px solid var(--border);border-left-width:4px;border-radius:var(--radius-sm);padding:14px 17px;margin:18px 0;background:var(--surface);font-size:15.5px}
+.box .bt{font-weight:700;font-size:12.5px;letter-spacing:.7px;text-transform:uppercase;display:block;margin-bottom:5px}
+.box.intuition{border-left-color:var(--accent);background:var(--accent-soft)}
+.box.intuition .bt{color:var(--accent)}
+.box.warn{border-left-color:var(--warn)}.box.warn .bt{color:var(--warn)}
+.box.good{border-left-color:var(--good)}.box.good .bt{color:var(--good)}
+.box.math{border-left-color:var(--accent-2)}.box.math .bt{color:var(--accent-2)}
+.box.info{border-left-color:var(--info)}.box.info .bt{color:var(--info)}
+.box.levelup{border-left-color:var(--accent-2);background:linear-gradient(90deg,color-mix(in srgb,var(--accent-2) 12%,transparent),transparent)}
+.box.levelup .bt{color:var(--accent-2)}
+.box.bad{border-left-color:var(--bad)}.box.bad .bt{color:var(--bad)}
+
+/* ============ CODE ============ */
+.code-block{position:relative;margin:16px 0;border:1px solid var(--code-border);border-radius:var(--radius-sm);overflow:hidden;background:var(--code-bg)}
+.code-head{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--code-border);font-size:12px;color:var(--text-faint)}
+.code-head .lang{font-family:var(--mono);color:var(--accent-2);font-weight:600}
+.code-head .copy{margin-left:auto;cursor:pointer;background:transparent;border:1px solid var(--code-border);color:var(--text-dim);border-radius:6px;padding:3px 9px;font-size:11.5px;font-family:inherit;transition:.13s}
+.code-head .copy:hover{border-color:var(--accent);color:var(--accent)}
+.code-block pre{margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13.3px;line-height:1.62;color:#d6deea;white-space:pre;tab-size:2}
+.code-block pre code{white-space:pre}
+@media(max-width:640px){.code-block pre{white-space:pre-wrap;word-break:break-word}}
+.tok-c{color:#6b7a90;font-style:italic}.tok-k{color:#c792ea}.tok-s{color:#c3e88d}.tok-n{color:#f78c6c}.tok-f{color:#82aaff}.tok-d{color:#ffcb6b}
+code.inline{font-family:var(--mono);font-size:.9em;background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;color:var(--accent-2)}
+
+/* ============ TABLES ============ */
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--border);border-radius:var(--radius-sm)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:440px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--surface-2);font-weight:680;color:var(--text);position:sticky;top:0;font-size:13px;letter-spacing:.3px}
+tr:last-child td{border-bottom:none}
+td code{font-size:.86em}
+.table-wrap.small table{font-size:13.5px}
+
+/* ============ VISUALS ============ */
+.viz-container{margin:22px 0;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px;text-align:center;position:relative}
+.viz-container svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.viz-cap{font-size:13px;color:var(--text-faint);margin-top:11px;text-align:center;line-height:1.5}
+.viz-zoom{position:absolute;top:9px;right:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.13s}
+.viz-zoom:hover{border-color:var(--accent);color:var(--accent)}
+.zoom-overlay{display:none;position:fixed;inset:0;z-index:120;background:rgba(5,8,12,.93);padding:20px}
+.zoom-overlay.show{display:flex;align-items:center;justify-content:center}
+.zoom-overlay svg{max-width:96vw;max-height:92vh;width:auto;height:auto}
+.zoom-close{position:fixed;top:16px;right:20px;color:#fff;font-size:30px;cursor:pointer;z-index:121;background:none;border:none}
+
+/* ============ TABS ============ */
+.tabs{margin:18px 0}
+.tab-nav{display:flex;flex-wrap:wrap;gap:5px;border-bottom:1px solid var(--border);margin-bottom:0}
+.tab-nav button{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);padding:9px 14px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:550;transition:.13s;border-radius:7px 7px 0 0}
+.tab-nav button:hover{color:var(--text);background:var(--surface)}
+.tab-nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none;padding:18px 2px;animation:fade .25s}
+.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ============ Q&A BANK ============ */
+.qa-filters{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.qa-filters button{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:inherit;transition:.13s}
+.qa-filters button:hover{border-color:var(--accent)}
+.qa-filters button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius-sm);margin:9px 0;background:var(--surface);overflow:hidden}
+.qa-q{padding:13px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:11px;font-weight:580;font-size:15.5px;list-style:none}
+.qa-q::-webkit-details-marker{display:none}
+.qa-q .tier{font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.tier.beginner{background:rgba(52,211,153,.16);color:var(--good)}
+.tier.intermediate{background:rgba(96,165,250,.16);color:var(--info)}
+.tier.advanced{background:rgba(251,191,36,.16);color:var(--warn)}
+.tier.expert{background:rgba(248,113,113,.16);color:var(--bad)}
+.qa-q .arrow{margin-left:auto;color:var(--text-faint);transition:.2s;flex-shrink:0}
+details[open] .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{padding:2px 16px 16px;color:var(--text-dim);font-size:15px;border-top:1px solid var(--border)}
+.qa-a p:first-child{margin-top:12px}
+.qa-cat{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.5px}
+
+/* ============ EXERCISES / PROJECTS ============ */
+.ex{border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0;background:var(--surface)}
+.ex .ex-h{font-weight:700;color:var(--accent);font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:9px}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;padding:2px 9px;border-radius:20px;text-transform:uppercase}
+.pill.b{background:rgba(52,211,153,.16);color:var(--good)}
+.pill.i{background:rgba(96,165,250,.16);color:var(--info)}
+.pill.a{background:rgba(251,191,36,.16);color:var(--warn)}
+.pill.e{background:rgba(248,113,113,.16);color:var(--bad)}
+.proj-track{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.proj-track .pt{flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;font-size:12.5px;text-align:center}
+.proj-track .pt b{display:block;color:var(--accent);font-size:13.5px;margin-bottom:2px}
+
+/* ============ MISC ============ */
+.crosslink-banner{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;padding:15px 18px;background:linear-gradient(110deg,var(--accent-soft),transparent);border:1px solid var(--border);border-radius:var(--radius)}
+.crosslink-banner a{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 13px;font-size:13.5px;font-weight:600}
+.crosslink-banner a:hover{border-color:var(--accent)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px}
+.kpi b{display:block;font-size:22px;color:var(--accent);font-family:var(--mono)}
+.kpi span{font-size:12.5px;color:var(--text-faint)}
+.refs li{margin:.5em 0;font-size:14.5px}
+.refs .rtag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:1px 7px;border-radius:5px;margin-right:7px;background:var(--surface-2);color:var(--text-faint)}
+.totop{position:fixed;bottom:22px;right:22px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:19px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.totop.show{opacity:1;pointer-events:auto}
+.eq{font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 15px;margin:13px 0;overflow-x:auto;font-size:14.5px;color:var(--text);line-height:1.8}
+.eq .v{color:var(--accent-2)}
+.foot{border-top:1px solid var(--border);padding:26px clamp(16px,4vw,52px);color:var(--text-faint);font-size:13.5px;max-width:var(--maxw);margin:0 auto}
+.dim{color:var(--text-faint)}
+.nowrap{white-space:nowrap}
+/* projects accent = emerald */
+:root{--accent:#2fbf71;--accent-2:#5fd99a;--accent-soft:rgba(47,191,113,.15)}
+[data-theme="light"]{--accent-soft:rgba(47,191,113,.12)}
+.lvl{display:inline-block;font:700 10.5px Inter;letter-spacing:.5px;text-transform:uppercase;padding:3px 9px;border-radius:20px;margin-left:8px;vertical-align:middle}
+.lvl.b{background:rgba(52,211,153,.16);color:var(--good)}
+.lvl.i{background:rgba(96,165,250,.16);color:var(--info)}
+.lvl.a{background:rgba(251,191,36,.16);color:var(--warn)}
+.lvl.x{background:rgba(248,113,113,.16);color:var(--bad)}
+.proj-meta{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+.proj-meta span{background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:5px 11px;font-size:12.5px;color:var(--text-dim)}
+</style></head><body>
+<div class="topbar">
+  <button class="menu-btn" onclick="toggleTOC()" aria-label="Menu">☰</button>
+  <span class="brand"><span class="dot"></span> CNNs · Projects</span>
+  <span class="crumbs">🛠 Learn by building</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" onclick="toggleTheme()">☀️ Light</button>
+</div>
+<div class="backdrop" id="backdrop" onclick="closeTOC()"></div>
+<div class="shell">
+<aside id="toc" class="toc">
+  <h4>Nine projects</h4>
+  <a href="#p1"><span class="toc-num">1</span>First CNN (Fashion-MNIST)</a>
+  <a href="#p2"><span class="toc-num">2</span>Convolution from scratch</a>
+  <a href="#p3"><span class="toc-num">3</span>CIFAR-10, for real</a>
+  <a href="#p4"><span class="toc-num">4</span>Transfer learning</a>
+  <a href="#p5"><span class="toc-num">5</span>Grad-CAM: see what it sees</a>
+  <a href="#seg"><span class="toc-num">6</span>U-Net: segment every pixel</a>
+  <a href="#detect"><span class="toc-num">7</span>Real-time webcam detector</a>
+  <a href="#siamese"><span class="toc-num">8</span>Siamese: one-shot recognition</a>
+  <a href="#p6"><span class="toc-num">9</span>Capstone: defect detector</a>
+  <a href="#roadmap"><span class="toc-num">→</span>Where to go after</a>
+</aside>
+<main class="content">
+<div class="hero">
+  <div class="kicker">Convolutional Neural Networks</div>
+  <h1>CNNs — Build-It-Yourself Projects</h1>
+  <p class="lead">Nine projects that climb from your first 20-line classifier through segmentation, real-time detection, and one-shot recognition to a transfer-learned, Grad-CAM-inspected, deployable defect detector. Each has a goal, steps, runnable 2026 code, what results to expect, and the specific traps that bite people. Code mirrors the <a href="2_cnn_reference.html#code">Reference §19</a>.</p>
+  <div class="reading-time">⏱ 9 projects · beginner → expert → capstone · all code runs on 2026 APIs</div>
+  <div class="crosslink-banner">
+    <span style="align-self:center;font-weight:600;font-size:13.5px">The climb:</span>
+    <a href="1_cnn_primer.html">🧒 Back to the Visual Primer</a>
+    <a href="2_cnn_reference.html">🎓 Open the Reference</a>
+  </div>
+  <div class="box levelup">
+    <span class="bt">⬆ Builds on the Foundations guide</span>
+    These projects assume you can run Python and have met training loops, loss, and gradient descent. If not, the <a href="../ann/2_neural_network_foundations.html">Neural-Network Foundations guide</a> covers that groundwork.
+  </div>
+  <div class="proj-track" style="margin-top:18px">
+    <div class="box info"><span class="bt">📊 Progress tracker</span>Tap a project, work the tabs left-to-right (About → Steps → Code → Results → Pitfalls → Stretch). Each builds on the last — do them in order the first time through.</div>
+  </div>
+</div>
+<section class="section" id="p1">
+<h2><span class="sec-no">1</span>Your first CNN<span class="lvl b">Beginner</span></h2>
+<div class="proj-meta"><span>📦 Fashion-MNIST</span><span>⏱ ~10 min on GPU</span><span>🎯 ~91% accuracy</span><span>🧩 needs: PyTorch</span></div>
+<div class="tabs" data-tabgroup="p1"><div class="tab-nav">
+<button class="active" data-target="p1-about" onclick="switchTab('p1','p1-about')">About</button>
+<button class="" data-target="p1-steps" onclick="switchTab('p1','p1-steps')">Steps</button>
+<button class="" data-target="p1-code" onclick="switchTab('p1','p1-code')">Code</button>
+<button class="" data-target="p1-results" onclick="switchTab('p1','p1-results')">Results</button>
+<button class="" data-target="p1-pitfalls" onclick="switchTab('p1','p1-pitfalls')">Pitfalls</button>
+<button class="" data-target="p1-stretch" onclick="switchTab('p1','p1-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p1-about" data-tabpanel="p1"><p>Train a small CNN to classify 28×28 grayscale clothing images into 10 categories. The goal isn't accuracy — it's seeing the whole pipeline (data → conv layers → pooling → classifier → training loop) work end-to-end in under 40 lines.</p><div class="box info"><span class="bt">What you'll learn</span>How a <code class="inline">Conv2d → ReLU → MaxPool</code> stack feeds a linear classifier, and the canonical PyTorch train/eval loop you'll reuse in every later project.</div><p>Maps to <a href="2_cnn_reference.html#anatomy">Reference §06</a> (block anatomy) and <a href="2_cnn_reference.html#training">§15</a> (training recipe).</p></div>
+<div class="tab-content" id="p1-steps" data-tabpanel="p1"><ol><li>Install <code class="inline">torch</code> and <code class="inline">torchvision</code>; pick CPU or GPU.</li><li>Load Fashion-MNIST with transforms.v2; normalise with the dataset mean/std.</li><li>Define <code class="inline">TinyCNN</code>: two conv blocks, each followed by 2×2 max-pool, then one linear head.</li><li>Train 5 epochs with AdamW + CrossEntropyLoss (pass <em>raw logits</em>).</li><li>Print test accuracy each epoch and watch it climb past 90%.</li></ol></div>
+<div class="tab-content" id="p1-code" data-tabpanel="p1"><div class="code-block"><div class="code-head"><span class="lang">Project 1 — Fashion-MNIST (PyTorch 2.11)</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># Project 1 — your first CNN on Fashion-MNIST (PyTorch 2.11)
+import torch, torch.nn as nn, torch.nn.functional as F
+from torch.utils.data import DataLoader
+from torchvision import datasets
+from torchvision.transforms import v2
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+tf = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True),
+                 v2.Normalize([0.2860], [0.3530])])
+train = datasets.FashionMNIST(&quot;./data&quot;, train=True,  download=True, transform=tf)
+test  = datasets.FashionMNIST(&quot;./data&quot;, train=False, download=True, transform=tf)
+train_dl = DataLoader(train, 128, shuffle=True)
+test_dl  = DataLoader(test, 256)
+
+class TinyCNN(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.c1 = nn.Conv2d(1, 16, 3, padding=1)   # 28x28
+        self.c2 = nn.Conv2d(16, 32, 3, padding=1)
+        self.fc = nn.Linear(32*7*7, 10)
+    def forward(self, x):
+        x = F.max_pool2d(F.relu(self.c1(x)), 2)    # -&gt; 14x14
+        x = F.max_pool2d(F.relu(self.c2(x)), 2)    # -&gt; 7x7
+        return self.fc(x.flatten(1))               # raw logits
+
+model = TinyCNN().to(device)
+opt = torch.optim.AdamW(model.parameters(), lr=1e-3)
+lossf = nn.CrossEntropyLoss()
+
+for epoch in range(5):
+    model.train()
+    for x, y in train_dl:
+        x, y = x.to(device), y.to(device)
+        opt.zero_grad(); lossf(model(x), y).backward(); opt.step()
+    model.eval(); correct = total = 0
+    with torch.no_grad():
+        for x, y in test_dl:
+            x, y = x.to(device), y.to(device)
+            correct += (model(x).argmax(1) == y).sum().item(); total += y.size(0)
+    print(f&quot;epoch {epoch}  test acc {correct/total:.3f}&quot;)
+# Expect ~0.90-0.92 after 5 epochs.</code></pre></div></div>
+<div class="tab-content" id="p1-results" data-tabpanel="p1"><p>After 5 epochs you should see test accuracy around <strong>0.90–0.92</strong>. The first epoch already clears ~0.86 — CNNs learn fast on easy data.</p><div class="box good"><span class="bt">Success looks like</span>A steadily rising accuracy with no NaNs. If epoch 0 is already ~0.10 (random) and stuck, you likely applied softmax before the loss or mismatched label dtype.</div></div>
+<div class="tab-content" id="p1-pitfalls" data-tabpanel="p1"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>Forgetting <code class="inline">model.eval()</code> before testing — harmless here (no BN) but a habit to build now.</li><li>Feeding un-normalised 0–255 pixels — training still works but converges slower.</li><li>Flattening with the wrong size: after two 2×2 pools, 28→14→7, so the linear layer sees <code class="inline">32×7×7</code>.</li></ul></div>
+<div class="tab-content" id="p1-stretch" data-tabpanel="p1"><ul><li>Add a third conv block and BatchNorm; compare convergence speed.</li><li>Swap max-pool for a stride-2 conv and see if accuracy holds.</li><li>Plot the 16 first-layer filters — do any look like edge detectors?</li></ul></div>
+</div></section>
+<section class="section" id="p2">
+<h2><span class="sec-no">2</span>Convolution from scratch<span class="lvl b">Beginner</span></h2>
+<div class="proj-meta"><span>🔢 NumPy only</span><span>⏱ ~20 min</span><span>🎯 match PyTorch to 1e-12</span><span>🧩 needs: NumPy, PyTorch</span></div>
+<div class="tabs" data-tabgroup="p2"><div class="tab-nav">
+<button class="active" data-target="p2-about" onclick="switchTab('p2','p2-about')">About</button>
+<button class="" data-target="p2-steps" onclick="switchTab('p2','p2-steps')">Steps</button>
+<button class="" data-target="p2-code" onclick="switchTab('p2','p2-code')">Code</button>
+<button class="" data-target="p2-results" onclick="switchTab('p2','p2-results')">Results</button>
+<button class="" data-target="p2-pitfalls" onclick="switchTab('p2','p2-pitfalls')">Pitfalls</button>
+<button class="" data-target="p2-stretch" onclick="switchTab('p2','p2-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p2-about" data-tabpanel="p2"><p>Implement 2-D convolution two ways — the literal nested-loop version and the fast im2col + matrix-multiply version — then prove both agree with PyTorch's <code class="inline">F.conv2d</code>. This is the project that makes convolution stop being magic.</p><div class="box info"><span class="bt">What you'll learn</span>That convolution is just "slide, multiply, sum," and that the fast version is one big matrix multiply (the trick every GPU library uses).</div><p>Maps directly to <a href="2_cnn_reference.html#convolution">Reference §03</a>, <a href="2_cnn_reference.html#backprop">§08</a> (im2col), and the worked numbers in <a href="2_cnn_reference.html#worked-example">§18</a>.</p></div>
+<div class="tab-content" id="p2-steps" data-tabpanel="p2"><ol><li>Write <code class="inline">conv2d_naive</code> with two nested loops over output positions.</li><li>Write <code class="inline">im2col</code> to unroll every patch into a row, then <code class="inline">conv2d_fast</code> as one matmul.</li><li>Assert the two agree on random inputs.</li><li>Compare to <code class="inline">F.conv2d</code> — remember PyTorch also does cross-correlation, so <strong>no kernel flip</strong> is needed.</li><li>Reproduce the §16 example (4×4 input, vertical-edge kernel) and check you get the 2×2 map of −1s.</li></ol></div>
+<div class="tab-content" id="p2-code" data-tabpanel="p2"><div class="code-block"><div class="code-head"><span class="lang">Project 2 — conv from scratch (verified)</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># Project 2 — convolution from scratch, verified against PyTorch
+import numpy as np, torch, torch.nn.functional as F
+
+def conv2d_naive(X, K):
+    kh, kw = K.shape
+    Ho, Wo = X.shape[0]-kh+1, X.shape[1]-kw+1
+    out = np.zeros((Ho, Wo))
+    for i in range(Ho):
+        for j in range(Wo):
+            out[i, j] = np.sum(X[i:i+kh, j:j+kw] * K)
+    return out
+
+def im2col(X, kh, kw):
+    Ho, Wo = X.shape[0]-kh+1, X.shape[1]-kw+1
+    cols = np.empty((Ho*Wo, kh*kw)); r = 0
+    for i in range(Ho):
+        for j in range(Wo):
+            cols[r] = X[i:i+kh, j:j+kw].ravel(); r += 1
+    return cols, Ho, Wo
+
+def conv2d_fast(X, K):
+    cols, Ho, Wo = im2col(X, *K.shape)
+    return (cols @ K.ravel()).reshape(Ho, Wo)
+
+rng = np.random.default_rng(0)
+X = rng.standard_normal((10, 10)); K = rng.standard_normal((3, 3))
+mine = conv2d_fast(X, K)
+assert np.allclose(mine, conv2d_naive(X, K))           # two methods agree
+
+# ground truth: PyTorch. Note conv2d does cross-correlation too -&gt; no flip needed.
+ref = F.conv2d(torch.tensor(X)[None, None], torch.tensor(K)[None, None])[0, 0].numpy()
+print(&quot;max abs diff vs PyTorch:&quot;, np.abs(mine - ref).max())   # ~1e-12</code></pre></div></div>
+<div class="tab-content" id="p2-results" data-tabpanel="p2"><p>The script prints a max absolute difference versus PyTorch of about <strong>1e-12 to 1e-16</strong> — i.e. identical up to floating-point noise. If it's larger, you have a real bug.</p><div class="box good"><span class="bt">Verified</span>This exact script runs clean: the from-scratch matmul matches PyTorch to ~8.9e-16.</div></div>
+<div class="tab-content" id="p2-pitfalls" data-tabpanel="p2"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>Flipping the kernel to match "textbook convolution" — PyTorch does cross-correlation, so flipping makes you <em>disagree</em>.</li><li>Off-by-one output sizes: valid conv gives <code class="inline">H−k+1</code>, not <code class="inline">H</code>.</li><li>Mismatched dtypes (float32 vs float64) inflating the diff — keep both float64 for the comparison.</li></ul></div>
+<div class="tab-content" id="p2-stretch" data-tabpanel="p2"><ul><li>Add stride and padding to both implementations and re-verify.</li><li>Extend im2col to multi-channel input (C_in stacked into the row).</li><li>Implement the backward pass (<code class="inline">∂L/∂K = X⋆δ</code>) and check it against autograd.</li></ul></div>
+</div></section>
+<section class="section" id="p3">
+<h2><span class="sec-no">3</span>CIFAR-10, for real<span class="lvl i">Intermediate</span></h2>
+<div class="proj-meta"><span>🖼 CIFAR-10</span><span>⏱ ~1–2 hr on GPU</span><span>🎯 ~93% accuracy</span><span>🧩 residual net + augmentation</span></div>
+<div class="tabs" data-tabgroup="p3"><div class="tab-nav">
+<button class="active" data-target="p3-about" onclick="switchTab('p3','p3-about')">About</button>
+<button class="" data-target="p3-steps" onclick="switchTab('p3','p3-steps')">Steps</button>
+<button class="" data-target="p3-code" onclick="switchTab('p3','p3-code')">Code</button>
+<button class="" data-target="p3-results" onclick="switchTab('p3','p3-results')">Results</button>
+<button class="" data-target="p3-pitfalls" onclick="switchTab('p3','p3-pitfalls')">Pitfalls</button>
+<button class="" data-target="p3-stretch" onclick="switchTab('p3','p3-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p3-about" data-tabpanel="p3"><p>Step up to 32×32 colour images and a real architecture: a mini-ResNet with skip connections, BatchNorm, data augmentation, AdamW, cosine LR, and mixed precision. This is a genuine, competitive training recipe in miniature.</p><div class="box info"><span class="bt">What you'll learn</span>Why skip connections, augmentation, and a good LR schedule together buy you ~10 accuracy points over the naive net from Project 1.</div><div class="box levelup"><span class="bt">⬆ Beat the MLP — the point of all this</span>Run the plain dense network from the <a href="../ann/2_neural_network_foundations.html">Foundations guide</a> on CIFAR-10 first. It stalls around <strong>50–55%</strong> — flattening a 32×32×3 image throws away every spatial relationship and explodes the parameter count. This CNN reaches <strong>~93%</strong> with <em>fewer</em> parameters. That gap, on the exact same data, <em>is</em> the entire argument for convolution — now you've proven it with your own hands.</div>
+<p>Maps to <a href="2_cnn_reference.html#architectures">Reference §12</a> (residuals), <a href="2_cnn_reference.html#augmentation">§14</a>, and <a href="2_cnn_reference.html#training">§15</a>.</p></div>
+<div class="tab-content" id="p3-steps" data-tabpanel="p3"><ol><li>Set up train/eval transforms — <strong>augment train only</strong> (random crop + flip).</li><li>Build the <code class="inline">Res</code> block (two conv-BN, a skip, with a 1×1 projection when shapes change).</li><li>Stack stem → 4 residual stages → GAP → linear into <code class="inline">ResNetMini</code>.</li><li>Train ~50 epochs with AdamW, CosineAnnealingLR, and AMP (see Reference §17 for the loop).</li><li>Track train vs test accuracy to watch for overfitting.</li></ol></div>
+<div class="tab-content" id="p3-code" data-tabpanel="p3"><div class="code-block"><div class="code-head"><span class="lang">Project 3 — mini-ResNet on CIFAR-10</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># Project 3 — CIFAR-10 with a residual-style net + augmentation
+import torch, torch.nn as nn, torch.nn.functional as F
+from torch.utils.data import DataLoader
+from torchvision import datasets
+from torchvision.transforms import v2
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+MEAN, STD = [0.4914,0.4822,0.4465], [0.2470,0.2435,0.2616]
+train_tf = v2.Compose([
+    v2.RandomCrop(32, padding=4), v2.RandomHorizontalFlip(),
+    v2.ToImage(), v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)])
+eval_tf = v2.Compose([v2.ToImage(), v2.ToDtype(torch.float32, scale=True), v2.Normalize(MEAN, STD)])
+
+class Res(nn.Module):
+    def __init__(self, cin, cout, stride=1):
+        super().__init__()
+        self.c1 = nn.Conv2d(cin, cout, 3, stride, 1, bias=False); self.b1 = nn.BatchNorm2d(cout)
+        self.c2 = nn.Conv2d(cout, cout, 3, 1, 1, bias=False);      self.b2 = nn.BatchNorm2d(cout)
+        self.sc = nn.Sequential()
+        if stride != 1 or cin != cout:
+            self.sc = nn.Sequential(nn.Conv2d(cin, cout, 1, stride, bias=False), nn.BatchNorm2d(cout))
+    def forward(self, x):
+        out = F.relu(self.b1(self.c1(x)))
+        out = self.b2(self.c2(out))
+        return F.relu(out + self.sc(x))            # the skip connection
+
+class ResNetMini(nn.Module):
+    def __init__(self, n=10):
+        super().__init__()
+        self.stem = nn.Sequential(nn.Conv2d(3,64,3,1,1,bias=False), nn.BatchNorm2d(64), nn.ReLU())
+        self.layers = nn.Sequential(
+            Res(64,64), Res(64,128,2), Res(128,256,2), Res(256,256))
+        self.head = nn.Sequential(nn.AdaptiveAvgPool2d(1), nn.Flatten(), nn.Linear(256, n))
+    def forward(self, x): return self.head(self.layers(self.stem(x)))
+
+# ... DataLoaders + AdamW + CosineAnnealingLR + AMP loop as in Reference §17.
+# Expect ~0.92-0.94 test accuracy after ~50 epochs with this recipe.</code></pre></div></div>
+<div class="tab-content" id="p3-results" data-tabpanel="p3"><p>Expect roughly <strong>0.92–0.94</strong> test accuracy after ~50 epochs. Without augmentation you'll plateau lower and overfit; without skips, deeper versions get harder to train.</p><div class="box good"><span class="bt">Ablation worth doing</span>Train once with augmentation off — you'll see train accuracy shoot up while test stalls. That gap <em>is</em> overfitting, made visible.</div></div>
+<div class="tab-content" id="p3-pitfalls" data-tabpanel="p3"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>Augmenting the test set — metrics become noisy and meaningless.</li><li>Tiny batch + BatchNorm = unstable stats; keep batch ≥ 64 or switch to GroupNorm.</li><li>Skipping <code class="inline">model.eval()</code> — now it matters: BN will use batch stats and your accuracy will wobble with batch size.</li><li>LR too high with cosine decay — loss spikes early; do a quick LR range test.</li></ul></div>
+<div class="tab-content" id="p3-stretch" data-tabpanel="p3"><ul><li>Add MixUp/CutMix from transforms.v2 and measure the calibration improvement.</li><li>Try label smoothing 0.1 and compare confidence histograms.</li><li>Compare your net's FLOPs/params to torchvision's ResNet-18.</li></ul></div>
+</div></section>
+<section class="section" id="p4">
+<h2><span class="sec-no">4</span>Transfer learning<span class="lvl i">Intermediate</span></h2>
+<div class="proj-meta"><span>🗂 your own folders</span><span>⏱ ~20 min</span><span>🎯 strong acc, little data</span><span>🧩 EfficientNet-V2</span></div>
+<div class="tabs" data-tabgroup="p4"><div class="tab-nav">
+<button class="active" data-target="p4-about" onclick="switchTab('p4','p4-about')">About</button>
+<button class="" data-target="p4-steps" onclick="switchTab('p4','p4-steps')">Steps</button>
+<button class="" data-target="p4-code" onclick="switchTab('p4','p4-code')">Code</button>
+<button class="" data-target="p4-results" onclick="switchTab('p4','p4-results')">Results</button>
+<button class="" data-target="p4-pitfalls" onclick="switchTab('p4','p4-pitfalls')">Pitfalls</button>
+<button class="" data-target="p4-stretch" onclick="switchTab('p4','p4-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p4-about" data-tabpanel="p4"><p>Take a model pretrained on millions of ImageNet photos and adapt it to <em>your</em> categories from just a few hundred images per class. Freeze the backbone, swap the head, train, then optionally fine-tune the top block at a low LR.</p><div class="box info"><span class="bt">What you'll learn</span>The single highest-leverage skill in applied vision — and the #1 gotcha (using the backbone's own <code class="inline">weights.transforms()</code> preprocessing).</div><p>Maps to <a href="2_cnn_reference.html#transfer">Reference §13</a>. The primer's "borrow trained eyes" idea, made real.</p></div>
+<div class="tab-content" id="p4-steps" data-tabpanel="p4"><ol><li>Arrange data as <code class="inline">data/train/&lt;class&gt;/</code> and <code class="inline">data/val/&lt;class&gt;/</code>.</li><li>Load <code class="inline">EfficientNet_V2_S_Weights.DEFAULT</code> and its bundled <code class="inline">preprocess</code>.</li><li>Freeze all backbone params; replace the final classifier with one sized to your class count.</li><li>Train just the head (fast) until val accuracy plateaus.</li><li>Unfreeze the top block, drop LR 10–100×, and fine-tune a few more epochs.</li></ol></div>
+<div class="tab-content" id="p4-code" data-tabpanel="p4"><div class="code-block"><div class="code-head"><span class="lang">Project 4 — transfer learning (torchvision 0.27)</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># Project 4 — transfer learning on your own folders (torchvision 0.27)
+import torch, torch.nn as nn
+from torchvision import models, datasets
+from torchvision.models import EfficientNet_V2_S_Weights
+from torch.utils.data import DataLoader
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+weights = EfficientNet_V2_S_Weights.DEFAULT
+preprocess = weights.transforms()              # the EXACT preprocessing it expects
+
+# expects data/train/&lt;class&gt;/*.jpg  and data/val/&lt;class&gt;/*.jpg
+train_ds = datasets.ImageFolder(&quot;data/train&quot;, transform=preprocess)
+val_ds   = datasets.ImageFolder(&quot;data/val&quot;,   transform=preprocess)
+n_cls = len(train_ds.classes)
+
+model = models.efficientnet_v2_s(weights=weights)
+for p in model.parameters():                   # 1) freeze the backbone
+    p.requires_grad = False
+in_f = model.classifier[1].in_features
+model.classifier[1] = nn.Linear(in_f, n_cls)   # 2) new head for YOUR classes
+model = model.to(device)
+
+# 3) train the head, then unfreeze top block and fine-tune at low LR
+opt = torch.optim.AdamW(model.classifier.parameters(), lr=1e-3, weight_decay=1e-2)
+lossf = nn.CrossEntropyLoss(label_smoothing=0.1)
+# ... standard train/eval loop. With a few hundred images/class expect strong
+# accuracy in a handful of epochs — far better than training from scratch.</code></pre></div></div>
+<div class="tab-content" id="p4-results" data-tabpanel="p4"><p>With a few hundred images per class you should beat a from-scratch model in a fraction of the epochs — often <strong>90%+</strong> on an easy custom task within minutes. Feature-extraction alone is frequently enough.</p><div class="box good"><span class="bt">Tell-tale of success</span>Val accuracy jumps high within the first epoch or two — the backbone's features are already doing the heavy lifting.</div></div>
+<div class="tab-content" id="p4-pitfalls" data-tabpanel="p4"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>Using your own normalisation instead of <code class="inline">weights.transforms()</code> — silently wrecks transfer.</li><li>Fine-tuning the whole network at full LR — you'll erase the pretrained knowledge ("catastrophic forgetting").</li><li>Forgetting the new head is trainable while everything else is frozen — check <code class="inline">requires_grad</code>.</li><li>Too few images and no augmentation — the head overfits instantly.</li></ul></div>
+<div class="tab-content" id="p4-stretch" data-tabpanel="p4"><ul><li>Compare feature-extraction vs full fine-tuning accuracy and training time.</li><li>Swap in <code class="inline">timm</code> and try a ConvNeXt-V2 backbone.</li><li>Use discriminative learning rates (lower for early layers, higher for the head).</li></ul></div>
+</div></section>
+<section class="section" id="p5">
+<h2><span class="sec-no">5</span>Grad-CAM: see what it sees<span class="lvl a">Advanced</span></h2>
+<div class="proj-meta"><span>🔥 heat-maps</span><span>⏱ ~30 min</span><span>🎯 visual debugging</span><span>🧩 hooks + gradients</span></div>
+<div class="tabs" data-tabgroup="p5"><div class="tab-nav">
+<button class="active" data-target="p5-about" onclick="switchTab('p5','p5-about')">About</button>
+<button class="" data-target="p5-steps" onclick="switchTab('p5','p5-steps')">Steps</button>
+<button class="" data-target="p5-code" onclick="switchTab('p5','p5-code')">Code</button>
+<button class="" data-target="p5-results" onclick="switchTab('p5','p5-results')">Results</button>
+<button class="" data-target="p5-pitfalls" onclick="switchTab('p5','p5-pitfalls')">Pitfalls</button>
+<button class="" data-target="p5-stretch" onclick="switchTab('p5','p5-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p5-about" data-tabpanel="p5"><p>Build a Grad-CAM tool that overlays a heat-map showing <em>where</em> a CNN looked when it made a prediction. It's the single best way to catch a model that learned a shortcut (the grass-not-cow problem) before it embarrasses you in production.</p><div class="box info"><span class="bt">What you'll learn</span>How to grab a layer's activations and gradients with hooks, weight the feature maps by gradient, and ReLU the sum into a "looked here" map.</div><p>Maps to <a href="2_cnn_reference.html#interpretability">Reference §17</a> (the α<sub>k</sub><sup>c</sup> formula) and the pitfalls in <a href="2_cnn_reference.html#pitfalls">§21</a>.</p></div>
+<div class="tab-content" id="p5-steps" data-tabpanel="p5"><ol><li>Load a pretrained ResNet-50 and pick the last conv block as the target layer.</li><li>Register a forward hook (to capture activations) and a full backward hook (to capture gradients).</li><li>Forward an image, backprop the chosen class score.</li><li>Average the gradients per channel → weights; weight the activation maps, sum, ReLU.</li><li>Normalise, upsample to image size, and overlay as a heat-map.</li></ol></div>
+<div class="tab-content" id="p5-code" data-tabpanel="p5"><div class="code-block"><div class="code-head"><span class="lang">Project 5 — Grad-CAM from scratch</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># Project 5 — Grad-CAM: a heat-map of where the CNN looked
+import torch, torch.nn.functional as F
+from torchvision import models
+from torchvision.models import ResNet50_Weights
+
+weights = ResNet50_Weights.DEFAULT
+model = models.resnet50(weights=weights).eval()
+target_layer = model.layer4[-1]                # last conv block
+
+acts, grads = {}, {}
+def fwd_hook(m, i, o): acts[&quot;v&quot;] = o.detach()
+def bwd_hook(m, gi, go): grads[&quot;v&quot;] = go[0].detach()
+target_layer.register_forward_hook(fwd_hook)
+target_layer.register_full_backward_hook(bwd_hook)
+
+def grad_cam(x, class_idx=None):
+    logits = model(x)                          # x: (1,3,H,W), preprocessed
+    if class_idx is None: class_idx = logits.argmax(1).item()
+    model.zero_grad()
+    logits[0, class_idx].backward()            # gradient of the chosen class
+    A, dA = acts[&quot;v&quot;][0], grads[&quot;v&quot;][0]        # (C,h,w)
+    alpha = dA.mean(dim=(1, 2))                # weight each map by mean gradient
+    cam = F.relu((alpha[:, None, None] * A).sum(0))   # weighted sum + ReLU
+    cam = cam / (cam.max() + 1e-8)
+    return cam.cpu().numpy(), class_idx        # upsample &amp; overlay on the image
+# If the heat-map sits on the background, your model learned a shortcut (Reference §19).</code></pre></div></div>
+<div class="tab-content" id="p5-results" data-tabpanel="p5"><p>On a correctly-learned classifier the hot region sits squarely on the object. The payoff is the <em>failure</em> case: point it at a model that cheated and the heat-map lights up the background instead.</p><div class="box good"><span class="bt">The "aha" moment</span>Run it on your Project 3 or 4 model. If the heat-map ever sits off the object, you've literally seen a spurious correlation.</div></div>
+<div class="tab-content" id="p5-pitfalls" data-tabpanel="p5"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>Using <code class="inline">register_backward_hook</code> (deprecated/buggy) instead of <code class="inline">register_full_backward_hook</code>.</li><li>Forgetting <code class="inline">model.zero_grad()</code> — gradients accumulate across calls and your map smears.</li><li>Targeting too early a layer — low-level layers give blurry, uninformative maps; use the last conv block.</li><li>Not detaching captured tensors — you'll leak memory across many images.</li></ul></div>
+<div class="tab-content" id="p5-stretch" data-tabpanel="p5"><ul><li>Add Grad-CAM++ for sharper maps on multiple instances.</li><li>Batch it and build a contact-sheet of heat-maps for your val set.</li><li>Wire it into Project 6 so every defect prediction ships with an explanation.</li></ul></div>
+</div></section>
+<section class="section" id="seg">
+<h2><span class="sec-no">6</span>U-Net: segment every pixel<span class="lvl a">Advanced</span></h2>
+<div class="proj-meta"><span>🩺 medical imaging</span><span>⏱ ~60 min</span><span>🎯 per-pixel masks</span><span>🧩 encoder–decoder + skips</span></div>
+<div class="tabs" data-tabgroup="p7"><div class="tab-nav">
+<button class="active" data-target="p7-about" onclick="switchTab('p7','p7-about')">About</button>
+<button class="" data-target="p7-steps" onclick="switchTab('p7','p7-steps')">Steps</button>
+<button class="" data-target="p7-code" onclick="switchTab('p7','p7-code')">Code</button>
+<button class="" data-target="p7-results" onclick="switchTab('p7','p7-results')">Results</button>
+<button class="" data-target="p7-pitfalls" onclick="switchTab('p7','p7-pitfalls')">Pitfalls</button>
+<button class="" data-target="p7-stretch" onclick="switchTab('p7','p7-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p7-about" data-tabpanel="p7"><p>Step up from "what is in this image?" to "<em>which pixels</em> are the tumour / defect / road?" You'll build a <strong>U-Net</strong> from scratch — the encoder–decoder-with-skips design from <a href="2_cnn_reference.html#beyond">Reference §20</a> that reuses the transposed convolutions from <a href="2_cnn_reference.html#adv-conv">§10</a>.</p><div class="box info"><span class="bt">What you'll learn</span>Why segmentation needs a decoder, what skip connections actually preserve, and why pixel-accuracy is a <em>lie</em> for this task (use Dice / IoU instead).</div><p>Great public datasets to start: the <strong>Oxford-IIIT Pet</strong> masks, <strong>ISIC</strong> skin-lesion, or any <strong>Kaggle medical-segmentation</strong> set.</p></div>
+<div class="tab-content " id="p7-steps" data-tabpanel="p7"><ol><li>Load image+mask pairs; resize to 128×128 or 256×256; normalise images, keep masks as 0/1.</li><li>Build the U-Net: 3 down-blocks → bottleneck → 3 up-blocks, concatenating the matching encoder feature map at each up step (the skip).</li><li>Train with <strong>Dice + BCE</strong> loss — Dice handles the heavy background imbalance.</li><li>Evaluate with <strong>Dice score / IoU</strong>, never pixel accuracy.</li><li>Overlay predicted masks on the input to eyeball boundary quality.</li></ol></div>
+<div class="tab-content " id="p7-code" data-tabpanel="p7"><div class="code-block"><div class="code-head"><span class="lang">p7_unet.py — verified: in 128×128 → out 128×128, 1.93M params</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># p7_unet.py — U-Net from scratch for binary segmentation (e.g. tumour masks).
+# Encoder (down) -&gt; bottleneck -&gt; decoder (up) with SKIP connections.
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+def double_conv(cin, cout):
+    return nn.Sequential(
+        nn.Conv2d(cin, cout, 3, padding=1), nn.BatchNorm2d(cout), nn.ReLU(inplace=True),
+        nn.Conv2d(cout, cout, 3, padding=1), nn.BatchNorm2d(cout), nn.ReLU(inplace=True),
+    )
+
+
+class UNet(nn.Module):
+    def __init__(self, in_ch=1, out_ch=1, base=32):
+        super().__init__()
+        self.d1 = double_conv(in_ch, base)          # encoder
+        self.d2 = double_conv(base, base * 2)
+        self.d3 = double_conv(base * 2, base * 4)
+        self.bott = double_conv(base * 4, base * 8)  # bottleneck
+        self.pool = nn.MaxPool2d(2)
+        # decoder: transposed conv upsamples, then double_conv on concatenated skip
+        self.u3 = nn.ConvTranspose2d(base * 8, base * 4, 2, stride=2)
+        self.c3 = double_conv(base * 8, base * 4)
+        self.u2 = nn.ConvTranspose2d(base * 4, base * 2, 2, stride=2)
+        self.c2 = double_conv(base * 4, base * 2)
+        self.u1 = nn.ConvTranspose2d(base * 2, base, 2, stride=2)
+        self.c1 = double_conv(base * 2, base)
+        self.head = nn.Conv2d(base, out_ch, 1)       # 1x1 -&gt; per-pixel logit
+
+    def forward(self, x):
+        s1 = self.d1(x);             x = self.pool(s1)
+        s2 = self.d2(x);             x = self.pool(s2)
+        s3 = self.d3(x);             x = self.pool(s3)
+        x = self.bott(x)
+        x = self.c3(torch.cat([self.u3(x), s3], dim=1))   # skip-connection concat
+        x = self.c2(torch.cat([self.u2(x), s2], dim=1))
+        x = self.c1(torch.cat([self.u1(x), s1], dim=1))
+        return self.head(x)          # (N, out_ch, H, W) raw logits
+
+
+def dice_loss(logits, target, eps=1e-6):
+    &quot;&quot;&quot;Dice handles the class imbalance of segmentation (mask is mostly background).&quot;&quot;&quot;
+    prob = torch.sigmoid(logits)
+    num = 2 * (prob * target).sum(dim=(2, 3)) + eps
+    den = prob.sum(dim=(2, 3)) + target.sum(dim=(2, 3)) + eps
+    return (1 - num / den).mean()
+
+
+if __name__ == &quot;__main__&quot;:
+    net = UNet(in_ch=1, out_ch=1)
+    img = torch.randn(2, 1, 128, 128)          # 2 grayscale scans
+    mask = (torch.rand(2, 1, 128, 128) &gt; 0.7).float()
+    out = net(img)
+    print(&quot;input :&quot;, tuple(img.shape))
+    print(&quot;output:&quot;, tuple(out.shape), &quot;(per-pixel logits, same H/W as input)&quot;)
+    print(&quot;dice loss:&quot;, round(dice_loss(out, mask).item(), 4))
+    print(&quot;params:&quot;, sum(p.numel() for p in net.parameters()))
+    # Real use: combine Dice + BCE, evaluate with IoU / Dice score, NOT pixel accuracy
+    # (background dominates, so accuracy lies — see Reference on evaluation).
+</code></pre></div></div>
+<div class="tab-content " id="p7-results" data-tabpanel="p7"><p>A working U-Net on a clean dataset reaches a strong Dice score and produces crisp boundaries thanks to the skip connections. The deliverable is a mask overlay that visibly tracks the object edge.</p><div class="box good"><span class="bt">Definition of done</span>Validation Dice clears your target and the predicted mask hugs the true boundary — not a blurry blob.</div></div>
+<div class="tab-content " id="p7-pitfalls" data-tabpanel="p7"><div class="box bad"><span class="bt">Watch for</span></div><ul><li><strong>Reporting pixel accuracy.</strong> If 95% of pixels are background, predicting "all background" scores 95% and segments nothing. Track Dice/IoU.</li><li>Mask/image misalignment after augmentation — apply the <em>same</em> geometric transform to both.</li><li>Checkerboard artifacts from transposed convs — try resize-then-conv decoders if you see them.</li><li>Class imbalance — Dice or focal loss beats plain BCE when the target is tiny.</li></ul></div>
+<div class="tab-content " id="p7-stretch" data-tabpanel="p7"><ul><li>Swap the encoder for a pretrained ResNet/EfficientNet backbone (a "U-Net with a backbone").</li><li>Add deep supervision or attention gates and measure the Dice gain.</li><li>Try DeepLabV3 (dilated convs) and compare context handling on large objects.</li></ul></div>
+</div></section>
+
+<section class="section" id="detect">
+<h2><span class="sec-no">7</span>Real-time webcam detector<span class="lvl a">Advanced</span></h2>
+<div class="proj-meta"><span>📹 live video</span><span>⏱ ~45 min</span><span>🎯 boxes + labels</span><span>🧩 anchor-free YOLO</span></div>
+<div class="tabs" data-tabgroup="p8"><div class="tab-nav">
+<button class="active" data-target="p8-about" onclick="switchTab('p8','p8-about')">About</button>
+<button class="" data-target="p8-steps" onclick="switchTab('p8','p8-steps')">Steps</button>
+<button class="" data-target="p8-code" onclick="switchTab('p8','p8-code')">Code</button>
+<button class="" data-target="p8-results" onclick="switchTab('p8','p8-results')">Results</button>
+<button class="" data-target="p8-pitfalls" onclick="switchTab('p8','p8-pitfalls')">Pitfalls</button>
+<button class="" data-target="p8-stretch" onclick="switchTab('p8','p8-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p8-about" data-tabpanel="p8"><p>Put a modern <strong>anchor-free YOLO</strong> on your webcam and watch it box objects in real time, then fine-tune it on your own classes. This is the one-stage detection design from <a href="2_cnn_reference.html#beyond">Reference §20</a> — fast enough for live video.</p><div class="box info"><span class="bt">What you'll learn</span>The difference between classification and detection heads, why one-stage anchor-free models win for real-time, and the full pretrained → fine-tune → export loop.</div></div>
+<div class="tab-content " id="p8-steps" data-tabpanel="p8"><ol><li><code class="inline">pip install ultralytics opencv-python</code>.</li><li>Load a pretrained nano model (COCO, 80 classes) and run it on webcam frames.</li><li>Read the live FPS — try nano vs small to feel the speed/accuracy trade.</li><li>To detect your own objects: label ~100 images, write a tiny <code class="inline">data.yaml</code>, and fine-tune.</li><li>Export to ONNX / TensorRT / TFLite for deployment (<a href="2_cnn_reference.html#production">Reference §23</a>).</li></ol></div>
+<div class="tab-content " id="p8-code" data-tabpanel="p8"><div class="code-block"><div class="code-head"><span class="lang">p8_yolo.py — run locally with a webcam</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># p8_yolo.py — Real-time webcam object detector with a modern anchor-free YOLO.
+# Uses Ultralytics (YOLOv8/v10/v11 share this API in 2026). Run locally with a webcam.
+#   pip install ultralytics opencv-python
+import cv2
+from ultralytics import YOLO
+
+
+def run_webcam(weights=&quot;yolov8n.pt&quot;, conf=0.4, cam=0):
+    &quot;&quot;&quot;Anchor-free, one-stage detection -&gt; fast enough for live video.
+    yolov8n = &#x27;nano&#x27; (fastest, edge-friendly). Swap to yolov8s/m for more accuracy.&quot;&quot;&quot;
+    model = YOLO(weights)              # downloads pretrained COCO weights on first run
+    cap = cv2.VideoCapture(cam)
+    if not cap.isOpened():
+        raise RuntimeError(&quot;Could not open webcam&quot;)
+
+    while True:
+        ok, frame = cap.read()
+        if not ok:
+            break
+        # stream=False returns a Results object per frame; .plot() draws boxes+labels
+        results = model.predict(frame, conf=conf, verbose=False)
+        annotated = results[0].plot()
+        cv2.imshow(&quot;YOLO live (press q to quit)&quot;, annotated)
+        if cv2.waitKey(1) &amp; 0xFF == ord(&quot;q&quot;):
+            break
+
+    cap.release()
+    cv2.destroyAllWindows()
+
+
+def fine_tune_on_custom_data():
+    &quot;&quot;&quot;Train on YOUR classes with a tiny data.yaml (paths + class names).
+    YOLO handles the anchor-free head, augmentation, and the train loop for you.&quot;&quot;&quot;
+    model = YOLO(&quot;yolov8n.pt&quot;)
+    model.train(data=&quot;my_dataset.yaml&quot;, epochs=50, imgsz=640, batch=16)
+    # Export for deployment: ONNX / TensorRT / TFLite (see Reference on production).
+    model.export(format=&quot;onnx&quot;)        # or format=&quot;engine&quot; for TensorRT
+
+
+if __name__ == &quot;__main__&quot;:
+    # Live demo with the pretrained COCO model (80 everyday classes):
+    run_webcam()
+    # Then fine_tune_on_custom_data() to detect your own objects (e.g. line products).
+</code></pre></div></div>
+<div class="tab-content " id="p8-results" data-tabpanel="p8"><p>The pretrained model boxes everyday objects live at interactive frame rates on a laptop GPU (or a few FPS on CPU). After fine-tuning, it detects your custom classes.</p><div class="box good"><span class="bt">Definition of done</span>Live boxes track objects smoothly, and a fine-tuned model detects at least one class that isn't in COCO.</div></div>
+<div class="tab-content " id="p8-pitfalls" data-tabpanel="p8"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>CPU-only inference is slow — use a smaller model or lower the input size for real-time.</li><li>Too few / poorly-labelled images → weak fine-tuning. Quality of boxes matters more than quantity.</li><li>Confidence threshold too low floods the screen with false boxes; too high misses objects. Tune it.</li><li>Forgetting to match the export's preprocessing on the deployment device (train/serve skew).</li></ul></div>
+<div class="tab-content " id="p8-stretch" data-tabpanel="p8"><ul><li>Add simple object tracking (ByteTrack) to keep IDs across frames.</li><li>Count objects crossing a line — a real factory/retail use case.</li><li>Benchmark ONNX vs TensorRT latency on your hardware.</li></ul></div>
+</div></section>
+
+<section class="section" id="siamese">
+<h2><span class="sec-no">8</span>Siamese net: one-shot recognition<span class="lvl x">Expert</span></h2>
+<div class="proj-meta"><span>👤 face / signature</span><span>⏱ ~60 min</span><span>🎯 verify by distance</span><span>🧩 metric learning</span></div>
+<div class="tabs" data-tabgroup="p9"><div class="tab-nav">
+<button class="active" data-target="p9-about" onclick="switchTab('p9','p9-about')">About</button>
+<button class="" data-target="p9-steps" onclick="switchTab('p9','p9-steps')">Steps</button>
+<button class="" data-target="p9-code" onclick="switchTab('p9','p9-code')">Code</button>
+<button class="" data-target="p9-results" onclick="switchTab('p9','p9-results')">Results</button>
+<button class="" data-target="p9-pitfalls" onclick="switchTab('p9','p9-pitfalls')">Pitfalls</button>
+<button class="" data-target="p9-stretch" onclick="switchTab('p9','p9-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p9-about" data-tabpanel="p9"><p>What if you must recognise someone from a <em>single</em> reference photo, with new identities added all the time? You can't retrain a classifier for every new person. The answer is <strong>metric learning</strong>: train a Siamese net so that same-identity images land close together in an embedding space and different ones land far apart.</p><div class="box info"><span class="bt">What you'll learn</span>Embeddings over classification, contrastive/triplet loss, and how "verify by distance + threshold" enables one-shot recognition without retraining.</div><p>Try it on <strong>Omniglot</strong> (the one-shot benchmark), <strong>AT&amp;T faces</strong>, or signature pairs.</p></div>
+<div class="tab-content " id="p9-steps" data-tabpanel="p9"><ol><li>Build a shared embedder CNN that maps an image to an L2-normalised vector.</li><li>Form pairs: same-identity (label 1) and different-identity (label 0).</li><li>Train with <strong>contrastive loss</strong> (pull same together, push different apart past a margin).</li><li>Enrol one reference embedding per identity.</li><li>Verify a new image by its distance to each reference; below threshold ⇒ match.</li></ol></div>
+<div class="tab-content " id="p9-code" data-tabpanel="p9"><div class="code-block"><div class="code-head"><span class="lang">p9_siamese.py — verified: 128-d embeddings, contrastive loss runs</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># p9_siamese.py — Siamese network for one-shot learning / face verification.
+# Idea: don&#x27;t classify into fixed classes. Learn an EMBEDDING where same-identity
+# pairs are close and different-identity pairs are far. Then &quot;recognise&quot; by distance.
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Embedder(nn.Module):
+    &quot;&quot;&quot;Shared CNN that maps an image -&gt; a small L2-normalised embedding vector.&quot;&quot;&quot;
+    def __init__(self, emb_dim=128):
+        super().__init__()
+        self.body = nn.Sequential(
+            nn.Conv2d(1, 32, 3, padding=1), nn.ReLU(inplace=True), nn.MaxPool2d(2),
+            nn.Conv2d(32, 64, 3, padding=1), nn.ReLU(inplace=True), nn.MaxPool2d(2),
+            nn.Conv2d(64, 128, 3, padding=1), nn.ReLU(inplace=True), nn.AdaptiveAvgPool2d(1),
+        )
+        self.fc = nn.Linear(128, emb_dim)
+
+    def forward(self, x):
+        x = self.body(x).flatten(1)
+        return F.normalize(self.fc(x), p=2, dim=1)   # unit-length embeddings
+
+
+class Siamese(nn.Module):
+    &quot;&quot;&quot;SAME weights process both images (that&#x27;s the &#x27;Siamese&#x27; twin trick).&quot;&quot;&quot;
+    def __init__(self, emb_dim=128):
+        super().__init__()
+        self.embed = Embedder(emb_dim)
+
+    def forward(self, a, b):
+        return self.embed(a), self.embed(b)
+
+
+def contrastive_loss(za, zb, label, margin=1.0):
+    &quot;&quot;&quot;label=1 -&gt; same identity (pull together); label=0 -&gt; different (push apart).&quot;&quot;&quot;
+    d = F.pairwise_distance(za, zb)
+    same = label * d.pow(2)
+    diff = (1 - label) * F.relu(margin - d).pow(2)
+    return (same + diff).mean()
+
+
+if __name__ == &quot;__main__&quot;:
+    net = Siamese(emb_dim=128)
+    a = torch.randn(4, 1, 64, 64)
+    b = torch.randn(4, 1, 64, 64)
+    label = torch.tensor([1., 0., 1., 0.])         # 1=same person, 0=different
+    za, zb = net(a, b)
+    print(&quot;embedding shape:&quot;, tuple(za.shape))
+    print(&quot;pair distances :&quot;, [round(x, 3) for x in F.pairwise_distance(za, zb).tolist()])
+    print(&quot;contrastive loss:&quot;, round(contrastive_loss(za, zb, label).item(), 4))
+    # Verify (one-shot): enrol ONE photo per person as a reference embedding, then a new
+    # photo is &quot;person X&quot; if its distance to X&#x27;s embedding is below a threshold. No
+    # retraining needed to add a new person -&gt; that&#x27;s the power of metric learning.
+    # Modern upgrade: swap contrastive for a TRIPLET loss (anchor/positive/negative).
+</code></pre></div></div>
+<div class="tab-content " id="p9-results" data-tabpanel="p9"><p>After training, same-identity pairs show small distances and different pairs large ones. You can add a brand-new identity with a single photo — no retraining — and verify it correctly.</p><div class="box good"><span class="bt">Definition of done</span>A clear distance gap between same and different pairs, and correct one-shot verification of an identity never seen in training.</div></div>
+<div class="tab-content " id="p9-pitfalls" data-tabpanel="p9"><div class="box bad"><span class="bt">Watch for</span></div><ul><li>Easy pairs dominate training — use hard-negative mining so the model actually learns.</li><li>Forgetting to L2-normalise embeddings makes the distance threshold unstable.</li><li>One fixed threshold rarely fits all conditions — calibrate on a validation set.</li><li>Data leakage: the same identity must not appear in both train and test splits.</li></ul></div>
+<div class="tab-content " id="p9-stretch" data-tabpanel="p9"><ul><li>Switch contrastive → <strong>triplet loss</strong> (anchor/positive/negative) and compare.</li><li>Add an SE attention block (Reference §11) to the embedder and measure the gain.</li><li>Build a tiny enrol/verify demo app with a webcam capture.</li></ul></div>
+</div></section>
+
+<section class="section" id="p6">
+<h2><span class="sec-no">9</span>Capstone: packaging defect detector<span class="lvl x">Capstone</span></h2>
+<div class="proj-meta"><span>🏭 real-world</span><span>⏱ a weekend</span><span>🎯 deployable model</span><span>🧩 transfer + Grad-CAM + ONNX</span></div>
+<div class="tabs" data-tabgroup="p6"><div class="tab-nav">
+<button class="active" data-target="p6-about" onclick="switchTab('p6','p6-about')">About</button>
+<button class="" data-target="p6-steps" onclick="switchTab('p6','p6-steps')">Steps</button>
+<button class="" data-target="p6-code" onclick="switchTab('p6','p6-code')">Code</button>
+<button class="" data-target="p6-results" onclick="switchTab('p6','p6-results')">Results</button>
+<button class="" data-target="p6-pitfalls" onclick="switchTab('p6','p6-pitfalls')">Pitfalls</button>
+<button class="" data-target="p6-stretch" onclick="switchTab('p6','p6-stretch')">Stretch</button>
+</div>
+<div class="tab-content active" id="p6-about" data-tabpanel="p6"><p>The whole series in one build: a classifier that flags defective product packaging/labels from photos — exactly the kind of supply-chain quality check that runs on a factory line. It combines transfer learning, class-imbalance handling, the right metrics, Grad-CAM for operator trust, and an ONNX export for deployment.</p><div class="box info"><span class="bt">What you'll learn</span>How the pieces fit into a system: rare-defect imbalance, recall over accuracy, interpretability for trust, and train/serve preprocessing parity.</div><p>Pulls together Reference <a href="2_cnn_reference.html#transfer">§13</a>, <a href="2_cnn_reference.html#evaluation">§16</a>, <a href="2_cnn_reference.html#interpretability">§17</a>, and <a href="2_cnn_reference.html#production">§23</a>.</p></div>
+<div class="tab-content" id="p6-steps" data-tabpanel="p6"><ol><li>Collect/organise images into <code class="inline">ok</code> and <code class="inline">defect</code> folders (defects will be rare — that's the point).</li><li>Transfer-learn an EfficientNet-V2-S head; oversample the defect class with a <code class="inline">WeightedRandomSampler</code>.</li><li>Evaluate with <strong>precision/recall and PR-AUC</strong>, not accuracy — and tune the threshold to the cost of a missed defect.</li><li>Run Grad-CAM (Project 5) on flagged items so a line operator can see <em>why</em> it flagged.</li><li>Export to ONNX and verify the deployed preprocessing matches <code class="inline">weights.transforms()</code> exactly.</li></ol></div>
+<div class="tab-content" id="p6-code" data-tabpanel="p6"><div class="code-block"><div class="code-head"><span class="lang">Project 6 — capstone defect detector</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># Project 6 — Capstone: packaging/label defect detector (transfer + Grad-CAM + export)
+import torch, torch.nn as nn
+from torchvision import models, datasets
+from torchvision.models import EfficientNet_V2_S_Weights
+from torch.utils.data import DataLoader, WeightedRandomSampler
+
+device = &quot;cuda&quot; if torch.cuda.is_available() else &quot;cpu&quot;
+weights = EfficientNet_V2_S_Weights.DEFAULT
+preprocess = weights.transforms()
+
+# data/{train,val}/{ok,defect}/*.jpg   (defects are rare -&gt; handle imbalance)
+train_ds = datasets.ImageFolder(&quot;data/train&quot;, transform=preprocess)
+counts = torch.bincount(torch.tensor(train_ds.targets))
+w = (1.0 / counts.float())[train_ds.targets]            # oversample the rare class
+sampler = WeightedRandomSampler(w, len(w), replacement=True)
+train_dl = DataLoader(train_ds, batch_size=32, sampler=sampler)
+
+model = models.efficientnet_v2_s(weights=weights)
+for p in model.parameters(): p.requires_grad = False
+model.classifier[1] = nn.Linear(model.classifier[1].in_features, 2)
+model = model.to(device)
+opt = torch.optim.AdamW(model.classifier.parameters(), lr=1e-3, weight_decay=1e-2)
+lossf = nn.CrossEntropyLoss(label_smoothing=0.05)
+# train head -&gt; fine-tune top block -&gt; evaluate with PRECISION/RECALL, not accuracy
+# (1% defects =&gt; 99% accuracy by predicting &quot;ok&quot; always. Track recall on defects!)
+
+# Deploy: fuse + export to ONNX for the line PC.
+example = torch.randn(1, 3, 384, 384, device=device)
+model.eval()
+torch.onnx.export(model, example, &quot;defect_detector.onnx&quot;,
+                  input_names=[&quot;image&quot;], output_names=[&quot;logits&quot;], opset_version=18)
+# Then: verify the deployed preprocessing matches `preprocess` EXACTLY (Reference §21).</code></pre></div></div>
+<div class="tab-content" id="p6-results" data-tabpanel="p6"><p>A well-built version reaches high recall on defects while keeping false alarms manageable. The deliverable isn't a number — it's a model that exports cleanly and explains its calls.</p><div class="box good"><span class="bt">Definition of done</span>Defect recall meets your target, the ONNX model loads and matches the PyTorch output, and Grad-CAM overlays land on the actual defect region.</div></div>
+<div class="tab-content" id="p6-pitfalls" data-tabpanel="p6"><div class="box bad"><span class="bt">Watch for</span></div><ul><li><strong>Reporting accuracy</strong> on 1% defects — predicting "ok" always scores 99% and catches zero defects. Track recall.</li><li>Train/serve skew: a different resize or channel order between training and the line PC silently degrades it (Reference §21).</li><li>Backgrounds that correlate with defects (one camera station for rejects) — Grad-CAM will expose this; fix the data.</li><li>No drift monitoring — lighting and packaging change over time; capture hard cases and retrain.</li></ul></div>
+<div class="tab-content" id="p6-stretch" data-tabpanel="p6"><ul><li>Add temperature scaling so the confidence score is trustworthy for thresholding.</li><li>Quantise to INT8 and measure the speed/accuracy trade for the line PC.</li><li>Wrap it in a tiny service that returns label + confidence + Grad-CAM image per photo.</li></ul></div>
+</div></section>
+
+<section id="roadmap">
+<h2>Where to go after</h2>
+<p>You've climbed from a from-scratch convolution all the way to a deployable defect detector. Here's how to keep the altitude — what to revisit, what to build next, and where the real datasets live.</p>
+
+<div class="box levelup"><span class="bt">↩ Level up — close the loop</span>Every project here leans on the <a href="2_cnn_reference.html">Reference</a>, and the Reference itself builds on forward-pass and backprop from the <a href="../ann/2_neural_network_foundations.html">Neural-Network Foundations</a> guide. Quick revision: the <a href="4_cnn_field_card.html">Field Card</a>. If any step felt shaky, that's the ladder back down to solid ground.</div>
+
+<h3>Cement what you built</h3>
+<ul>
+<li><strong>Re-derive one gradient by hand.</strong> Take the conv backward pass from Project&nbsp;2 and reconcile it with Reference <a href="2_cnn_reference.html#backprop">§08</a>. If you can explain why a conv's backward pass is itself a convolution, the rest is bookkeeping.</li>
+<li><strong>Break something on purpose.</strong> Remove the <code class="inline">WeightedRandomSampler</code> from Project&nbsp;6 and watch defect recall collapse while accuracy stays high — the imbalance trap from Reference <a href="2_cnn_reference.html#evaluation">§16</a> made real.</li>
+<li><strong>Swap the backbone.</strong> Re-run Project&nbsp;4 with ConvNeXt-V2 or MobileNet-V4 from <code class="inline">timm</code> and compare accuracy, size, and latency. Reference <a href="2_cnn_reference.html#architectures">§12</a> is your map.</li>
+</ul>
+
+<h3>The next rung — beyond classification</h3>
+<div class="proj-track">
+<div class="pt"><b>Detection</b>boxes, not labels — try a YOLO or DETR fine-tune</div>
+<div class="pt"><b>Segmentation</b>per-pixel masks — U-Net or SAM-style</div>
+<div class="pt"><b>Self-supervised</b>pretrain without labels — DINOv2 / MAE</div>
+<div class="pt"><b>Vision transformers</b>where conv inductive bias ends — Reference §18</div>
+</div>
+<p>These all reuse what you have: a backbone, a loss, an eval loop, and a deployment story. Reference <a href="2_cnn_reference.html#beyond">§20</a> sketches the conceptual jump from "what is it?" to "where is it?" and "which pixels?".</p>
+
+<h3>Real datasets to graduate onto</h3>
+<ul>
+<li><strong>CIFAR-100 / Tiny-ImageNet</strong> — same pipeline as Project&nbsp;3, more classes and harder confusions.</li>
+<li><strong>Imagenette / Imagewoof</strong> — small, honest stand-ins for ImageNet; perfect for transfer-learning experiments (Project&nbsp;4).</li>
+<li><strong>MVTec AD</strong> — the industrial anomaly-detection benchmark; the closest public analogue to Project&nbsp;6's packaging-defect task.</li>
+<li><strong>Your own photos</strong> — 200 images in two folders is enough to feel the whole loop end-to-end. Nothing teaches faster than your own messy data.</li>
+</ul>
+
+<div class="box good"><span class="bt">The honest finish line</span>You don't "finish" CNNs — you reach the point where a new vision problem looks like a pipeline you already know: load, augment, transfer, train, evaluate on the <em>right</em> metric, interpret, export. That instinct is the whole goal of this trio.</div>
+
+<div class="crosslink-banner">
+<strong>The climb, one more time:</strong>
+<a href="1_cnn_primer.html">🧒 Visual Primer</a> — the intuition ·
+<a href="2_cnn_reference.html">🎓 Reference</a> — the depth ·
+<a href="../ann/2_neural_network_foundations.html">↩ NN Foundations</a> — the bedrock.
+</div>
+</section>
+
+<footer class="foot">
+<p><strong>CNN Projects</strong> — part of the Foundations study series. Pairs with the <a href="1_cnn_primer.html">Visual Primer</a> (start here if it's new) and the <a href="2_cnn_reference.html">Reference</a> (the depth behind every step). Builds on the <a href="../ann/2_neural_network_foundations.html">Neural-Network Foundations</a> guide.</p>
+<p>All nine projects run on current 2026 APIs (PyTorch 2.11, torchvision 0.27 transforms v2, timm 1.0, Keras 3). Project 2's from-scratch convolution matches PyTorch to floating-point precision.</p>
+</footer>
+</main>
+</div>
+
+<button class="totop" id="toTop" onclick="scrollTop()" aria-label="Back to top">↑</button>
+
+<div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
+<button class="zoom-close" onclick="closeZoom()" aria-label="Close">×</button>
+<div id="zoomHolder"></div>
+</div>
+
+<script>
+// ===== THEME (localStorage wrapped) =====
+(function(){
+  var KEY='vidyalaya-theme';
+  try{var s=localStorage.getItem(KEY);if(s)document.documentElement.setAttribute('data-theme',s);}catch(e){}
+  window.toggleTheme=function(){
+    var cur=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',cur);
+    try{localStorage.setItem(KEY,cur);}catch(e){}
+    var b=document.getElementById('themeBtn');if(b)b.textContent=cur==='light'?'🌙 Dark':'☀️ Light';
+  };
+})();
+// ===== TOC DRAWER =====
+function toggleTOC(){
+  var t=document.getElementById('toc'),b=document.getElementById('backdrop');
+  if(!t)return;t.classList.toggle('open');if(b)b.classList.toggle('show');
+}
+function closeTOC(){
+  var t=document.getElementById('toc'),b=document.getElementById('backdrop');
+  if(t)t.classList.remove('open');if(b)b.classList.remove('show');
+}
+// ===== COPY =====
+function copyCode(btn){
+  var pre=btn.closest('.code-block').querySelector('pre');
+  var txt=pre.innerText;
+  navigator.clipboard.writeText(txt).then(function(){
+    var o=btn.textContent;btn.textContent='✓ Copied';setTimeout(function(){btn.textContent=o;},1500);
+  }).catch(function(){
+    var o=btn.textContent;btn.textContent='⌘C to copy';setTimeout(function(){btn.textContent=o;},1500);
+  });
+}
+// ===== TABS =====
+function switchTab(group,id){
+  var nav=document.querySelector('[data-tabgroup="'+group+'"]');
+  if(nav){nav.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+    var ab=nav.querySelector('[data-target="'+id+'"]');if(ab)ab.classList.add('active');}
+  var sel=document.querySelectorAll('[data-tabpanel="'+group+'"]');
+  sel.forEach(function(p){p.classList.remove('active');});
+  var t=document.getElementById(id);if(t)t.classList.add('active');
+}
+// ===== Q&A FILTER =====
+function filterQA(cat,btn){
+  document.querySelectorAll('.qa-filters button').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.qa-item').forEach(function(it){
+    var ic=it.getAttribute('data-cat')||'',itier=it.getAttribute('data-tier')||'';
+    var show=(cat==='all')||(ic.indexOf(cat)>-1)||(itier===cat);
+    it.style.display=show?'':'none';
+  });
+}
+// ===== ZOOM =====
+function zoomViz(btn){
+  var svg=btn.closest('.viz-container').querySelector('svg').cloneNode(true);
+  var ov=document.getElementById('zoomOverlay');
+  var holder=document.getElementById('zoomHolder');
+  holder.innerHTML='';holder.appendChild(svg);ov.classList.add('show');
+}
+function closeZoom(){document.getElementById('zoomOverlay').classList.remove('show');}
+// ===== ACTIVE SECTION + BACK TO TOP =====
+document.addEventListener('DOMContentLoaded',function(){
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  var map={};links.forEach(function(a){var h=a.getAttribute('href');if(h&&h.charAt(0)==='#')map[h.slice(1)]=a;});
+  var secs=[].slice.call(document.querySelectorAll('section.section'));
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){a.classList.remove('active');});
+          var a=map[e.target.id];if(a){a.classList.add('active');}
+        }
+      });
+    },{rootMargin:'-40% 0px -55% 0px'});
+    secs.forEach(function(s){obs.observe(s);});
+  }
+  var tt=document.getElementById('toTop');
+  window.addEventListener('scroll',function(){
+    if(tt){if(window.scrollY>600)tt.classList.add('show');else tt.classList.remove('show');}
+  },{passive:true});
+  // close drawer on link tap (mobile)
+  links.forEach(function(a){a.addEventListener('click',function(){if(window.innerWidth<=1250)closeTOC();});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeZoom();closeTOC();}});
+});
+function scrollTop(){window.scrollTo({top:0,behavior:'smooth'});}
+
+</script>
+</body>
+</html>

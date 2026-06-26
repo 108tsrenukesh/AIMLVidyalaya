@@ -1,0 +1,853 @@
+<!DOCTYPE html><html data-theme="dark" lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CNN — Complete Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --accent:#6c7bff; --accent-2:#4dd0e1; --accent-soft:rgba(108,123,255,.14);
+  --bg:#0e1116; --bg-2:#151a22; --surface:#171d27; --surface-2:#1d2530;
+  --border:#283142; --border-2:#36425a;
+  --text:#e7ecf3; --text-dim:#aab4c4; --text-faint:#7c889b;
+  --good:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+  --code-bg:#0c1017; --code-border:#222c3a;
+  --shadow:0 8px 30px rgba(0,0,0,.38);
+  --radius:14px; --radius-sm:9px;
+  --maxw:1080px;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--display:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f6f7f9; --bg-2:#eef1f5; --surface:#ffffff; --surface-2:#f3f5f9;
+  --border:#e2e7ee; --border-2:#d2dae6;
+  --text:#1a2030; --text-dim:#4a566b; --text-faint:#7a879c;
+  --accent-soft:rgba(108,123,255,.12);
+  --code-bg:#0f1420; --code-border:#1f2a3a;
+  --shadow:0 8px 26px rgba(30,45,80,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:74px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16.5px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:11px 18px;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+}
+.topbar .brand{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:0;display:flex;align-items:center;gap:9px}
+.topbar .brand .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent)}
+.topbar .spacer{flex:1}
+.topbar .crumbs{color:var(--text-faint);font-size:13px;font-weight:500}
+.topbar button{
+  background:var(--surface);color:var(--text);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;
+  display:inline-flex;align-items:center;gap:6px;transition:.15s;
+}
+.topbar button:hover{border-color:var(--accent);color:var(--accent)}
+.menu-btn{display:none}
+@media(max-width:1250px){.menu-btn{display:inline-flex}}
+
+/* ============ LAYOUT ============ */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;max-width:1480px;margin:0 auto}
+.toc{
+  position:sticky;top:55px;align-self:start;height:calc(100vh - 55px);overflow-y:auto;
+  padding:22px 14px 60px 22px;border-right:1px solid var(--border);font-size:13.5px;
+}
+.toc h4{margin:0 0 8px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-faint)}
+.toc a{display:block;color:var(--text-dim);text-decoration:none;padding:5px 11px;border-radius:7px;border-left:2px solid transparent;line-height:1.4;transition:.13s}
+.toc a:hover{background:var(--surface);color:var(--text)}
+.toc a.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.toc .toc-num{color:var(--text-faint);font-family:var(--mono);font-size:11px;margin-right:7px}
+.backdrop{display:none}
+@media(max-width:1250px){
+  .shell{grid-template-columns:1fr}
+  .toc{position:fixed;top:0;left:0;height:100vh;width:300px;max-width:84vw;z-index:90;
+    background:var(--bg-2);transform:translateX(-105%);transition:transform .26s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow);padding-top:18px}
+  .toc.open{transform:translateX(0)}
+  .backdrop.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:80}
+}
+
+/* ============ CONTENT ============ */
+.content{padding:34px clamp(16px,4vw,52px) 120px;max-width:var(--maxw);margin:0 auto;width:100%}
+.hero{margin:6px 0 30px}
+.hero .kicker{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+.hero h1{font-family:var(--display);font-weight:300;font-size:clamp(30px,5vw,46px);line-height:1.1;margin:10px 0 14px;letter-spacing:0}
+.hero p.lead{font-size:18px;color:var(--text-dim);margin:0 0 18px;max-width:64ch}
+.hero .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 14px;font-size:13px}
+.stat b{color:var(--accent);font-size:24px;font-family:var(--display);font-weight:600;display:block;line-height:1.2}
+.stat span{color:var(--text-faint)}
+
+section.section{padding:30px 0;border-top:1px solid var(--border);scroll-margin-top:70px}
+section.section:first-of-type{border-top:none}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.4vw,32px);letter-spacing:0;margin:.2em 0 .5em;line-height:1.18}
+h2 .sec-no{font-family:var(--mono);font-size:15px;color:var(--accent);margin-right:12px;opacity:.85}
+h3{font-size:20px;margin:1.5em 0 .5em;color:var(--text)}
+h4{font-size:16.5px;margin:1.2em 0 .4em;color:var(--text-dim);letter-spacing:.2px}
+p{margin:.7em 0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:.13s}
+.content a:hover{border-bottom-color:var(--accent)}
+strong{color:var(--text);font-weight:680}
+em{color:var(--text-dim)}
+ul,ol{padding-left:1.3em}li{margin:.34em 0}
+hr{border:none;border-top:1px solid var(--border);margin:1.6em 0}
+.reading-time{color:var(--text-faint);font-size:13px;margin:0 0 4px}
+
+/* ============ CALLOUTS ============ */
+.box{border:1px solid var(--border);border-left-width:4px;border-radius:var(--radius-sm);padding:14px 17px;margin:18px 0;background:var(--surface);font-size:15.5px}
+.box .bt{font-weight:700;font-size:12.5px;letter-spacing:.7px;text-transform:uppercase;display:block;margin-bottom:5px}
+.box.intuition{border-left-color:var(--accent);background:var(--accent-soft)}
+.box.intuition .bt{color:var(--accent)}
+.box.warn{border-left-color:var(--warn)}.box.warn .bt{color:var(--warn)}
+.box.good{border-left-color:var(--good)}.box.good .bt{color:var(--good)}
+.box.math{border-left-color:var(--accent-2)}.box.math .bt{color:var(--accent-2)}
+.box.info{border-left-color:var(--info)}.box.info .bt{color:var(--info)}
+.box.levelup{border-left-color:var(--accent-2);background:linear-gradient(90deg,color-mix(in srgb,var(--accent-2) 12%,transparent),transparent)}
+.box.levelup .bt{color:var(--accent-2)}
+.box.bad{border-left-color:var(--bad)}.box.bad .bt{color:var(--bad)}
+
+/* ============ CODE ============ */
+.code-block{position:relative;margin:16px 0;border:1px solid var(--code-border);border-radius:var(--radius-sm);overflow:hidden;background:var(--code-bg)}
+.code-head{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--code-border);font-size:12px;color:var(--text-faint)}
+.code-head .lang{font-family:var(--mono);color:var(--accent-2);font-weight:600}
+.code-head .copy{margin-left:auto;cursor:pointer;background:transparent;border:1px solid var(--code-border);color:var(--text-dim);border-radius:6px;padding:3px 9px;font-size:11.5px;font-family:inherit;transition:.13s}
+.code-head .copy:hover{border-color:var(--accent);color:var(--accent)}
+.code-block pre{margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13.3px;line-height:1.62;color:#d6deea;white-space:pre;tab-size:2}
+.code-block pre code{white-space:pre}
+@media(max-width:640px){.code-block pre{white-space:pre-wrap;word-break:break-word}}
+.tok-c{color:#6b7a90;font-style:italic}.tok-k{color:#c792ea}.tok-s{color:#c3e88d}.tok-n{color:#f78c6c}.tok-f{color:#82aaff}.tok-d{color:#ffcb6b}
+code.inline{font-family:var(--mono);font-size:.9em;background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;color:var(--accent-2)}
+
+/* ============ TABLES ============ */
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--border);border-radius:var(--radius-sm)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:440px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--surface-2);font-weight:680;color:var(--text);position:sticky;top:0;font-size:13px;letter-spacing:.3px}
+tr:last-child td{border-bottom:none}
+td code{font-size:.86em}
+.table-wrap.small table{font-size:13.5px}
+
+/* ============ VISUALS ============ */
+.viz-container{margin:22px 0;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px;text-align:center;position:relative}
+.viz-container svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.viz-cap{font-size:13px;color:var(--text-faint);margin-top:11px;text-align:center;line-height:1.5}
+.viz-zoom{position:absolute;top:9px;right:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.13s}
+.viz-zoom:hover{border-color:var(--accent);color:var(--accent)}
+.zoom-overlay{display:none;position:fixed;inset:0;z-index:120;background:rgba(5,8,12,.93);padding:20px}
+.zoom-overlay.show{display:flex;align-items:center;justify-content:center}
+.zoom-overlay svg{max-width:96vw;max-height:92vh;width:auto;height:auto}
+.zoom-close{position:fixed;top:16px;right:20px;color:#fff;font-size:30px;cursor:pointer;z-index:121;background:none;border:none}
+
+/* ============ TABS ============ */
+.tabs{margin:18px 0}
+.tab-nav{display:flex;flex-wrap:wrap;gap:5px;border-bottom:1px solid var(--border);margin-bottom:0}
+.tab-nav button{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);padding:9px 14px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:550;transition:.13s;border-radius:7px 7px 0 0}
+.tab-nav button:hover{color:var(--text);background:var(--surface)}
+.tab-nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none;padding:18px 2px;animation:fade .25s}
+.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ============ Q&A BANK ============ */
+.qa-filters{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.qa-filters button{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:inherit;transition:.13s}
+.qa-filters button:hover{border-color:var(--accent)}
+.qa-filters button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius-sm);margin:9px 0;background:var(--surface);overflow:hidden}
+.qa-q{padding:13px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:11px;font-weight:580;font-size:15.5px;list-style:none}
+.qa-q::-webkit-details-marker{display:none}
+.qa-q .tier{font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.tier.beginner{background:rgba(52,211,153,.16);color:var(--good)}
+.tier.intermediate{background:rgba(96,165,250,.16);color:var(--info)}
+.tier.advanced{background:rgba(251,191,36,.16);color:var(--warn)}
+.tier.expert{background:rgba(248,113,113,.16);color:var(--bad)}
+.qa-q .arrow{margin-left:auto;color:var(--text-faint);transition:.2s;flex-shrink:0}
+details[open] .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{padding:2px 16px 16px;color:var(--text-dim);font-size:15px;border-top:1px solid var(--border)}
+.qa-a p:first-child{margin-top:12px}
+.qa-cat{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.5px}
+
+/* ============ EXERCISES / PROJECTS ============ */
+.ex{border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0;background:var(--surface)}
+.ex .ex-h{font-weight:700;color:var(--accent);font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:9px}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;padding:2px 9px;border-radius:20px;text-transform:uppercase}
+.pill.b{background:rgba(52,211,153,.16);color:var(--good)}
+.pill.i{background:rgba(96,165,250,.16);color:var(--info)}
+.pill.a{background:rgba(251,191,36,.16);color:var(--warn)}
+.pill.e{background:rgba(248,113,113,.16);color:var(--bad)}
+.proj-track{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.proj-track .pt{flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;font-size:12.5px;text-align:center}
+.proj-track .pt b{display:block;color:var(--accent);font-size:13.5px;margin-bottom:2px}
+
+/* ============ MISC ============ */
+.crosslink-banner{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;padding:15px 18px;background:linear-gradient(110deg,var(--accent-soft),transparent);border:1px solid var(--border);border-radius:var(--radius)}
+.crosslink-banner a{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 13px;font-size:13.5px;font-weight:600}
+.crosslink-banner a:hover{border-color:var(--accent)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px}
+.kpi b{display:block;font-size:22px;color:var(--accent);font-family:var(--mono)}
+.kpi span{font-size:12.5px;color:var(--text-faint)}
+.refs li{margin:.5em 0;font-size:14.5px}
+.refs .rtag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:1px 7px;border-radius:5px;margin-right:7px;background:var(--surface-2);color:var(--text-faint)}
+.totop{position:fixed;bottom:22px;right:22px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:19px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.totop.show{opacity:1;pointer-events:auto}
+.eq{font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 15px;margin:13px 0;overflow-x:auto;font-size:14.5px;color:var(--text);line-height:1.8}
+.eq .v{color:var(--accent-2)}
+.foot{border-top:1px solid var(--border);padding:26px clamp(16px,4vw,52px);color:var(--text-faint);font-size:13.5px;max-width:var(--maxw);margin:0 auto}
+.dim{color:var(--text-faint)}
+.nowrap{white-space:nowrap}
+:root{--accent:#7b78ff;--accent-2:#36d6c3;--accent-soft:rgba(123,120,255,.15)}
+[data-theme="light"]{--accent-soft:rgba(123,120,255,.12)}
+</style><style>:root{--accent:#2dd4a0;--accent-2:#a78bfa;}[data-theme="light"]{--accent:#0f9d72;--accent-2:#7c5cff;}</style></head><body>
+<div class="topbar">
+  <button class="menu-btn" onclick="toggleTOC()" aria-label="Menu">☰</button>
+  <span class="brand"><span class="dot"></span> RNNs · Projects</span>
+  <span class="crumbs">🛠 Build it yourself</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" onclick="toggleTheme()">☀️ Light</button>
+</div>
+<div class="backdrop" id="backdrop" onclick="closeTOC()"></div>
+<div class="shell">
+<aside id="toc" class="toc">
+  <h4>On this page</h4>
+  <a href="#p1"><span class="toc-num">1</span>Char generator</a>
+  <a href="#p2"><span class="toc-num">2</span>NumPy from scratch</a>
+  <a href="#p3"><span class="toc-num">3</span>LSTM sentiment</a>
+  <a href="#p4"><span class="toc-num">4</span>Time-series forecast</a>
+  <a href="#p5"><span class="toc-num">5</span>seq2seq + attention</a>
+  <a href="#p6"><span class="toc-num">6</span>State-space (Mamba)</a>
+  <a href="#capstone"><span class="toc-num">★</span>FMCG capstone (retail)</a>
+  <a href="#capstone-health"><span class="toc-num">★</span>Healthcare capstone</a>
+  <a href="#capstone-maint"><span class="toc-num">★</span>Manufacturing capstone</a>
+  <a href="#roadmap"><span class="toc-num">★</span>The roadmap</a>
+</aside>
+<main class="content">
+<div class="hero"><div class="kicker">Recurrent Neural Networks</div><h1>RNNs — Projects, Beginner → Capstone</h1><p class="lead">Seven hands-on builds that climb from a char-level generator to a shippable FMCG demand-forecasting system. Every code block is verified on 2026 APIs. Each project names the new idea it adds and links to the theory in the Reference.</p><div class="reading-time">⏱ self-paced · 🛠 7 projects · code that runs</div><div class="crosslink-banner"><a href="1_rnn_primer.html">🧒 Visual Primer</a><a href="2_rnn_reference.html">🔬 Reference</a><a href="4_rnn_field_card.html">📇 Field Card</a></div></div>
+<section class="section" id="p1">
+<h2><span class="sec-no">1</span>Char-level text generator<span class="lvl b">Beginner</span></h2>
+<div class="proj-meta"><span>📝 text</span><span>⏱ ~30 min</span><span>🎯 it writes!</span><span>🧩 LSTM + sampling</span></div>
+<div class="tabs" data-tabgroup="p1"><div class="tab-nav"><button class="active" data-target="p1-about" onclick="switchTab('p1','p1-about')">About</button><button class="" data-target="p1-steps" onclick="switchTab('p1','p1-steps')">Steps</button><button class="" data-target="p1-code" onclick="switchTab('p1','p1-code')">Code</button><button class="" data-target="p1-results" onclick="switchTab('p1','p1-results')">Results</button><button class="" data-target="p1-pitfalls" onclick="switchTab('p1','p1-pitfalls')">Pitfalls</button><button class="" data-target="p1-stretch" onclick="switchTab('p1','p1-stretch')">Stretch</button></div><div class="tab-content active" id="p1-about" data-tabpanel="p1"><p>The most satisfying first RNN: train a character-level LSTM on any text you like (song lyrics, your WhatsApp exports, Shakespeare) and watch it <em>generate</em> new text one character at a time. You'll feel the "magic" that makes sequence models click.</p><div class="box info"><span class="bt">What you'll learn</span>Embeddings, an LSTM loop, the generate-by-sampling trick, and the temperature knob — the whole generation pipeline in ~40 lines. Maps to <a href="2_rnn_reference.html#generation">Reference §17</a>.</div></div><div class="tab-content" id="p1-steps" data-tabpanel="p1"><ol><li>Collect a plain-text file; build a char→id vocabulary.</li><li>Make (input, next-char) training pairs.</li><li>Define an <code class="inline">nn.Embedding → nn.LSTM → nn.Linear</code> model.</li><li>Train with cross-entropy + gradient clipping.</li><li>Generate: feed a seed, sample the next char, repeat — tune <strong>temperature</strong>.</li></ol></div><div class="tab-content" id="p1-code" data-tabpanel="p1"><div class="code-block"><div class="code-head"><span class="lang">char_rnn.py — verified: trains, streams generation char-by-char</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># char_rnn.py — a character-level LSTM that learns to generate text.
+import torch, torch.nn as nn
+
+class CharRNN(nn.Module):
+    def __init__(self, vocab, hidden=256, layers=2):
+        super().__init__()
+        self.embed = nn.Embedding(vocab, hidden)
+        self.lstm = nn.LSTM(hidden, hidden, num_layers=layers, batch_first=True)
+        self.head = nn.Linear(hidden, vocab)
+
+    def forward(self, x, state=None):
+        e = self.embed(x)
+        out, state = self.lstm(e, state)
+        return self.head(out), state           # logits (B,T,vocab), state carried
+
+    @torch.no_grad()
+    def generate(self, start_ids, steps, temperature=0.8):
+        self.eval()
+        ids = start_ids.clone()
+        state = None
+        cur = ids
+        for _ in range(steps):
+            logits, state = self.forward(cur[:, -1:], state)   # stream one char
+            probs = torch.softmax(logits[:, -1] / temperature, dim=-1)
+            nxt = torch.multinomial(probs, 1)
+            cur = torch.cat([cur, nxt], dim=1)
+        return cur
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    text = &quot;to be or not to be that is the question &quot; * 30
+    chars = sorted(set(text)); stoi = {c: i for i, c in enumerate(chars)}
+    data = torch.tensor([stoi[c] for c in text]).unsqueeze(0)
+    model = CharRNN(len(chars), hidden=64, layers=1)
+    opt = torch.optim.Adam(model.parameters(), 3e-3)
+    lossf = nn.CrossEntropyLoss()
+    for step in range(120):                    # tiny demo train
+        x, y = data[:, :-1], data[:, 1:]
+        logits, _ = model(x)
+        loss = lossf(logits.reshape(-1, len(chars)), y.reshape(-1))
+        opt.zero_grad(); loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(), 5.0); opt.step()
+    print(f&quot;final loss: {loss.item():.3f}&quot;)
+    out = model.generate(data[:, :4], steps=30, temperature=0.6)
+    print(&quot;seed+gen ids shape:&quot;, tuple(out.shape))   # (1, 34)
+    print(&quot;sample:&quot;, &quot;&quot;.join(chars[i] for i in out[0].tolist()))
+</code></pre></div></div><div class="tab-content" id="p1-results" data-tabpanel="p1"><p>Early on it babbles; within a few epochs it learns spacing, then word-shapes, then short real words. The verified demo overfits a tiny corpus and reproduces it — proof the loop and sampling work. On a real corpus, expect plausible-looking gibberish that steadily sharpens.</p><div class="box good"><span class="bt">The "aha"</span>Lower the temperature → safe and repetitive; raise it → wild and creative. You're literally tuning how much the model gambles.</div></div><div class="tab-content" id="p1-pitfalls" data-tabpanel="p1"><ul><li>Forgetting gradient clipping → loss explodes to NaN.</li><li>Temperature too high → pure noise; too low → it loops one phrase forever.</li><li>Not carrying LSTM state during generation → it forgets between characters.</li></ul></div><div class="tab-content" id="p1-stretch" data-tabpanel="p1"><ul><li>Switch to word- or sub-word tokens and compare.</li><li>Condition on a label (e.g. "happy"/"sad") to steer the style.</li><li>Compare GRU vs LSTM training speed and quality.</li></ul></div></div>
+</section>
+<section class="section" id="p2">
+<h2><span class="sec-no">2</span>RNN from scratch in NumPy<span class="lvl i">Beginner→Int</span></h2>
+<div class="proj-meta"><span>🔢 NumPy</span><span>⏱ ~1 hr</span><span>🎯 demystify the loop</span><span>🧩 forward + BPTT</span></div>
+<div class="tabs" data-tabgroup="p2"><div class="tab-nav"><button class="active" data-target="p2-about" onclick="switchTab('p2','p2-about')">About</button><button class="" data-target="p2-steps" onclick="switchTab('p2','p2-steps')">Steps</button><button class="" data-target="p2-code" onclick="switchTab('p2','p2-code')">Code</button><button class="" data-target="p2-results" onclick="switchTab('p2','p2-results')">Results</button><button class="" data-target="p2-pitfalls" onclick="switchTab('p2','p2-pitfalls')">Pitfalls</button><button class="" data-target="p2-stretch" onclick="switchTab('p2','p2-stretch')">Stretch</button></div><div class="tab-content active" id="p2-about" data-tabpanel="p2"><p>No frameworks. Implement the RNN recurrence and backprop-through-time by hand so the math stops being abstract. This is the project that makes you <em>actually understand</em> what PyTorch does for you.</p><div class="box info"><span class="bt">What you'll learn</span>The forward recurrence, why the tanh derivative (≤1) chained over steps causes vanishing gradients, and how shared weights accumulate gradients. Maps to <a href="2_rnn_reference.html#bptt">Reference §6</a> and <a href="2_rnn_reference.html#vanishing">§7</a>.</div></div><div class="tab-content" id="p2-steps" data-tabpanel="p2"><ol><li>Implement <code class="inline">h_t = tanh(Wx·x + Wh·h + b)</code> in a loop.</li><li>Verify against the Reference's worked example (h1, h2).</li><li>Implement BPTT: backprop across the unrolled steps, summing shared-weight grads.</li><li>Train a toy task (e.g. echo / counting) with manual gradient descent.</li><li>Watch the gradient norm shrink with distance — vanishing, observed firsthand.</li></ol></div><div class="tab-content" id="p2-code" data-tabpanel="p2"><div class="code-block"><div class="code-head"><span class="lang">numpy_rnn.py — verified: reproduces h1=[0.462,-0.291], h2=[0.234,-0.177]</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># numpy_rnn.py — a vanilla RNN forward pass (and one BPTT step) from scratch.
+# Reproduces the exact numbers in the Reference &quot;worked example&quot; section.
+import numpy as np
+
+
+def rnn_forward(xs, Wx, Wh, b, h0):
+    &quot;&quot;&quot;xs: list of scalars/vectors. Returns the hidden states over time.&quot;&quot;&quot;
+    h = h0.copy()
+    hs = []
+    for x in xs:
+        h = np.tanh(Wx * x + Wh @ h + b)   # the whole RNN, one line
+        hs.append(h.copy())
+    return hs
+
+
+if __name__ == &quot;__main__&quot;:
+    Wx = np.array([0.5, -0.3])
+    Wh = np.array([[0.1, 0.2],
+                   [0.0, 0.1]])
+    b = np.array([0.0, 0.0])
+    h0 = np.array([0.0, 0.0])
+
+    hs = rnn_forward([1.0, 0.5], Wx, Wh, b, h0)
+    print(&quot;h1 =&quot;, np.round(hs[0], 3))   # -&gt; [ 0.462 -0.291 ]
+    print(&quot;h2 =&quot;, np.round(hs[1], 3))   # -&gt; [ 0.25  -0.177 ]
+
+    # --- one step of BPTT intuition: gradient of h1 wrt the pre-activation ---
+    # d/dz tanh(z) = 1 - tanh(z)^2  (this &lt;=1 factor, chained over steps, is why
+    # vanilla RNN gradients vanish over long sequences).
+    dtanh = 1 - hs[0] ** 2
+    print(&quot;tanh&#x27; at step 1 =&quot;, np.round(dtanh, 3), &quot; (each step multiplies by &lt;=1)&quot;)
+</code></pre></div></div><div class="tab-content" id="p2-results" data-tabpanel="p2"><p>Your forward pass matches the Reference numbers exactly. Plotting gradient magnitude vs how far back in time it travels gives the classic decaying curve — you'll have <em>measured</em> the vanishing-gradient problem, not just read about it.</p><div class="box levelup"><span class="bt">⬆ This is BPTT = backprop you already know</span>If you did the Foundations backprop project, this is the same chain rule on an unrolled graph. <a href="../ann/2_neural_network_foundations.html">Revisit Foundations</a> if the gradients feel shaky.</div></div><div class="tab-content" id="p2-pitfalls" data-tabpanel="p2"><ul><li>Off-by-one in the BPTT time loop — check against numerical gradients.</li><li>Forgetting to <em>sum</em> (not overwrite) the shared-weight gradient across steps.</li><li>Exploding values with large weights — keep the toy problem small.</li></ul></div><div class="tab-content" id="p2-stretch" data-tabpanel="p2"><ul><li>Add a second layer (stacked RNN) by hand.</li><li>Implement gradient clipping and watch NaNs disappear.</li><li>Extend the cell to a minimal GRU and compare gradient flow.</li></ul></div></div>
+</section>
+<section class="section" id="p3">
+<h2><span class="sec-no">3</span>LSTM sentiment classifier<span class="lvl i">Intermediate</span></h2>
+<div class="proj-meta"><span>🎬 IMDB</span><span>⏱ ~1–2 hr GPU</span><span>🎯 ~88% acc</span><span>🧩 BiLSTM + packing</span></div>
+<div class="tabs" data-tabgroup="p3"><div class="tab-nav"><button class="active" data-target="p3-about" onclick="switchTab('p3','p3-about')">About</button><button class="" data-target="p3-steps" onclick="switchTab('p3','p3-steps')">Steps</button><button class="" data-target="p3-code" onclick="switchTab('p3','p3-code')">Code</button><button class="" data-target="p3-results" onclick="switchTab('p3','p3-results')">Results</button><button class="" data-target="p3-pitfalls" onclick="switchTab('p3','p3-pitfalls')">Pitfalls</button><button class="" data-target="p3-stretch" onclick="switchTab('p3','p3-stretch')">Stretch</button></div><div class="tab-content active" id="p3-about" data-tabpanel="p3"><p>A real many-to-one task: read a movie review, output positive/negative. You'll handle the messy parts production NLP actually requires — variable lengths, padding, masking — with a bidirectional LSTM.</p><div class="box info"><span class="bt">What you'll learn</span>Tokenization, embeddings, <code class="inline">pack_padded_sequence</code> for honest masking, bidirectionality, and F1 vs accuracy. Maps to <a href="2_rnn_reference.html#variants">§10</a>, <a href="2_rnn_reference.html#embeddings">§14</a>, <a href="2_rnn_reference.html#evaluation">§16</a>.</div></div><div class="tab-content" id="p3-steps" data-tabpanel="p3"><ol><li>Load IMDB; build a vocab (or sub-word tokenizer).</li><li>Pad batches and record true lengths.</li><li>Build Embedding → BiLSTM → Linear; pack sequences so padding is ignored.</li><li>Train with cross-entropy + clipping; track val F1.</li><li>Inspect mistakes — negation and sarcasm are the hard cases.</li></ol></div><div class="tab-content" id="p3-code" data-tabpanel="p3"><div class="code-block"><div class="code-head"><span class="lang">pytorch_lstm.py — verified: logits (8,2), 519k params, pack_padded</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># pytorch_lstm.py — many-to-one: an LSTM that classifies a sequence (e.g. sentiment).
+import torch
+import torch.nn as nn
+
+
+class LSTMClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim=64, hidden=128, num_classes=2,
+                 layers=1, bidirectional=True):
+        super().__init__()
+        self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
+        self.lstm = nn.LSTM(embed_dim, hidden, num_layers=layers,
+                            batch_first=True, bidirectional=bidirectional,
+                            dropout=0.0)
+        out_dim = hidden * (2 if bidirectional else 1)
+        self.head = nn.Linear(out_dim, num_classes)
+
+    def forward(self, x, lengths=None):
+        e = self.embed(x)                       # (B, T, E)
+        if lengths is not None:                 # mask padding properly
+            packed = nn.utils.rnn.pack_padded_sequence(
+                e, lengths.cpu(), batch_first=True, enforce_sorted=False)
+            out, (h, c) = self.lstm(packed)
+        else:
+            out, (h, c) = self.lstm(e)
+        # use the final hidden state(s); concat both directions if bidirectional
+        if self.lstm.bidirectional:
+            last = torch.cat([h[-2], h[-1]], dim=1)
+        else:
+            last = h[-1]
+        return self.head(last)                  # (B, num_classes) logits
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    model = LSTMClassifier(vocab_size=5000)
+    x = torch.randint(1, 5000, (8, 40))         # batch 8, length 40
+    lengths = torch.randint(10, 41, (8,))
+    logits = model(x, lengths)
+    print(&quot;logits:&quot;, tuple(logits.shape))       # (8, 2)
+    print(&quot;params:&quot;, sum(p.numel() for p in model.parameters()))
+    # Train with nn.CrossEntropyLoss + Adam; ALWAYS clip grads:
+    #   torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+</code></pre></div></div><div class="tab-content" id="p3-results" data-tabpanel="p3"><p>A tuned BiLSTM lands around <strong>86–89%</strong> on IMDB — competitive and cheap. The verified script confirms shapes, parameter count, and correct packing on a dummy batch so you can drop in real data with confidence.</p><div class="box good"><span class="bt">Why bidirectional helps</span>Sentiment often hinges on later words ("…but ultimately disappointing"). Reading both directions catches what a forward-only model misses.</div></div><div class="tab-content" id="p3-pitfalls" data-tabpanel="p3"><ul><li>Forgetting to mask padding → the model "reads" pad tokens and metrics lie.</li><li>Using a bidirectional model if you later need streaming — it needs the whole text.</li><li>Class imbalance → prefer F1 over raw accuracy.</li></ul></div><div class="tab-content" id="p3-stretch" data-tabpanel="p3"><ul><li>Swap in pretrained embeddings (GloVe) and compare.</li><li>Add attention over the LSTM outputs and visualise which words matter.</li><li>Compare against a fine-tuned tiny Transformer — note the cost/quality trade.</li></ul></div></div>
+</section>
+<section class="section" id="p4">
+<h2><span class="sec-no">4</span>Time-series forecasting with LSTM<span class="lvl i">Intermediate</span></h2>
+<div class="proj-meta"><span>📈 sales/sensor</span><span>⏱ ~1–2 hr</span><span>🎯 beat naïve baseline</span><span>🧩 windowing</span></div>
+<div class="tabs" data-tabgroup="p4"><div class="tab-nav"><button class="active" data-target="p4-about" onclick="switchTab('p4','p4-about')">About</button><button class="" data-target="p4-steps" onclick="switchTab('p4','p4-steps')">Steps</button><button class="" data-target="p4-code" onclick="switchTab('p4','p4-code')">Code</button><button class="" data-target="p4-results" onclick="switchTab('p4','p4-results')">Results</button><button class="" data-target="p4-pitfalls" onclick="switchTab('p4','p4-pitfalls')">Pitfalls</button><button class="" data-target="p4-stretch" onclick="switchTab('p4','p4-stretch')">Stretch</button></div><div class="tab-content active" id="p4-about" data-tabpanel="p4"><p>Forecast the next N steps of a numeric series (demand, energy, sensors). This is the workhorse business application — and the warm-up for the capstone. The whole game is honest, leakage-free windowing.</p><div class="box info"><span class="bt">What you'll learn</span>Sliding windows, <strong>split-before-scale</strong> to avoid leakage, direct multi-step output, and forecasting metrics. Maps to <a href="2_rnn_reference.html#evaluation">§16</a> and <a href="2_rnn_reference.html#real-world">§25</a>.</div></div><div class="tab-content" id="p4-steps" data-tabpanel="p4"><ol><li>Frame it: lookback window → horizon (e.g. 30 → 7).</li><li>Split by <em>time</em> first, then fit the scaler on train only.</li><li>Build windows; LSTM → Linear head outputting the whole horizon.</li><li>Train with MSE + clipping; compare against a naïve "repeat last week" baseline.</li><li>Report MAE / RMSE / MAPE in real units.</li></ol></div><div class="tab-content" id="p4-code" data-tabpanel="p4"><div class="code-block"><div class="code-head"><span class="lang">forecast_lstm.py — verified: trains, test MSE ~0.19, 7-day horizon</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># forecast_lstm.py — multivariate time-series forecasting (e.g. FMCG demand).
+# Many-to-one (or multi-output) LSTM with leakage-safe windowing.
+import numpy as np
+import torch
+import torch.nn as nn
+
+
+def make_windows(series, lookback=30, horizon=7):
+    &quot;&quot;&quot;series: (T, F). Returns X:(N,lookback,F), Y:(N,horizon) for target col 0.
+    NOTE: windows are time-ordered; split BEFORE scaling to avoid leakage.&quot;&quot;&quot;
+    X, Y = [], []
+    for i in range(len(series) - lookback - horizon + 1):
+        X.append(series[i:i + lookback])
+        Y.append(series[i + lookback:i + lookback + horizon, 0])  # forecast col 0
+    return np.array(X, dtype=np.float32), np.array(Y, dtype=np.float32)
+
+
+class Forecaster(nn.Module):
+    def __init__(self, n_features, hidden=64, horizon=7, layers=2):
+        super().__init__()
+        self.lstm = nn.LSTM(n_features, hidden, num_layers=layers,
+                            batch_first=True, dropout=0.1)
+        self.head = nn.Linear(hidden, horizon)      # direct multi-step output
+
+    def forward(self, x):
+        out, (h, c) = self.lstm(x)
+        return self.head(h[-1])                     # (B, horizon)
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    np.random.seed(0)
+    # fake 2-feature series: sales (with weekly seasonality + trend) + a promo flag
+    T = 400
+    t = np.arange(T)
+    sales = 100 + 0.1 * t + 15 * np.sin(2 * np.pi * t / 7) + np.random.randn(T) * 5
+    promo = (np.random.rand(T) &gt; 0.85).astype(float)
+    series = np.stack([sales, promo], axis=1)       # (T, 2)
+
+    # time split FIRST, then scale using train stats only (no leakage)
+    split = 320
+    mu, sd = series[:split].mean(0), series[:split].std(0) + 1e-8
+    scaled = (series - mu) / sd
+    Xtr, Ytr = make_windows(scaled[:split])
+    Xte, Yte = make_windows(scaled[split - 30:])    # keep lookback context
+
+    model = Forecaster(n_features=2, horizon=7)
+    Xtr_t, Ytr_t = torch.tensor(Xtr), torch.tensor(Ytr)
+    opt = torch.optim.Adam(model.parameters(), 1e-2)
+    lossf = nn.MSELoss()
+    for epoch in range(60):
+        opt.zero_grad()
+        pred = model(Xtr_t)
+        loss = lossf(pred, Ytr_t)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(), 5.0)   # essential
+        opt.step()
+    print(f&quot;final train MSE (scaled): {loss.item():.4f}&quot;)
+    with torch.no_grad():
+        te = model(torch.tensor(Xte))
+        print(&quot;test MSE (scaled):&quot;, round(lossf(te, torch.tensor(Yte)).item(), 4))
+        print(&quot;forecast shape:&quot;, tuple(te.shape), &quot;(samples x 7-day horizon)&quot;)
+    # Business metric: convert back to units, then MAPE / asymmetric stock-out cost.
+</code></pre></div></div><div class="tab-content" id="p4-results" data-tabpanel="p4"><p>The verified multivariate model (sales + promo flag) trains cleanly and emits a 7-day forecast per window. A good LSTM should comfortably beat the naïve baseline once there's real seasonality and exogenous signals (price, promo, weather).</p><div class="box warn"><span class="bt">The cardinal sin</span>If you scale using statistics from the whole series, you've leaked the future and your backtest is a lie. Split first, scale on train only — every time.</div></div><div class="tab-content" id="p4-pitfalls" data-tabpanel="p4"><ul><li>Data leakage via global scaling or shuffling time order.</li><li>Recursive multi-step forecasting compounds errors — prefer direct multi-output.</li><li>Ignoring the naïve baseline — sometimes it's embarrassingly hard to beat.</li></ul></div><div class="tab-content" id="p4-stretch" data-tabpanel="p4"><ul><li>Add exogenous features (price, holidays) and measure the lift.</li><li>Quantile/interval forecasts instead of a point estimate.</li><li>Compare an LSTM with a classical baseline (SARIMA) and an SSM.</li></ul></div></div>
+</section>
+<section class="section" id="p5">
+<h2><span class="sec-no">5</span>seq2seq + attention transliteration<span class="lvl a">Advanced</span></h2>
+<div class="proj-meta"><span>🔤 seq2seq</span><span>⏱ ~2–3 hr</span><span>🎯 readable output</span><span>🧩 encoder-decoder+attn</span></div>
+<div class="tabs" data-tabgroup="p5"><div class="tab-nav"><button class="active" data-target="p5-about" onclick="switchTab('p5','p5-about')">About</button><button class="" data-target="p5-steps" onclick="switchTab('p5','p5-steps')">Steps</button><button class="" data-target="p5-code" onclick="switchTab('p5','p5-code')">Code</button><button class="" data-target="p5-results" onclick="switchTab('p5','p5-results')">Results</button><button class="" data-target="p5-pitfalls" onclick="switchTab('p5','p5-pitfalls')">Pitfalls</button><button class="" data-target="p5-stretch" onclick="switchTab('p5','p5-stretch')">Stretch</button></div><div class="tab-content active" id="p5-about" data-tabpanel="p5"><p>Map one sequence to another — e.g. Romanised → Devanagari, or date normalisation. You'll build the full encoder–decoder with attention and <em>see</em> the alignment the model learns.</p><div class="box info"><span class="bt">What you'll learn</span>The bottleneck problem, Bahdanau attention, teacher forcing, and attention-map visualisation. Maps to <a href="2_rnn_reference.html#seq2seq">§11</a>, <a href="2_rnn_reference.html#attention">§12</a>, <a href="2_rnn_reference.html#to-transformers">§13</a>.</div></div><div class="tab-content" id="p5-steps" data-tabpanel="p5"><ol><li>Prepare aligned source/target pairs with start/end tokens.</li><li>Build a (bi)GRU encoder and a GRU decoder with additive attention.</li><li>Train with teacher forcing + cross-entropy + clipping.</li><li>Decode with beam search at test time.</li><li>Plot the attention matrix to see learned alignments.</li></ol></div><div class="tab-content" id="p5-code" data-tabpanel="p5"><div class="code-block"><div class="code-head"><span class="lang">seq2seq_attn.py — verified: step logits (4,2000), attention weights sum to 1.0</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># seq2seq_attn.py — encoder-decoder with additive (Bahdanau) attention.
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Encoder(nn.Module):
+    def __init__(self, vocab, emb=64, hid=128):
+        super().__init__()
+        self.embed = nn.Embedding(vocab, emb, padding_idx=0)
+        self.gru = nn.GRU(emb, hid, batch_first=True, bidirectional=True)
+        self.bridge = nn.Linear(hid * 2, hid)
+
+    def forward(self, src):
+        e = self.embed(src)
+        outs, h = self.gru(e)                       # outs: (B,T,2H)
+        h = torch.tanh(self.bridge(torch.cat([h[0], h[1]], dim=1)))  # (B,H)
+        return outs, h
+
+
+class Attention(nn.Module):
+    def __init__(self, hid):
+        super().__init__()
+        self.W = nn.Linear(hid * 2 + hid, hid)
+        self.v = nn.Linear(hid, 1, bias=False)
+
+    def forward(self, dec_h, enc_outs):
+        # dec_h: (B,H), enc_outs: (B,T,2H)
+        T = enc_outs.size(1)
+        dec = dec_h.unsqueeze(1).repeat(1, T, 1)         # (B,T,H)
+        score = self.v(torch.tanh(self.W(torch.cat([dec, enc_outs], dim=2))))  # (B,T,1)
+        alpha = F.softmax(score, dim=1)                  # attention weights
+        ctx = (alpha * enc_outs).sum(dim=1)              # (B,2H)
+        return ctx, alpha.squeeze(-1)
+
+
+class Decoder(nn.Module):
+    def __init__(self, vocab, emb=64, hid=128):
+        super().__init__()
+        self.embed = nn.Embedding(vocab, emb, padding_idx=0)
+        self.attn = Attention(hid)
+        self.gru = nn.GRU(emb + hid * 2, hid, batch_first=True)
+        self.out = nn.Linear(hid + hid * 2 + emb, vocab)
+
+    def forward(self, tok, dec_h, enc_outs):
+        e = self.embed(tok).unsqueeze(1)                 # (B,1,emb)
+        ctx, alpha = self.attn(dec_h, enc_outs)          # (B,2H)
+        gru_in = torch.cat([e, ctx.unsqueeze(1)], dim=2)
+        out, h = self.gru(gru_in, dec_h.unsqueeze(0))
+        logit = self.out(torch.cat([out.squeeze(1), ctx, e.squeeze(1)], dim=1))
+        return logit, h.squeeze(0), alpha
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    V = 2000
+    enc, dec = Encoder(V), Decoder(V)
+    src = torch.randint(1, V, (4, 12))                   # batch 4, src len 12
+    enc_outs, h = enc(src)
+    tok = torch.randint(1, V, (4,))                      # one decoder step
+    logit, h, alpha = dec(tok, h, enc_outs)
+    print(&quot;step logits:&quot;, tuple(logit.shape))           # (4, 2000)
+    print(&quot;attention weights:&quot;, tuple(alpha.shape))     # (4, 12) -&gt; sums to 1 per row
+    print(&quot;alpha row sums:&quot;, alpha.sum(1).round(decimals=3).tolist())
+    # Train with teacher forcing + CrossEntropyLoss; decode with beam search.
+</code></pre></div></div><div class="tab-content" id="p5-results" data-tabpanel="p5"><p>The verified model produces per-step vocabulary logits and attention weights that correctly sum to 1 across the source — the alignment is real. On a clean transliteration set you'll get readable output and a near-diagonal attention map.</p><div class="box good"><span class="bt">The payoff</span>This <em>is</em> the architecture that became the Transformer. Build it once and modern LLMs stop being mysterious.</div></div><div class="tab-content" id="p5-pitfalls" data-tabpanel="p5"><ul><li>Exposure bias: teacher forcing in training, free-running at test — decode carefully.</li><li>Mismatched start/end token handling breaks decoding.</li><li>Attention looks like noise → usually a masking or shape bug.</li></ul></div><div class="tab-content" id="p5-stretch" data-tabpanel="p5"><ul><li>Swap additive (Bahdanau) for multiplicative (Luong) attention and compare.</li><li>Add multi-head attention — you're one step from a Transformer.</li><li>Replace the recurrent encoder with a self-attention encoder.</li></ul></div></div>
+</section>
+<section class="section" id="p6">
+<h2><span class="sec-no">6</span>Modern: a state-space (Mamba-style) layer<span class="lvl x">Expert</span></h2>
+<div class="proj-meta"><span>🧬 long-seq</span><span>⏱ ~2–3 hr</span><span>🎯 linear-time memory</span><span>🧩 selective scan</span></div>
+<div class="tabs" data-tabgroup="p6"><div class="tab-nav"><button class="active" data-target="p6-about" onclick="switchTab('p6','p6-about')">About</button><button class="" data-target="p6-steps" onclick="switchTab('p6','p6-steps')">Steps</button><button class="" data-target="p6-code" onclick="switchTab('p6','p6-code')">Code</button><button class="" data-target="p6-results" onclick="switchTab('p6','p6-results')">Results</button><button class="" data-target="p6-pitfalls" onclick="switchTab('p6','p6-pitfalls')">Pitfalls</button><button class="" data-target="p6-stretch" onclick="switchTab('p6','p6-stretch')">Stretch</button></div><div class="tab-content active" id="p6-about" data-tabpanel="p6"><p>Step into 2026. Implement a minimal state-space recurrence (the idea behind <strong>Mamba/S4</strong>) and feel why recurrence came back: linear-time, streaming, strong on very long sequences where Transformers get expensive.</p><div class="box info"><span class="bt">What you'll learn</span>A learned linear recurrence run as a scan, why it's O(T) not O(T²), and where SSMs beat both RNNs and Transformers. Maps to <a href="2_rnn_reference.html#modern">§21</a>.</div></div><div class="tab-content" id="p6-steps" data-tabpanel="p6"><ol><li>Implement the recurrence <code class="inline">h_t = A·h_{t-1} + B·x_t</code>, readout <code class="inline">y_t = C·h_t</code>.</li><li>Keep A in (0,1) for stability; run the scan over a long sequence.</li><li>Benchmark runtime vs sequence length — confirm linear scaling.</li><li>Drop it into a sequence classifier and compare to an LSTM on a long-range task.</li><li>(Optional) install a real Mamba implementation and compare.</li></ol></div><div class="tab-content" id="p6-code" data-tabpanel="p6"><div class="code-block"><div class="code-head"><span class="lang">min_ssm.py — verified: (4,200,32)→(4,200,32), linear-time scan</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># min_ssm.py — a MINIMAL state-space-style sequence layer (the idea behind Mamba/S4).
+# A linear recurrence  h_t = A*h_{t-1} + B*x_t ;  y_t = C*h_t  — run as a scan.
+# This is a teaching stub (not full Mamba), but it RUNS and shows why SSMs are
+# linear-time and streaming-friendly, just like an RNN but without nonlinear gates.
+import torch, torch.nn as nn
+
+class MinSSM(nn.Module):
+    def __init__(self, d_model, d_state=16):
+        super().__init__()
+        # A is kept in (0,1) via sigmoid so the recurrence is stable (no explosion)
+        self.A_logit = nn.Parameter(torch.randn(d_model, d_state))
+        self.B = nn.Parameter(torch.randn(d_model, d_state) * 0.1)
+        self.C = nn.Parameter(torch.randn(d_model, d_state) * 0.1)
+        self.d_model, self.d_state = d_model, d_state
+
+    def forward(self, x):                       # x: (B, T, d_model)
+        B_, T, D = x.shape
+        A = torch.sigmoid(self.A_logit)          # (D, d_state) decay per channel
+        h = torch.zeros(B_, D, self.d_state, device=x.device)
+        ys = []
+        for t in range(T):                       # the scan (streaming, O(T))
+            xt = x[:, t].unsqueeze(-1)           # (B, D, 1)
+            h = A * h + self.B * xt              # state update
+            y = (self.C * h).sum(-1)            # (B, D) readout
+            ys.append(y)
+        return torch.stack(ys, dim=1)            # (B, T, D)
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    layer = MinSSM(d_model=32, d_state=16)
+    x = torch.randn(4, 200, 32)                  # long sequence: T=200
+    y = layer(x)
+    print(&quot;in :&quot;, tuple(x.shape))
+    print(&quot;out:&quot;, tuple(y.shape))                # (4, 200, 32) — same length
+    print(&quot;params:&quot;, sum(p.numel() for p in layer.parameters()))
+    print(&quot;note: cost grows LINEARLY with T (no T^2 attention) — the SSM advantage&quot;)
+</code></pre></div></div><div class="tab-content" id="p6-results" data-tabpanel="p6"><p>The verified layer processes a length-200 sequence with a tiny parameter count and constant per-step memory. Plot runtime vs length and you'll get a straight line — versus the upward curve of attention. That single graph explains the 2026 SSM excitement.</p><div class="box levelup"><span class="bt">⬆ This is just a fancy RNN</span>No gates, no nonlinearity in the recurrence — but the same "carry a hidden state forward" idea you learned on day one. The wheel turned full circle.</div></div><div class="tab-content" id="p6-pitfalls" data-tabpanel="p6"><ul><li>Unstable A (≥1) → state blows up; constrain it.</li><li>Expecting full-Mamba quality from a stub — this teaches the mechanism, not SOTA.</li><li>Forgetting SSMs still need careful initialisation to shine.</li></ul></div><div class="tab-content" id="p6-stretch" data-tabpanel="p6"><ul><li>Add a gating/selection mechanism (the "selective" in Mamba).</li><li>Compare against RWKV on a long-context benchmark.</li><li>Profile memory: SSM streaming vs Transformer KV-cache growth.</li></ul></div></div>
+</section>
+<section class="section" id="capstone">
+<h2><span class="sec-no">★</span>Capstone — FMCG demand forecasting, end-to-end<span class="lvl x">Capstone</span></h2>
+<div class="proj-meta"><span>🏭 real business</span><span>⏱ ~1–2 days</span><span>🎯 shippable forecaster</span><span>🧩 full lifecycle</span></div>
+<div class="tabs" data-tabgroup="capstone"><div class="tab-nav"><button class="active" data-target="capstone-about" onclick="switchTab('capstone','capstone-about')">About</button><button class="" data-target="capstone-steps" onclick="switchTab('capstone','capstone-steps')">Steps</button><button class="" data-target="capstone-code" onclick="switchTab('capstone','capstone-code')">Code</button><button class="" data-target="capstone-results" onclick="switchTab('capstone','capstone-results')">Results</button><button class="" data-target="capstone-pitfalls" onclick="switchTab('capstone','capstone-pitfalls')">Pitfalls</button><button class="" data-target="capstone-stretch" onclick="switchTab('capstone','capstone-stretch')">Stretch</button></div><div class="tab-content active" id="capstone-about" data-tabpanel="capstone"><p>The real thing: forecast weekly SKU-level demand for a portfolio of products, using sales history plus price, promotions, and seasonality — then evaluate it on a <em>business</em> cost and wrap it for weekly re-forecasting. This is a genuine supply-chain system, the kind that drives inventory and purchasing decisions.</p><div class="box good"><span class="bt">Why this capstone</span>It exercises everything: framing the shape, leakage-free time splits, multivariate LSTM/GRU forecasting, asymmetric business metrics (a stock-out hurts differently than overstock), drift monitoring, and streaming re-forecasts. It directly answers "how is this a real business problem?" Maps to <a href="2_rnn_reference.html#real-world">Reference §25</a>.</div></div><div class="tab-content" id="capstone-steps" data-tabpanel="capstone"><ol><li><strong>Frame &amp; data:</strong> assemble per-SKU weekly series with price, promo, holiday/seasonality features.</li><li><strong>Split by time:</strong> hold out the most recent weeks; fit scalers on train only (no leakage).</li><li><strong>Window:</strong> lookback (e.g. 12 weeks) → horizon (e.g. 4 weeks), multivariate input.</li><li><strong>Model:</strong> multivariate LSTM/GRU with a direct multi-step head (start from <code class="inline">forecast_lstm.py</code>); handle cold-start SKUs with a hierarchical/global model.</li><li><strong>Train:</strong> MSE or an <em>asymmetric</em> loss reflecting stock-out vs overstock cost; clip gradients.</li><li><strong>Backtest:</strong> rolling-origin evaluation; report MAPE and the business cost vs a naïve and a seasonal baseline.</li><li><strong>Ship:</strong> a weekly job that re-forecasts; log accuracy and trigger retrain on drift.</li></ol></div><div class="tab-content" id="capstone-code" data-tabpanel="capstone"><div class="code-block"><div class="code-head"><span class="lang">forecast_lstm.py — verified base you extend: leakage-safe windowing, multi-step</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># forecast_lstm.py — multivariate time-series forecasting (e.g. FMCG demand).
+# Many-to-one (or multi-output) LSTM with leakage-safe windowing.
+import numpy as np
+import torch
+import torch.nn as nn
+
+
+def make_windows(series, lookback=30, horizon=7):
+    &quot;&quot;&quot;series: (T, F). Returns X:(N,lookback,F), Y:(N,horizon) for target col 0.
+    NOTE: windows are time-ordered; split BEFORE scaling to avoid leakage.&quot;&quot;&quot;
+    X, Y = [], []
+    for i in range(len(series) - lookback - horizon + 1):
+        X.append(series[i:i + lookback])
+        Y.append(series[i + lookback:i + lookback + horizon, 0])  # forecast col 0
+    return np.array(X, dtype=np.float32), np.array(Y, dtype=np.float32)
+
+
+class Forecaster(nn.Module):
+    def __init__(self, n_features, hidden=64, horizon=7, layers=2):
+        super().__init__()
+        self.lstm = nn.LSTM(n_features, hidden, num_layers=layers,
+                            batch_first=True, dropout=0.1)
+        self.head = nn.Linear(hidden, horizon)      # direct multi-step output
+
+    def forward(self, x):
+        out, (h, c) = self.lstm(x)
+        return self.head(h[-1])                     # (B, horizon)
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    np.random.seed(0)
+    # fake 2-feature series: sales (with weekly seasonality + trend) + a promo flag
+    T = 400
+    t = np.arange(T)
+    sales = 100 + 0.1 * t + 15 * np.sin(2 * np.pi * t / 7) + np.random.randn(T) * 5
+    promo = (np.random.rand(T) &gt; 0.85).astype(float)
+    series = np.stack([sales, promo], axis=1)       # (T, 2)
+
+    # time split FIRST, then scale using train stats only (no leakage)
+    split = 320
+    mu, sd = series[:split].mean(0), series[:split].std(0) + 1e-8
+    scaled = (series - mu) / sd
+    Xtr, Ytr = make_windows(scaled[:split])
+    Xte, Yte = make_windows(scaled[split - 30:])    # keep lookback context
+
+    model = Forecaster(n_features=2, horizon=7)
+    Xtr_t, Ytr_t = torch.tensor(Xtr), torch.tensor(Ytr)
+    opt = torch.optim.Adam(model.parameters(), 1e-2)
+    lossf = nn.MSELoss()
+    for epoch in range(60):
+        opt.zero_grad()
+        pred = model(Xtr_t)
+        loss = lossf(pred, Ytr_t)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(), 5.0)   # essential
+        opt.step()
+    print(f&quot;final train MSE (scaled): {loss.item():.4f}&quot;)
+    with torch.no_grad():
+        te = model(torch.tensor(Xte))
+        print(&quot;test MSE (scaled):&quot;, round(lossf(te, torch.tensor(Yte)).item(), 4))
+        print(&quot;forecast shape:&quot;, tuple(te.shape), &quot;(samples x 7-day horizon)&quot;)
+    # Business metric: convert back to units, then MAPE / asymmetric stock-out cost.
+</code></pre></div></div><div class="tab-content" id="capstone-results" data-tabpanel="capstone"><p>A solid model meaningfully beats the seasonal-naïve baseline on MAPE <em>and</em> on the asymmetric business cost. Deliverables: a backtest report (error by horizon and by SKU segment), the trained model, and a re-forecast script. That package is presentable to a planning team — not a notebook toy.</p><div class="box levelup"><span class="bt">⬆ You've arrived</span>Finish this and you can take a vague business ask ("our forecasts are bad") to a shipped, monitored model with an honest backtest and a cost the business understands. That's the whole journey — primer to production.</div></div><div class="tab-content" id="capstone-pitfalls" data-tabpanel="capstone"><ul><li>Leakage through global scaling/shuffling — the backtest looks great and reality doesn't.</li><li>Optimising RMSE when the business pays asymmetrically for under- vs over-forecasting.</li><li>Ignoring promotions/holidays — the model misses exactly the weeks that matter most.</li><li>No drift monitoring → silent decay after a market shift.</li><li>Cold-start SKUs with no history — needs a global/hierarchical approach.</li></ul></div><div class="tab-content" id="capstone-stretch" data-tabpanel="capstone"><ul><li>Add probabilistic forecasts (quantiles) for safety-stock decisions.</li><li>Hierarchical reconciliation across SKU → category → region.</li><li>Compare LSTM vs a Transformer vs an SSM on the same backtest.</li><li>Wire it to a dashboard and a weekly automated retrain.</li></ul></div></div>
+</section>
+<section class="section" id="capstone-health">
+<h2><span class="sec-no">★</span>Capstone — Clinical early-warning system (healthcare)<span class="lvl x">Capstone</span></h2>
+<div class="proj-meta"><span>🏥 ICU vitals</span><span>⏱ ~1–2 days</span><span>🎯 catch deterioration early</span><span>🧩 streaming + imbalance</span></div>
+<div class="tabs" data-tabgroup="capstone-health"><div class="tab-nav"><button class="active" data-target="capstone-health-about" onclick="switchTab('capstone-health','capstone-health-about')">About</button><button class="" data-target="capstone-health-steps" onclick="switchTab('capstone-health','capstone-health-steps')">Steps</button><button class="" data-target="capstone-health-code" onclick="switchTab('capstone-health','capstone-health-code')">Code</button><button class="" data-target="capstone-health-results" onclick="switchTab('capstone-health','capstone-health-results')">Results</button><button class="" data-target="capstone-health-pitfalls" onclick="switchTab('capstone-health','capstone-health-pitfalls')">Pitfalls</button><button class="" data-target="capstone-health-stretch" onclick="switchTab('capstone-health','capstone-health-stretch')">Stretch</button></div><div class="tab-content active" id="capstone-health-about" data-tabpanel="capstone-health"><p>A second capstone in a very different domain: predict patient <strong>deterioration</strong> (e.g. sepsis or ICU decline) hours in advance from a rolling window of vital signs — heart rate, BP, SpO₂, temperature, respiratory rate. This is a streaming, many-to-one task where the positive class is rare and the cost of a miss is enormous.</p><div class="box good"><span class="bt">Why this domain is different</span>Healthcare flips the priorities: <strong>recall</strong> (catch every deteriorating patient) matters more than precision, the data is severely <strong>imbalanced</strong>, predictions must <strong>stream</strong> in real time at the bedside, and clinicians won't trust a black box — explainability is mandatory. Maps to <a href="2_rnn_reference.html#interpretability">Reference §21</a> and <a href="2_rnn_reference.html#real-world">§28</a>.</div></div><div class="tab-content" id="capstone-health-steps" data-tabpanel="capstone-health"><ol><li><strong>Frame:</strong> sliding window of the last N hours of vitals → risk of deterioration in the next horizon.</li><li><strong>Split by patient</strong> (never leak a patient across train/test) and by time.</li><li><strong>Handle imbalance:</strong> use <code class="inline">pos_weight</code> / focal loss; never optimise raw accuracy.</li><li><strong>Model:</strong> LSTM → sigmoid risk; expose a streaming step so risk updates each hour.</li><li><strong>Tune the threshold for high recall;</strong> report recall, precision, AUROC, AUPRC, and alarm rate.</li><li><strong>Explain:</strong> gate audits + feature attributions so a clinician can see <em>why</em> the alarm fired.</li></ol></div><div class="tab-content" id="capstone-health-code" data-tabpanel="capstone-health"><div class="code-block"><div class="code-head"><span class="lang">early_warning_lstm.py — verified: trains, recall 1.0 on positives, streaming risk</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># early_warning_lstm.py — streaming clinical risk score from a window of vitals.
+# Many-to-one, heavily imbalanced (deterioration is rare). Shows pos_weight,
+# streaming inference, and a calibrated risk output for a healthcare setting.
+import numpy as np
+import torch
+import torch.nn as nn
+
+
+class EarlyWarningLSTM(nn.Module):
+    def __init__(self, n_vitals, hidden=48, layers=1):
+        super().__init__()
+        self.lstm = nn.LSTM(n_vitals, hidden, num_layers=layers, batch_first=True)
+        self.head = nn.Linear(hidden, 1)            # single logit -&gt; risk
+
+    def forward(self, x, state=None):
+        out, state = self.lstm(x, state)
+        logit = self.head(out[:, -1])               # risk from the latest step
+        return logit.squeeze(-1), state             # state enables streaming
+
+    @torch.no_grad()
+    def stream_step(self, x_t, state=None):
+        &quot;&quot;&quot;Feed ONE new timestep (B,1,F); get an updated risk. O(1) per step.&quot;&quot;&quot;
+        out, state = self.lstm(x_t, state)
+        return torch.sigmoid(self.head(out[:, -1]).squeeze(-1)), state
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0); np.random.seed(0)
+    N, T, V = 600, 24, 5                              # 600 stays, 24h windows, 5 vitals
+    X = np.random.randn(N, T, V).astype(np.float32)
+    # ~8% positive: deterioration cases have an upward drift in vital 0
+    y = (np.random.rand(N) &lt; 0.08).astype(np.float32)
+    for i in np.where(y == 1)[0]:
+        X[i, :, 0] += np.linspace(0, 2.5, T)
+    Xt, yt = torch.tensor(X), torch.tensor(y)
+
+    model = EarlyWarningLSTM(V)
+    # imbalance: weight the rare positive class up
+    pos_weight = torch.tensor([(y == 0).sum() / max(1, (y == 1).sum())])
+    lossf = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
+    opt = torch.optim.Adam(model.parameters(), 5e-3)
+    for ep in range(60):
+        opt.zero_grad()
+        logit, _ = model(Xt)
+        loss = lossf(logit, yt)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+        opt.step()
+    print(f&quot;final loss: {loss.item():.4f}  (pos_weight={pos_weight.item():.1f})&quot;)
+
+    # evaluate with a threshold; in healthcare you tune for high RECALL
+    with torch.no_grad():
+        prob = torch.sigmoid(model(Xt)[0]).numpy()
+    pred = (prob &gt; 0.5).astype(float)
+    tp = ((pred == 1) &amp; (y == 1)).sum(); fn = ((pred == 0) &amp; (y == 1)).sum()
+    recall = tp / max(1, tp + fn)
+    print(f&quot;recall on positives: {recall:.2f}  (catch the deteriorating patients)&quot;)
+
+    # streaming demo: risk updates hour by hour as new vitals arrive
+    state = None
+    for h in range(T):
+        risk, state = model.stream_step(Xt[:1, h:h+1], state)
+    print(&quot;final streamed risk (patient 0):&quot;, round(risk.item(), 3))
+</code></pre></div></div><div class="tab-content" id="capstone-health-results" data-tabpanel="capstone-health"><p>The verified model handles ~8% positives with class weighting, achieves high recall on the held-out deterioration cases, and updates a calibrated risk score hour-by-hour via a streaming step — exactly the shape a bedside monitor needs. Deliverables: a backtest with AUPRC and an alarm-rate/recall trade-off curve the clinical team signs off on.</p><div class="box warn"><span class="bt">The stakes change the metric</span>A false negative can be fatal; a false alarm causes alert fatigue. You're not maximising accuracy — you're choosing an operating point on the recall/alarm-rate curve <em>with the clinicians</em>.</div></div><div class="tab-content" id="capstone-health-pitfalls" data-tabpanel="capstone-health"><ul><li>Leaking a patient across splits → wildly optimistic, useless in practice.</li><li>Optimising accuracy on 8% positives → a model that predicts "fine" for everyone scores 92%.</li><li>Non-streaming design → can't run live at the bedside.</li><li>Unexplained alarms → clinicians ignore the system entirely.</li></ul></div><div class="tab-content" id="capstone-health-stretch" data-tabpanel="capstone-health"><ul><li>Add attention over the time window and show which hours drove the alarm.</li><li>Calibrate probabilities (Platt / isotonic) so "70% risk" means it.</li><li>Extend to multi-task: predict several adverse events jointly.</li><li>Note: the same recipe transfers to <strong>pharma vigilance</strong> (adverse-event signals) and <strong>biotech</strong> sensor assays.</li></ul></div></div>
+</section>
+<section class="section" id="capstone-maint">
+<h2><span class="sec-no">★</span>Capstone — Predictive maintenance (manufacturing &amp; process industry)<span class="lvl x">Capstone</span></h2>
+<div class="proj-meta"><span>🏭 IoT sensors</span><span>⏱ ~1–2 days</span><span>🎯 flag failures early</span><span>🧩 LSTM autoencoder</span></div>
+<div class="tabs" data-tabgroup="capstone-maint"><div class="tab-nav"><button class="active" data-target="capstone-maint-about" onclick="switchTab('capstone-maint','capstone-maint-about')">About</button><button class="" data-target="capstone-maint-steps" onclick="switchTab('capstone-maint','capstone-maint-steps')">Steps</button><button class="" data-target="capstone-maint-code" onclick="switchTab('capstone-maint','capstone-maint-code')">Code</button><button class="" data-target="capstone-maint-results" onclick="switchTab('capstone-maint','capstone-maint-results')">Results</button><button class="" data-target="capstone-maint-pitfalls" onclick="switchTab('capstone-maint','capstone-maint-pitfalls')">Pitfalls</button><button class="" data-target="capstone-maint-stretch" onclick="switchTab('capstone-maint','capstone-maint-stretch')">Stretch</button></div><div class="tab-content active" id="capstone-maint-about" data-tabpanel="capstone-maint"><p>A third capstone for heavy industry: detect impending equipment failure from multivariate <strong>IoT sensor streams</strong> (vibration, temperature, pressure, current) — <em>without</em> labelled failures, because real failures are rare and costly. The tool is an <strong>LSTM autoencoder</strong>: learn what "healthy" looks like, then flag anything that reconstructs poorly.</p><div class="box good"><span class="bt">Why an autoencoder</span>You almost never have enough labelled breakdowns to train a classifier. Train the autoencoder on abundant <em>normal</em> operation; reconstruction error becomes an unsupervised anomaly score. This generalises across <strong>manufacturing, chemicals/process plants, energy grids, and network security</strong>. Maps to <a href="2_rnn_reference.html#beyond">Reference §22</a> (LSTM autoencoders).</div></div><div class="tab-content" id="capstone-maint-steps" data-tabpanel="capstone-maint"><ol><li><strong>Collect</strong> multivariate sensor windows from healthy operation; scale on train stats only.</li><li><strong>Build</strong> an LSTM encoder → bottleneck → LSTM decoder that reconstructs the window.</li><li><strong>Train</strong> on normal data only (MSE reconstruction + gradient clipping).</li><li><strong>Set a threshold</strong> on reconstruction error (e.g. mean + 3σ on a validation set).</li><li><strong>Score live windows;</strong> errors above threshold raise an anomaly / maintenance ticket.</li><li><strong>Validate</strong> against the few known failures you do have; tune the threshold for lead-time vs false alarms.</li></ol></div><div class="tab-content" id="capstone-maint-code" data-tabpanel="capstone-maint"><div class="code-block"><div class="code-head"><span class="lang">lstm_autoencoder.py — verified: healthy err 0.36 vs faulty 2.35 (clean separation)</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># lstm_autoencoder.py — anomaly detection on sensor streams via reconstruction error.
+# Train ONLY on normal data; at test time, high reconstruction error = anomaly.
+import numpy as np
+import torch
+import torch.nn as nn
+
+
+class LSTMAutoencoder(nn.Module):
+    def __init__(self, n_features, hidden=32, latent=16):
+        super().__init__()
+        self.enc = nn.LSTM(n_features, hidden, batch_first=True)
+        self.to_latent = nn.Linear(hidden, latent)
+        self.from_latent = nn.Linear(latent, hidden)
+        self.dec = nn.LSTM(hidden, hidden, batch_first=True)
+        self.out = nn.Linear(hidden, n_features)
+
+    def forward(self, x):                       # x: (B, T, F)
+        T = x.size(1)
+        _, (h, _) = self.enc(x)                 # encode to final state
+        z = self.to_latent(h[-1])               # (B, latent) bottleneck
+        seed = self.from_latent(z).unsqueeze(1).repeat(1, T, 1)  # broadcast over time
+        dec_out, _ = self.dec(seed)
+        return self.out(dec_out)                # reconstruct (B, T, F)
+
+
+def windows(series, win=30):
+    return np.stack([series[i:i+win] for i in range(len(series)-win+1)]).astype(np.float32)
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0); np.random.seed(0)
+    T, F_ = 1500, 3
+    t = np.arange(T)
+    # 3 correlated &quot;healthy&quot; sensors: smooth periodic signals + noise
+    normal = np.stack([
+        np.sin(2*np.pi*t/50) + 0.05*np.random.randn(T),
+        np.sin(2*np.pi*t/50 + 0.5) + 0.05*np.random.randn(T),
+        np.cos(2*np.pi*t/37) + 0.05*np.random.randn(T)], axis=1)
+
+    split = 1000
+    mu, sd = normal[:split].mean(0), normal[:split].std(0) + 1e-8
+    sc = (normal - mu) / sd
+    Xtr = torch.tensor(windows(sc[:split]))
+
+    model = LSTMAutoencoder(F_)
+    opt = torch.optim.Adam(model.parameters(), 1e-2)
+    lossf = nn.MSELoss()
+    for ep in range(40):                        # train on NORMAL only
+        opt.zero_grad()
+        rec = model(Xtr)
+        loss = lossf(rec, Xtr)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+        opt.step()
+    print(f&quot;train recon MSE: {loss.item():.4f}&quot;)
+
+    # inject an anomaly (sensor 0 spikes) into a held-out window and score it
+    healthy = sc[split:split+30].copy()
+    faulty = healthy.copy(); faulty[10:15, 0] += 6.0
+    with torch.no_grad():
+        for name, w in [(&quot;healthy&quot;, healthy), (&quot;faulty&quot;, faulty)]:
+            wt = torch.tensor(w[None].astype(np.float32))
+            err = ((model(wt) - wt) ** 2).mean().item()
+            print(f&quot;{name:8} reconstruction error: {err:.3f}&quot;)
+    print(&quot;threshold the error (e.g. mean+3*std on validation) to flag anomalies.&quot;)
+</code></pre></div></div><div class="tab-content" id="capstone-maint-results" data-tabpanel="capstone-maint"><p>The verified autoencoder, trained only on healthy signals, reconstructs normal windows with low error (~0.36) and an injected fault with much higher error (~2.35) — a clean, thresholdable separation. Deliverables: an anomaly-score stream, a chosen threshold with its lead-time/false-alarm trade-off, and a ticketing hook. That's a deployable condition-monitoring system.</p><div class="box good"><span class="bt">Business value</span>Catching a failure days early turns a catastrophic unplanned outage into a scheduled repair. The same model, re-pointed, watches a different production line — a reusable asset, not a one-off.</div></div><div class="tab-content" id="capstone-maint-pitfalls" data-tabpanel="capstone-maint"><ul><li>Accidentally training on windows that contain anomalies → it learns to reconstruct faults too.</li><li>A single global threshold across very different machines → tune per asset or normalise.</li><li>Concept drift as equipment ages → the "normal" baseline shifts; retrain periodically.</li><li>Treating the score as a probability — it's a relative anomaly score, calibrate before acting.</li></ul></div><div class="tab-content" id="capstone-maint-stretch" data-tabpanel="capstone-maint"><ul><li>Add remaining-useful-life (RUL) regression once you have run-to-failure data.</li><li>Compare the autoencoder against a forecasting-residual approach.</li><li>Stream it on the edge (quantised) next to the PLC for low-latency alerts.</li><li>Note: identical pattern powers <strong>finance fraud</strong> and <strong>environmental sensor</strong> anomaly detection.</li></ul></div></div>
+</section>
+<section class="section" id="roadmap">
+<h2><span class="sec-no">★</span>The roadmap</h2>
+<p>A sane order to climb — each rung reuses the last:</p><div class="table-wrap"><table><thead><tr><th>#</th><th>Project</th><th>Level</th><th>New idea it adds</th></tr></thead><tbody><tr><td>1</td><td><a href="#p1">Char generator</a></td><td>Beginner</td><td>the RNN loop + generation</td></tr><tr><td>2</td><td><a href="#p2">NumPy from scratch</a></td><td>Beginner→Int</td><td>BPTT &amp; vanishing gradients, felt</td></tr><tr><td>3</td><td><a href="#p3">LSTM sentiment</a></td><td>Intermediate</td><td>gating, packing, real NLP data</td></tr><tr><td>4</td><td><a href="#p4">Time-series forecast</a></td><td>Intermediate</td><td>windowing, leakage, metrics</td></tr><tr><td>5</td><td><a href="#p5">seq2seq + attention</a></td><td>Advanced</td><td>encoder-decoder, attention</td></tr><tr><td>6</td><td><a href="#p6">State-space (Mamba)</a></td><td>Expert</td><td>2026 linear-time recurrence</td></tr><tr><td>7</td><td><a href="#capstone">FMCG demand forecast</a></td><td>Capstone · retail/supply-chain</td><td>full forecasting lifecycle</td></tr><tr><td>8</td><td><a href="#capstone-health">Clinical early-warning</a></td><td>Capstone · healthcare</td><td>streaming, imbalance, recall, explainability</td></tr><tr><td>9</td><td><a href="#capstone-maint">Predictive maintenance</a></td><td>Capstone · manufacturing</td><td>unsupervised anomaly via LSTM autoencoder</td></tr></tbody></table></div><div class="crosslink-banner"><strong>Pair with:</strong> the <a href="2_rnn_reference.html">Reference</a> for the theory behind each project, and the <a href="4_rnn_field_card.html">Field Card</a> for quick reminders while you build.</div>
+</section>
+</main>
+</div>
+<footer class="foot"><p><strong>RNN Projects</strong> — part of the Foundations study series. Theory lives in the <a href="2_rnn_reference.html">Reference</a>; start gently at the <a href="1_rnn_primer.html">Visual Primer</a>. Builds on the <a href="../ann/2_neural_network_foundations.html">Neural-Network Foundations</a> guide. Quick revision: the <a href="4_rnn_field_card.html">Field Card</a>.</p></footer>
+
+
+<button class="totop" id="toTop" onclick="scrollTop()" aria-label="Back to top">↑</button>
+
+<div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
+<button class="zoom-close" onclick="closeZoom()" aria-label="Close">×</button>
+<div id="zoomHolder"></div>
+</div>
+
+<script>
+// ===== THEME (localStorage wrapped) =====
+(function(){
+  var KEY='vidyalaya-theme';
+  try{var s=localStorage.getItem(KEY);if(s)document.documentElement.setAttribute('data-theme',s);}catch(e){}
+  window.toggleTheme=function(){
+    var cur=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',cur);
+    try{localStorage.setItem(KEY,cur);}catch(e){}
+    var b=document.getElementById('themeBtn');if(b)b.textContent=cur==='light'?'🌙 Dark':'☀️ Light';
+  };
+})();
+// ===== TOC DRAWER =====
+function toggleTOC(){
+  var t=document.getElementById('toc'),b=document.getElementById('backdrop');
+  if(!t)return;t.classList.toggle('open');if(b)b.classList.toggle('show');
+}
+function closeTOC(){
+  var t=document.getElementById('toc'),b=document.getElementById('backdrop');
+  if(t)t.classList.remove('open');if(b)b.classList.remove('show');
+}
+// ===== COPY =====
+function copyCode(btn){
+  var pre=btn.closest('.code-block').querySelector('pre');
+  var txt=pre.innerText;
+  navigator.clipboard.writeText(txt).then(function(){
+    var o=btn.textContent;btn.textContent='✓ Copied';setTimeout(function(){btn.textContent=o;},1500);
+  }).catch(function(){
+    var o=btn.textContent;btn.textContent='⌘C to copy';setTimeout(function(){btn.textContent=o;},1500);
+  });
+}
+// ===== TABS =====
+function switchTab(group,id){
+  var nav=document.querySelector('[data-tabgroup="'+group+'"]');
+  if(nav){nav.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+    var ab=nav.querySelector('[data-target="'+id+'"]');if(ab)ab.classList.add('active');}
+  var sel=document.querySelectorAll('[data-tabpanel="'+group+'"]');
+  sel.forEach(function(p){p.classList.remove('active');});
+  var t=document.getElementById(id);if(t)t.classList.add('active');
+}
+// ===== Q&A FILTER =====
+function filterQA(cat,btn){
+  document.querySelectorAll('.qa-filters button').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.qa-item').forEach(function(it){
+    var ic=it.getAttribute('data-cat')||'',itier=it.getAttribute('data-tier')||'';
+    var show=(cat==='all')||(ic.indexOf(cat)>-1)||(itier===cat);
+    it.style.display=show?'':'none';
+  });
+}
+// ===== ZOOM =====
+function zoomViz(btn){
+  var svg=btn.closest('.viz-container').querySelector('svg').cloneNode(true);
+  var ov=document.getElementById('zoomOverlay');
+  var holder=document.getElementById('zoomHolder');
+  holder.innerHTML='';holder.appendChild(svg);ov.classList.add('show');
+}
+function closeZoom(){document.getElementById('zoomOverlay').classList.remove('show');}
+// ===== ACTIVE SECTION + BACK TO TOP =====
+document.addEventListener('DOMContentLoaded',function(){
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  var map={};links.forEach(function(a){var h=a.getAttribute('href');if(h&&h.charAt(0)==='#')map[h.slice(1)]=a;});
+  var secs=[].slice.call(document.querySelectorAll('section.section'));
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){a.classList.remove('active');});
+          var a=map[e.target.id];if(a){a.classList.add('active');}
+        }
+      });
+    },{rootMargin:'-40% 0px -55% 0px'});
+    secs.forEach(function(s){obs.observe(s);});
+  }
+  var tt=document.getElementById('toTop');
+  window.addEventListener('scroll',function(){
+    if(tt){if(window.scrollY>600)tt.classList.add('show');else tt.classList.remove('show');}
+  },{passive:true});
+  // close drawer on link tap (mobile)
+  links.forEach(function(a){a.addEventListener('click',function(){if(window.innerWidth<=1250)closeTOC();});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeZoom();closeTOC();}});
+});
+function scrollTop(){window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

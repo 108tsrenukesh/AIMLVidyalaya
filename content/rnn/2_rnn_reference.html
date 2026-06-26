@@ -1,0 +1,1296 @@
+<!DOCTYPE html><html data-theme="dark" lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CNN — Complete Reference</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;1,300;1,600&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ============ DESIGN TOKENS ============ */
+:root{
+  --accent:#6c7bff; --accent-2:#4dd0e1; --accent-soft:rgba(108,123,255,.14);
+  --bg:#0e1116; --bg-2:#151a22; --surface:#171d27; --surface-2:#1d2530;
+  --border:#283142; --border-2:#36425a;
+  --text:#e7ecf3; --text-dim:#aab4c4; --text-faint:#7c889b;
+  --good:#34d399; --warn:#fbbf24; --bad:#f87171; --info:#60a5fa;
+  --code-bg:#0c1017; --code-border:#222c3a;
+  --shadow:0 8px 30px rgba(0,0,0,.38);
+  --radius:14px; --radius-sm:9px;
+  --maxw:1080px;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;--display:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+}
+[data-theme="light"]{
+  --bg:#f6f7f9; --bg-2:#eef1f5; --surface:#ffffff; --surface-2:#f3f5f9;
+  --border:#e2e7ee; --border-2:#d2dae6;
+  --text:#1a2030; --text-dim:#4a566b; --text-faint:#7a879c;
+  --accent-soft:rgba(108,123,255,.12);
+  --code-bg:#0f1420; --code-border:#1f2a3a;
+  --shadow:0 8px 26px rgba(30,45,80,.10);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:74px}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:var(--sans);font-size:16.5px;line-height:1.72;
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+/* ============ TOP BAR ============ */
+.topbar{
+  position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:12px;
+  padding:11px 18px;background:color-mix(in srgb,var(--bg) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--border);
+}
+.topbar .brand{font-family:var(--display);font-weight:600;font-size:17px;letter-spacing:0;display:flex;align-items:center;gap:9px}
+.topbar .brand .dot{width:11px;height:11px;border-radius:50%;background:linear-gradient(135deg,var(--accent),var(--accent-2));box-shadow:0 0 12px var(--accent)}
+.topbar .spacer{flex:1}
+.topbar .crumbs{color:var(--text-faint);font-size:13px;font-weight:500}
+.topbar button{
+  background:var(--surface);color:var(--text);border:1px solid var(--border);
+  border-radius:9px;padding:7px 11px;cursor:pointer;font-size:13px;font-family:inherit;
+  display:inline-flex;align-items:center;gap:6px;transition:.15s;
+}
+.topbar button:hover{border-color:var(--accent);color:var(--accent)}
+.menu-btn{display:none}
+@media(max-width:1250px){.menu-btn{display:inline-flex}}
+
+/* ============ LAYOUT ============ */
+.shell{display:grid;grid-template-columns:264px minmax(0,1fr);gap:0;max-width:1480px;margin:0 auto}
+.toc{
+  position:sticky;top:55px;align-self:start;height:calc(100vh - 55px);overflow-y:auto;
+  padding:22px 14px 60px 22px;border-right:1px solid var(--border);font-size:13.5px;
+}
+.toc h4{margin:0 0 8px;font-size:11px;letter-spacing:1.4px;text-transform:uppercase;color:var(--text-faint)}
+.toc a{display:block;color:var(--text-dim);text-decoration:none;padding:5px 11px;border-radius:7px;border-left:2px solid transparent;line-height:1.4;transition:.13s}
+.toc a:hover{background:var(--surface);color:var(--text)}
+.toc a.active{color:var(--accent);border-left-color:var(--accent);background:var(--accent-soft);font-weight:600}
+.toc .toc-num{color:var(--text-faint);font-family:var(--mono);font-size:11px;margin-right:7px}
+.backdrop{display:none}
+@media(max-width:1250px){
+  .shell{grid-template-columns:1fr}
+  .toc{position:fixed;top:0;left:0;height:100vh;width:300px;max-width:84vw;z-index:90;
+    background:var(--bg-2);transform:translateX(-105%);transition:transform .26s cubic-bezier(.4,0,.2,1);box-shadow:var(--shadow);padding-top:18px}
+  .toc.open{transform:translateX(0)}
+  .backdrop.show{display:block;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:80}
+}
+
+/* ============ CONTENT ============ */
+.content{padding:34px clamp(16px,4vw,52px) 120px;max-width:var(--maxw);margin:0 auto;width:100%}
+.hero{margin:6px 0 30px}
+.hero .kicker{color:var(--accent);font-weight:700;font-size:13px;letter-spacing:2px;text-transform:uppercase}
+.hero h1{font-family:var(--display);font-weight:300;font-size:clamp(30px,5vw,46px);line-height:1.1;margin:10px 0 14px;letter-spacing:0}
+.hero p.lead{font-size:18px;color:var(--text-dim);margin:0 0 18px;max-width:64ch}
+.hero .stats{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+.stat{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:9px 14px;font-size:13px}
+.stat b{color:var(--accent);font-size:24px;font-family:var(--display);font-weight:600;display:block;line-height:1.2}
+.stat span{color:var(--text-faint)}
+
+section.section{padding:30px 0;border-top:1px solid var(--border);scroll-margin-top:70px}
+section.section:first-of-type{border-top:none}
+h2{font-family:var(--display);font-weight:600;font-size:clamp(23px,3.4vw,32px);letter-spacing:0;margin:.2em 0 .5em;line-height:1.18}
+h2 .sec-no{font-family:var(--mono);font-size:15px;color:var(--accent);margin-right:12px;opacity:.85}
+h3{font-size:20px;margin:1.5em 0 .5em;color:var(--text)}
+h4{font-size:16.5px;margin:1.2em 0 .4em;color:var(--text-dim);letter-spacing:.2px}
+p{margin:.7em 0}
+a{color:var(--accent);text-decoration:none;border-bottom:1px solid transparent;transition:.13s}
+.content a:hover{border-bottom-color:var(--accent)}
+strong{color:var(--text);font-weight:680}
+em{color:var(--text-dim)}
+ul,ol{padding-left:1.3em}li{margin:.34em 0}
+hr{border:none;border-top:1px solid var(--border);margin:1.6em 0}
+.reading-time{color:var(--text-faint);font-size:13px;margin:0 0 4px}
+
+/* ============ CALLOUTS ============ */
+.box{border:1px solid var(--border);border-left-width:4px;border-radius:var(--radius-sm);padding:14px 17px;margin:18px 0;background:var(--surface);font-size:15.5px}
+.box .bt{font-weight:700;font-size:12.5px;letter-spacing:.7px;text-transform:uppercase;display:block;margin-bottom:5px}
+.box.intuition{border-left-color:var(--accent);background:var(--accent-soft)}
+.box.intuition .bt{color:var(--accent)}
+.box.warn{border-left-color:var(--warn)}.box.warn .bt{color:var(--warn)}
+.box.good{border-left-color:var(--good)}.box.good .bt{color:var(--good)}
+.box.math{border-left-color:var(--accent-2)}.box.math .bt{color:var(--accent-2)}
+.box.info{border-left-color:var(--info)}.box.info .bt{color:var(--info)}
+.box.levelup{border-left-color:var(--accent-2);background:linear-gradient(90deg,color-mix(in srgb,var(--accent-2) 12%,transparent),transparent)}
+.box.levelup .bt{color:var(--accent-2)}
+.box.bad{border-left-color:var(--bad)}.box.bad .bt{color:var(--bad)}
+
+/* ============ CODE ============ */
+.code-block{position:relative;margin:16px 0;border:1px solid var(--code-border);border-radius:var(--radius-sm);overflow:hidden;background:var(--code-bg)}
+.code-head{display:flex;align-items:center;gap:8px;padding:7px 12px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--code-border);font-size:12px;color:var(--text-faint)}
+.code-head .lang{font-family:var(--mono);color:var(--accent-2);font-weight:600}
+.code-head .copy{margin-left:auto;cursor:pointer;background:transparent;border:1px solid var(--code-border);color:var(--text-dim);border-radius:6px;padding:3px 9px;font-size:11.5px;font-family:inherit;transition:.13s}
+.code-head .copy:hover{border-color:var(--accent);color:var(--accent)}
+.code-block pre{margin:0;padding:14px 16px;overflow-x:auto;font-family:var(--mono);font-size:13.3px;line-height:1.62;color:#d6deea;white-space:pre;tab-size:2}
+.code-block pre code{white-space:pre}
+@media(max-width:640px){.code-block pre{white-space:pre-wrap;word-break:break-word}}
+.tok-c{color:#6b7a90;font-style:italic}.tok-k{color:#c792ea}.tok-s{color:#c3e88d}.tok-n{color:#f78c6c}.tok-f{color:#82aaff}.tok-d{color:#ffcb6b}
+code.inline{font-family:var(--mono);font-size:.9em;background:var(--surface-2);border:1px solid var(--border);border-radius:5px;padding:1px 6px;color:var(--accent-2)}
+
+/* ============ TABLES ============ */
+.table-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--border);border-radius:var(--radius-sm)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:440px}
+th,td{padding:9px 13px;text-align:left;border-bottom:1px solid var(--border);vertical-align:top}
+th{background:var(--surface-2);font-weight:680;color:var(--text);position:sticky;top:0;font-size:13px;letter-spacing:.3px}
+tr:last-child td{border-bottom:none}
+td code{font-size:.86em}
+.table-wrap.small table{font-size:13.5px}
+
+/* ============ VISUALS ============ */
+.viz-container{margin:22px 0;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);padding:16px;text-align:center;position:relative}
+.viz-container svg{max-width:100%;height:auto;display:block;margin:0 auto}
+.viz-cap{font-size:13px;color:var(--text-faint);margin-top:11px;text-align:center;line-height:1.5}
+.viz-zoom{position:absolute;top:9px;right:9px;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);border-radius:7px;width:30px;height:30px;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center;transition:.13s}
+.viz-zoom:hover{border-color:var(--accent);color:var(--accent)}
+.zoom-overlay{display:none;position:fixed;inset:0;z-index:120;background:rgba(5,8,12,.93);padding:20px}
+.zoom-overlay.show{display:flex;align-items:center;justify-content:center}
+.zoom-overlay svg{max-width:96vw;max-height:92vh;width:auto;height:auto}
+.zoom-close{position:fixed;top:16px;right:20px;color:#fff;font-size:30px;cursor:pointer;z-index:121;background:none;border:none}
+
+/* ============ TABS ============ */
+.tabs{margin:18px 0}
+.tab-nav{display:flex;flex-wrap:wrap;gap:5px;border-bottom:1px solid var(--border);margin-bottom:0}
+.tab-nav button{background:transparent;border:none;border-bottom:2px solid transparent;color:var(--text-dim);padding:9px 14px;cursor:pointer;font-size:14px;font-family:inherit;font-weight:550;transition:.13s;border-radius:7px 7px 0 0}
+.tab-nav button:hover{color:var(--text);background:var(--surface)}
+.tab-nav button.active{color:var(--accent);border-bottom-color:var(--accent)}
+.tab-content{display:none;padding:18px 2px;animation:fade .25s}
+.tab-content.active{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+/* ============ Q&A BANK ============ */
+.qa-filters{display:flex;flex-wrap:wrap;gap:7px;margin:16px 0}
+.qa-filters button{background:var(--surface);border:1px solid var(--border);color:var(--text-dim);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:13px;font-family:inherit;transition:.13s}
+.qa-filters button:hover{border-color:var(--accent)}
+.qa-filters button.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600}
+.qa-item{border:1px solid var(--border);border-radius:var(--radius-sm);margin:9px 0;background:var(--surface);overflow:hidden}
+.qa-q{padding:13px 16px;cursor:pointer;display:flex;align-items:flex-start;gap:11px;font-weight:580;font-size:15.5px;list-style:none}
+.qa-q::-webkit-details-marker{display:none}
+.qa-q .tier{font-size:10.5px;font-weight:700;letter-spacing:.5px;padding:2px 8px;border-radius:20px;text-transform:uppercase;white-space:nowrap;margin-top:2px}
+.tier.beginner{background:rgba(52,211,153,.16);color:var(--good)}
+.tier.intermediate{background:rgba(96,165,250,.16);color:var(--info)}
+.tier.advanced{background:rgba(251,191,36,.16);color:var(--warn)}
+.tier.expert{background:rgba(248,113,113,.16);color:var(--bad)}
+.qa-q .arrow{margin-left:auto;color:var(--text-faint);transition:.2s;flex-shrink:0}
+details[open] .qa-q .arrow{transform:rotate(90deg)}
+.qa-a{padding:2px 16px 16px;color:var(--text-dim);font-size:15px;border-top:1px solid var(--border)}
+.qa-a p:first-child{margin-top:12px}
+.qa-cat{font-size:11px;color:var(--text-faint);text-transform:uppercase;letter-spacing:.5px}
+
+/* ============ EXERCISES / PROJECTS ============ */
+.ex{border:1px solid var(--border);border-radius:var(--radius-sm);padding:16px 18px;margin:16px 0;background:var(--surface)}
+.ex .ex-h{font-weight:700;color:var(--accent);font-size:15px;margin-bottom:6px;display:flex;align-items:center;gap:9px}
+.pill{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.4px;padding:2px 9px;border-radius:20px;text-transform:uppercase}
+.pill.b{background:rgba(52,211,153,.16);color:var(--good)}
+.pill.i{background:rgba(96,165,250,.16);color:var(--info)}
+.pill.a{background:rgba(251,191,36,.16);color:var(--warn)}
+.pill.e{background:rgba(248,113,113,.16);color:var(--bad)}
+.proj-track{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0}
+.proj-track .pt{flex:1;min-width:120px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px;font-size:12.5px;text-align:center}
+.proj-track .pt b{display:block;color:var(--accent);font-size:13.5px;margin-bottom:2px}
+
+/* ============ MISC ============ */
+.crosslink-banner{display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;padding:15px 18px;background:linear-gradient(110deg,var(--accent-soft),transparent);border:1px solid var(--border);border-radius:var(--radius)}
+.crosslink-banner a{display:inline-flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:8px 13px;font-size:13.5px;font-weight:600}
+.crosslink-banner a:hover{border-color:var(--accent)}
+.kpi-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:18px 0}
+.kpi{background:var(--surface);border:1px solid var(--border);border-radius:11px;padding:14px}
+.kpi b{display:block;font-size:22px;color:var(--accent);font-family:var(--mono)}
+.kpi span{font-size:12.5px;color:var(--text-faint)}
+.refs li{margin:.5em 0;font-size:14.5px}
+.refs .rtag{font-size:10.5px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;padding:1px 7px;border-radius:5px;margin-right:7px;background:var(--surface-2);color:var(--text-faint)}
+.totop{position:fixed;bottom:22px;right:22px;width:44px;height:44px;border-radius:50%;background:var(--accent);color:#fff;border:none;cursor:pointer;font-size:19px;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+.totop.show{opacity:1;pointer-events:auto}
+.eq{font-family:var(--mono);background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 15px;margin:13px 0;overflow-x:auto;font-size:14.5px;color:var(--text);line-height:1.8}
+.eq .v{color:var(--accent-2)}
+.foot{border-top:1px solid var(--border);padding:26px clamp(16px,4vw,52px);color:var(--text-faint);font-size:13.5px;max-width:var(--maxw);margin:0 auto}
+.dim{color:var(--text-faint)}
+.nowrap{white-space:nowrap}
+:root{--accent:#7b78ff;--accent-2:#36d6c3;--accent-soft:rgba(123,120,255,.15)}
+[data-theme="light"]{--accent-soft:rgba(123,120,255,.12)}
+</style><style>:root{--accent:#14b8c4;--accent-2:#ffb454;}[data-theme="light"]{--accent:#0e9aa6;--accent-2:#d98a2b;}</style></head><body>
+<div class="topbar">
+  <button class="menu-btn" onclick="toggleTOC()" aria-label="Menu">☰</button>
+  <span class="brand"><span class="dot"></span> RNNs · Reference</span>
+  <span class="crumbs">🎓→🔬 The deep guide</span>
+  <span class="spacer"></span>
+  <button id="themeBtn" onclick="toggleTheme()">☀️ Light</button>
+</div>
+<div class="backdrop" id="backdrop" onclick="closeTOC()"></div>
+<div class="shell">
+<aside id="toc" class="toc">
+  <h4>On this page</h4>
+  <a href="#intro"><span class="toc-num">01</span>What an RNN is</a>
+  <a href="#why-not-ff"><span class="toc-num">02</span>Why not a plain net?</a>
+  <a href="#sequence-shapes"><span class="toc-num">03</span>Shapes of sequence problems</a>
+  <a href="#rnn-cell"><span class="toc-num">04</span>The RNN cell &amp; unrolling</a>
+  <a href="#forward"><span class="toc-num">05</span>Forward pass through time</a>
+  <a href="#bptt"><span class="toc-num">06</span>Backprop through time</a>
+  <a href="#vanishing"><span class="toc-num">07</span>Vanishing &amp; exploding gradients</a>
+  <a href="#lstm"><span class="toc-num">08</span>LSTM</a>
+  <a href="#gru"><span class="toc-num">09</span>GRU</a>
+  <a href="#variants"><span class="toc-num">10</span>Bidirectional &amp; deep RNNs</a>
+  <a href="#seq2seq"><span class="toc-num">11</span>Sequence-to-sequence</a>
+  <a href="#attention"><span class="toc-num">12</span>Attention</a>
+  <a href="#ctc"><span class="toc-num">13</span>CTC — alignment-free training</a>
+  <a href="#to-transformers"><span class="toc-num">14</span>From attention to Transformers</a>
+  <a href="#embeddings"><span class="toc-num">15</span>Tokens &amp; embeddings</a>
+  <a href="#training-recipe"><span class="toc-num">16</span>Training RNNs well</a>
+  <a href="#evaluation"><span class="toc-num">17</span>Evaluating sequence models</a>
+  <a href="#generation"><span class="toc-num">18</span>Decoding &amp; generation</a>
+  <a href="#worked-example"><span class="toc-num">19</span>Worked numeric example</a>
+  <a href="#code"><span class="toc-num">20</span>Code: scratch → PyTorch → seq2seq</a>
+  <a href="#interpretability"><span class="toc-num">21</span>Interpretability &amp; debugging</a>
+  <a href="#beyond"><span class="toc-num">22</span>Sequence tasks in the wild</a>
+  <a href="#modern"><span class="toc-num">23</span>The 2026 landscape</a>
+  <a href="#mamba"><span class="toc-num">24</span>Mamba &amp; selective SSMs</a>
+  <a href="#pitfalls"><span class="toc-num">25</span>Common pitfalls</a>
+  <a href="#tuning"><span class="toc-num">26</span>Tuning &amp; debugging</a>
+  <a href="#production"><span class="toc-num">27</span>Production &amp; deployment</a>
+  <a href="#real-world"><span class="toc-num">28</span>Real world — the business view</a>
+  <a href="#qa"><span class="toc-num">29</span>Q&amp;A bank</a>
+  <a href="#glossary"><span class="toc-num">30</span>Notation &amp; glossary</a>
+  <a href="#cheatsheet"><span class="toc-num">31</span>Formula cheat-sheet</a>
+  <a href="#references"><span class="toc-num">32</span>References</a>
+</aside>
+<main class="content">
+<div class="hero">
+  <div class="kicker">Recurrent Neural Networks</div>
+  <h1>RNNs — The Complete Reference</h1>
+  <p class="lead">From "how does a network <em>remember</em>?" through vanilla RNNs, the vanishing-gradient crisis, LSTMs and GRUs, sequence-to-sequence with attention, and the leap to Transformers — all the way to the 2026 state-space revival (Mamba, RWKV). Math is derived with intuition; every code block runs on 2026 APIs; every idea lands in a real business problem.</p>
+  <div class="reading-time">⏱ ~85 min read · sequence-modelling, end to end</div>
+  <div class="stats">
+    <div class="stat"><b>32</b><span>sections</span></div>
+    <div class="stat"><b>30</b><span>Q&amp;A bank</span></div>
+    <div class="stat"><b>14</b><span>visual explainers</span></div>
+    <div class="stat"><b>5</b><span>code labs</span></div>
+    <div class="stat"><b>16</b><span>references</span></div>
+  </div>
+  <div class="crosslink-banner">
+    <span style="align-self:center;font-weight:600;font-size:13.5px">The climb:</span>
+    <a href="1_rnn_primer.html">🧒 Start at the Visual Primer</a>
+    <a href="3_rnn_projects.html">🛠 Build it in the Projects guide</a>
+    <a href="4_rnn_field_card.html">📇 Field Card</a>
+  </div>
+  <div class="box levelup">
+    <span class="bt">⬆ Builds on the Foundations guide</span>
+    This guide assumes you know how a plain neural network does a <strong>forward pass</strong> and <strong>backpropagation</strong>. An RNN is that same machinery applied <em>in a loop over time</em>, sharing one set of weights across every step. Wherever we reuse those ideas you'll see an <strong>⬆ level-up</strong> link back to <a href="../ann/2_neural_network_foundations.html">the Foundations reference</a>.
+  </div>
+</div>
+<section class="section" id="intro">
+<h2><span class="sec-no">01</span>What an RNN actually is</h2>
+<p>A feed-forward network sees one fixed-size input and forgets it instantly. But language, audio, sensor streams, and sales histories arrive as <strong>sequences</strong> — ordered, variable in length, where what came before changes the meaning of what comes next. A <strong>Recurrent Neural Network</strong> is the simplest idea that gives a network <em>memory</em>: it processes a sequence one element at a time, and carries a <strong>hidden state</strong> forward from each step to the next.</p>
+<div class="box intuition"><span class="bt">The one-sentence model</span>An RNN reads a sequence like you read a sentence — left to right, updating a running "gist" (the hidden state) after every word, and using that gist plus the next word to decide what to do.</div>
+<p>That running gist is the whole trick. At every step the network combines <em>the new input</em> with <em>its memory of everything so far</em>, produces an output if needed, and passes an updated memory onward. The same small set of weights is reused at every step — which is exactly why an RNN can handle a sequence of <em>any</em> length with a fixed number of parameters.</p>
+<div class="box good"><span class="bt">Why this guide matters in 2026</span>Transformers now dominate, but they grew directly out of the RNN→attention story — you cannot truly understand them without it. And recurrence is roaring back: state-space models (Mamba) and RWKV are RNN-like architectures beating Transformers on long-context efficiency. This guide takes you from the 1980s idea to that 2026 frontier.</p></div>
+</section>
+<section class="section" id="why-not-ff">
+<h2><span class="sec-no">02</span>Why a plain network can't do sequences</h2>
+<p>Before recurrence, why not just feed the whole sequence into an MLP? Three walls:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Problem</th><th>What goes wrong</th></tr></thead>
+<tbody>
+<tr><td><strong>Variable length</strong></td><td>An MLP has a fixed input size. Sentences, songs, and sales histories don't. You'd need a different network for every length.</td></tr>
+<tr><td><strong>No sense of order</strong></td><td>Flatten "dog bites man" and "man bites dog" into a bag of words and they look identical — but they mean opposite things.</td></tr>
+<tr><td><strong>No parameter sharing</strong></td><td>A pattern ("not good") should be recognised wherever it appears in the sequence. An MLP would have to relearn it separately at every position.</td></tr>
+</tbody></table></div>
+<p>An RNN answers all three at once with one move: <strong>share the same weights across every time-step and thread a memory between them.</strong> Variable length? Just loop more times. Order? The memory is built up in order. Sharing? There's literally one cell, reused.</p>
+<div class="box intuition"><span class="bt">Parallel to CNNs</span>A CNN shares weights across <em>space</em> (the same filter slides over the image). An RNN shares weights across <em>time</em> (the same cell steps along the sequence). Same powerful idea — weight sharing — applied to a different axis. If you've read the <a href="../cnn/2_cnn_reference.html">CNN reference</a>, this will feel familiar.</div>
+</section>
+<section class="section" id="sequence-shapes">
+<h2><span class="sec-no">03</span>The shapes of sequence problems</h2>
+<p>"Sequence model" covers a surprising range of tasks. Knowing which <em>shape</em> you have tells you how to wire the RNN — and is the first question to ask of any business problem.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Shape</th><th>In → Out</th><th>Real example</th></tr></thead>
+<tbody>
+<tr><td><strong>One-to-many</strong></td><td>1 input → sequence</td><td>image → caption</td></tr>
+<tr><td><strong>Many-to-one</strong></td><td>sequence → 1 label</td><td>review → sentiment; ECG → diagnosis</td></tr>
+<tr><td><strong>Many-to-many (aligned)</strong></td><td>sequence → same-length sequence</td><td>tag each word (NER, POS)</td></tr>
+<tr><td><strong>Many-to-many (seq2seq)</strong></td><td>sequence → different-length sequence</td><td>translation; speech → text</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">Real-life framing</span>"Forecast next week's demand from the last 90 days" is many-to-one (or many-to-many if you predict several future steps). "Summarise this complaint" is seq2seq. Naming the shape first stops you from building the wrong model — a mistake that's expensive to discover late.</div>
+</section>
+<section class="section" id="rnn-cell">
+<h2><span class="sec-no">04</span>The RNN cell &amp; the unrolled view</h2>
+<p>Here is the entire vanilla RNN in one equation. At each step <code class="inline">t</code>, take the previous hidden state <code class="inline">h<sub>t-1</sub></code> and the new input <code class="inline">x<sub>t</sub></code>, mix them, squash with a non-linearity:</p>
+<div class="box math"><span class="bt">The recurrence</span>
+<div class="eq">h<sub>t</sub> = tanh( W<sub>x</sub> x<sub>t</sub> + W<sub>h</sub> h<sub>t-1</sub> + b )</div>
+<div class="eq">y<sub>t</sub> = W<sub>y</sub> h<sub>t</sub> + b<sub>y</sub></div>
+Three weight matrices — <code class="inline">W<sub>x</sub></code> (input→hidden), <code class="inline">W<sub>h</sub></code> (hidden→hidden, the memory), <code class="inline">W<sub>y</sub></code> (hidden→output) — and that's it. The <em>same three</em> are used at every single step.</div>
+<p>The clearest way to picture this is to <strong>unroll</strong> the loop: draw one copy of the cell per time-step, with the hidden state flowing from each to the next. It's not a deeper network — it's the same cell, photographed at each moment.</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="An RNN unrolled across time">
+<style>.cell{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.8;rx:8}.xb{fill:#7c889b22;stroke:#7c889b;stroke-width:1.4}.yb{fill:#ffb45422;stroke:#ffb454;stroke-width:1.4}.t{font:600 12px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:10px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.8;fill:none;marker-end:url(#ar)}.ah{stroke:#14b8c4;stroke-width:2.4;fill:none;marker-end:url(#ar2)}</style>
+<defs><marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#aab4c4"/></marker><marker id="ar2" markerWidth="9" markerHeight="9" refX="7" refY="3" orient="auto"><path d="M0,0 L7,3 L0,6 Z" fill="#14b8c4"/></marker></defs>
+<rect class="xb" x="48" y="170" width="44" height="30" rx="5"/><text class="s" x="70" y="190">x<tspan baseline-shift="sub">t-1</tspan></text>
+<rect class="cell" x="42" y="95" width="56" height="46"/><text class="t" x="70" y="123">h<tspan baseline-shift="sub" font-size="9">t-1</tspan></text>
+<rect class="yb" x="48" y="35" width="44" height="30" rx="5"/><text class="s" x="70" y="55">y<tspan baseline-shift="sub">t-1</tspan></text>
+<line x1="70" y1="170" x2="70" y2="143" class="a"/>
+<line x1="70" y1="95" x2="70" y2="67" class="a"/>
+<line x1="98" y1="118" x2="222" y2="118" class="ah"/>
+<rect class="xb" x="228" y="170" width="44" height="30" rx="5"/><text class="s" x="250" y="190">x<tspan baseline-shift="sub">t</tspan></text>
+<rect class="cell" x="222" y="95" width="56" height="46"/><text class="t" x="250" y="123">h<tspan baseline-shift="sub" font-size="9">t</tspan></text>
+<rect class="yb" x="228" y="35" width="44" height="30" rx="5"/><text class="s" x="250" y="55">y<tspan baseline-shift="sub">t</tspan></text>
+<line x1="250" y1="170" x2="250" y2="143" class="a"/>
+<line x1="250" y1="95" x2="250" y2="67" class="a"/>
+<line x1="278" y1="118" x2="402" y2="118" class="ah"/>
+<rect class="xb" x="408" y="170" width="44" height="30" rx="5"/><text class="s" x="430" y="190">x<tspan baseline-shift="sub">t+1</tspan></text>
+<rect class="cell" x="402" y="95" width="56" height="46"/><text class="t" x="430" y="123">h<tspan baseline-shift="sub" font-size="9">t+1</tspan></text>
+<rect class="yb" x="408" y="35" width="44" height="30" rx="5"/><text class="s" x="430" y="55">y<tspan baseline-shift="sub">t+1</tspan></text>
+<line x1="430" y1="170" x2="430" y2="143" class="a"/>
+<line x1="430" y1="95" x2="430" y2="67" class="a"/>
+<line x1="458" y1="118" x2="582" y2="118" class="ah"/>
+<rect class="xb" x="588" y="170" width="44" height="30" rx="5"/><text class="s" x="610" y="190">x<tspan baseline-shift="sub">…</tspan></text>
+<rect class="cell" x="582" y="95" width="56" height="46"/><text class="t" x="610" y="123">h<tspan baseline-shift="sub" font-size="9">…</tspan></text>
+<rect class="yb" x="588" y="35" width="44" height="30" rx="5"/><text class="s" x="610" y="55">y<tspan baseline-shift="sub">…</tspan></text>
+<line x1="610" y1="170" x2="610" y2="143" class="a"/>
+<line x1="610" y1="95" x2="610" y2="67" class="a"/>
+<text class="s" x="350" y="20" fill="#14b8c4">the SAME weights are reused at every step — that teal arrow is the memory (hidden state) flowing forward</text>
+</svg>
+<div class="viz-cap">An RNN unrolled across time. Inputs come up from the bottom, outputs leave at the top, and the teal arrow — the hidden state — is the memory carried forward. Crucially, the weights inside every cell are <em>identical</em>; unrolling is just a way to see the loop.</div>
+</div>
+<div class="box info"><span class="bt">The hidden state is everything</span>At step <code class="inline">t</code>, <code class="inline">h<sub>t</sub></code> is the network's entire memory of the sequence so far, squeezed into a fixed-size vector. Its size is a key hyperparameter — too small and the model can't remember enough; too big and it overfits and slows down.</div>
+<div class="box info"><span class="bt">Elman vs Jordan</span>Two classic formulations: the <strong>Elman</strong> network (used here) feeds the <em>hidden</em> state back into itself — <code class="inline">h<sub>t-1</sub> → h<sub>t</sub></code>; the older <strong>Jordan</strong> network feeds the <em>output</em> back instead — <code class="inline">y<sub>t-1</sub> → h<sub>t</sub></code>. Elman's hidden-state recurrence won out and is what "RNN" means today.</div>
+</section>
+<section class="section" id="forward">
+<h2><span class="sec-no">05</span>Forward pass through time</h2>
+<p>Running an RNN forward is just applying that one recurrence in a loop. Start with <code class="inline">h<sub>0</sub></code> (usually zeros), then for each element feed it in and update the state:</p>
+<div class="box math"><span class="bt">The loop, in words</span>h ← 0; &nbsp; for each x in sequence: &nbsp; h ← tanh(W<sub>x</sub>x + W<sub>h</sub>h + b); &nbsp; emit y = W<sub>y</sub>h. <br>The final h is a summary of the whole sequence (use it for many-to-one); the sequence of y's is the per-step output (use it for tagging or generation).</div>
+<p>Because the loop length equals the sequence length, the <strong>computation is inherently sequential</strong> — step <code class="inline">t</code> can't start until step <code class="inline">t-1</code> finishes. That single fact is the RNN's blessing (true memory) and its curse (no parallelism), and it's exactly the weakness Transformers later exploit (<a href="#to-transformers">§ to Transformers</a>).</p>
+<div class="box warn"><span class="bt">Mind the initial state</span>Resetting <code class="inline">h</code> to zero is right between independent sequences, but if you're streaming one long signal in chunks you must <em>carry</em> the state across chunks (and detach it from the graph) — a classic bug that quietly destroys accuracy.</div>
+</section>
+<section class="section" id="bptt">
+<h2><span class="sec-no">06</span>Backpropagation through time (BPTT)</h2>
+<p>How does an RNN learn? The same way any network does — gradient descent — but the gradient has to flow <em>backward through the unrolled loop</em>. This is <strong>Backpropagation Through Time</strong>: unroll the network, run the normal backward pass across all the time-steps, and because the weights are shared, <strong>sum</strong> each weight's gradient over every step it was used.</p>
+<div class="box math"><span class="bt">The key wrinkle</span>A single weight matrix <code class="inline">W<sub>h</sub></code> appears at every time-step. Its total gradient is the sum of the gradient contributions from all steps. The loss at step <code class="inline">t</code> depends on <em>every</em> earlier hidden state, so the chain rule reaches all the way back to step 0.</div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button><svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="BPTT gradient flowing back through unrolled steps"><style>.gflow{stroke:#ef4d6a;stroke-width:2.4;fill:none;marker-end:url(#gb);stroke-dasharray:8 5;animation:gb 1.4s linear infinite}@keyframes gb{to{stroke-dashoffset:26}}.cellb{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.6}.tb{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.sb{font:9.5px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.fwd{stroke:#7c889b;stroke-width:1.6;fill:none;marker-end:url(#fb)}</style><defs><marker id="gb" markerWidth="9" markerHeight="9" refX="2" refY="3" orient="auto"><path d="M7,0 L0,3 L7,6 Z" fill="#ef4d6a"/></marker><marker id="fb" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#7c889b"/></marker></defs><rect class="cellb" x="50" y="90" width="60" height="44" rx="8"/><text class="tb" x="80" y="117">h<tspan baseline-shift="sub" font-size="9">t-3</tspan></text><line x1="110" y1="112" x2="210" y2="112" class="fwd"/><rect class="cellb" x="210" y="90" width="60" height="44" rx="8"/><text class="tb" x="240" y="117">h<tspan baseline-shift="sub" font-size="9">t-2</tspan></text><line x1="270" y1="112" x2="370" y2="112" class="fwd"/><rect class="cellb" x="370" y="90" width="60" height="44" rx="8"/><text class="tb" x="400" y="117">h<tspan baseline-shift="sub" font-size="9">t-1</tspan></text><line x1="430" y1="112" x2="530" y2="112" class="fwd"/><rect class="cellb" x="530" y="90" width="60" height="44" rx="8"/><text class="tb" x="560" y="117">h<tspan baseline-shift="sub" font-size="9">t</tspan></text><rect x="534" y="30" width="52" height="28" rx="6" fill="#ffb45422" stroke="#ffb454" stroke-width="1.5"/><text class="tb" x="560" y="49" fill="#ffb454">loss</text><line x1="560" y1="90" x2="560" y2="58" class="fwd"/><path d="M530,135 C 480.0,175 480.0,175 430,135" class="gflow"/><path d="M370,135 C 320.0,175 320.0,175 270,135" class="gflow"/><path d="M210,135 C 160.0,175 160.0,175 110,135" class="gflow"/><text class="sb" x="350" y="200" fill="#ef4d6a">the loss's gradient travels back through every step — multiplied at each one, which is why it can vanish or explode</text><text class="sb" x="350" y="18">forward (grey) →  &nbsp;&nbsp; ← gradient (red, BPTT)</text></svg>
+<div class="viz-cap">BPTT in motion. The forward pass (grey) builds hidden states left to right; the loss at the end sends its gradient <em>backward</em> through every step (red). Because that red signal is multiplied at each hop, it either fades (vanishing) or blows up (exploding) — the problem §7 tackles head-on.</div>
+</div>
+<div class="box levelup"><span class="bt">⬆ Same backprop you already know</span>BPTT isn't a new algorithm — it's ordinary <a href="../ann/2_neural_network_foundations.html">backpropagation</a> run on the unrolled graph. If you can backprop through a deep MLP, you can backprop through time; the only twist is summing the shared-weight gradients.</div>
+<h3>Truncated BPTT</h3>
+<p>For long sequences, unrolling thousands of steps is memory-prohibitive and the gradient is unreliable anyway. <strong>Truncated BPTT</strong> processes the sequence in chunks of, say, 50–200 steps: carry the hidden state forward across chunks, but only back-propagate within each chunk. It's the standard practical compromise.</p>
+</section>
+<section class="section" id="vanishing">
+<h2><span class="sec-no">07</span>The vanishing &amp; exploding gradient problem</h2>
+<p>Here is the villain of the whole story — the reason vanilla RNNs fail on anything but short sequences, and the problem every later architecture exists to solve.</p>
+<p>When the gradient flows back through time, it gets <strong>multiplied by the same recurrent weight (and the tanh derivative) at every step</strong>. Multiply a number slightly less than 1 by itself 100 times and it vanishes to zero; slightly more than 1 and it explodes to infinity.</p>
+<div class="box math"><span class="bt">Why it happens</span>The gradient across <code class="inline">k</code> steps carries a factor like <code class="inline">(W<sub>h</sub>)<sup>k</sup></code> times products of tanh derivatives (each ≤ 1). If the relevant eigenvalue of <code class="inline">W<sub>h</sub></code> is &lt; 1 → <strong>vanish</strong>; if &gt; 1 → <strong>explode</strong>. There's no comfortable middle for long ranges.</div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 170" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Vanishing gradient across timesteps">
+<style>.bar{fill:#ef4d6a}.t{font:600 12px Inter,sans-serif;fill:#e7ecf3}.s{font:10px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}</style>
+<rect class="bar" x="40" y="19.0" width="38" height="121.0" rx="2" opacity="1.00"/>
+<text class="s" x="59.0" y="155">t-13</text>
+<rect class="bar" x="84" y="64.6" width="38" height="75.4" rx="2" opacity="0.62"/>
+<rect class="bar" x="128" y="92.872" width="38" height="47.128" rx="2" opacity="0.38"/>
+<rect class="bar" x="172" y="110.40064000000001" width="38" height="29.599359999999997" rx="2" opacity="0.25"/>
+<rect class="bar" x="216" y="121.2683968" width="38" height="18.7316032" rx="2" opacity="0.25"/>
+<rect class="bar" x="260" y="128.006406016" width="38" height="11.993593983999999" rx="2" opacity="0.25"/>
+<text class="s" x="279.0" y="155">t-8</text>
+<rect class="bar" x="304" y="132.18397172992" width="38" height="7.8160282700799995" rx="2" opacity="0.25"/>
+<rect class="bar" x="348" y="134.7740624725504" width="38" height="5.2259375274496" rx="2" opacity="0.25"/>
+<rect class="bar" x="392" y="136.37991873298125" width="38" height="3.620081267018752" rx="2" opacity="0.25"/>
+<rect class="bar" x="436" y="137.37554961444837" width="38" height="2.624450385551626" rx="2" opacity="0.25"/>
+<rect class="bar" x="480" y="137.992840760958" width="38" height="2.007159239042008" rx="2" opacity="0.25"/>
+<text class="s" x="499.0" y="155">t-3</text>
+<rect class="bar" x="524" y="138.37556127179394" width="38" height="1.624438728206045" rx="2" opacity="0.25"/>
+<rect class="bar" x="568" y="138.61284798851224" width="38" height="1.387152011487748" rx="2" opacity="0.25"/>
+<rect class="bar" x="612" y="138.7599657528776" width="38" height="1.2400342471224037" rx="2" opacity="0.25"/>
+<text class="s" x="631.0" y="155">t-0</text>
+<text class="t" x="40" y="22">Gradient magnitude as it travels back through time →</text>
+<text class="s" x="560" y="100" fill="#ef4d6a">early steps get</text><text class="s" x="560" y="114" fill="#ef4d6a">almost no signal</text>
+</svg>
+<div class="viz-cap">Vanishing gradients: as the learning signal travels back through time, it shrinks geometrically. By the time it reaches the early steps it's effectively zero — so the network <em>cannot learn long-range dependencies</em>. "The clouds were in the … sky" is easy; "I grew up in France … I speak fluent ___" is where vanilla RNNs fail.</div>
+</div>
+<div class="table-wrap"><table>
+<thead><tr><th>Symptom</th><th>Cause</th><th>Fix</th></tr></thead>
+<tbody>
+<tr><td>Loss spikes to NaN</td><td>exploding gradients</td><td><strong>gradient clipping</strong> (cheap, essential)</td></tr>
+<tr><td>Can't learn long context</td><td>vanishing gradients</td><td><strong>gated cells</strong> — LSTM / GRU (next)</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">The pivot of this whole guide</span>Exploding gradients have an easy patch (clip them). Vanishing gradients do not — and solving them is precisely what LSTMs and GRUs were invented for. Everything from here is a response to this one slide.</div>
+</section>
+<section class="section" id="lstm">
+<h2><span class="sec-no">08</span>LSTM — giving memory a protected highway</h2>
+<p>The <strong>Long Short-Term Memory</strong> cell (Hochreiter &amp; Schmidhuber, 1997) is the breakthrough that made RNNs actually work on long sequences. Its idea is elegant: add a separate <strong>cell state</strong> — a "memory highway" that runs straight through the sequence with only minor, gated edits — so gradients can travel far without vanishing.</p>
+<p>Three <strong>gates</strong> (each a little sigmoid network outputting values in 0–1) control the highway:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Gate</th><th>Asks</th><th>Effect</th></tr></thead>
+<tbody>
+<tr><td><strong>Forget</strong></td><td>what should I erase from memory?</td><td>multiplies the old cell state (0 = forget, 1 = keep)</td></tr>
+<tr><td><strong>Input</strong></td><td>what new info should I store?</td><td>adds a gated candidate into the cell state</td></tr>
+<tr><td><strong>Output</strong></td><td>what should I expose right now?</td><td>filters the cell state into the hidden state h</td></tr>
+</tbody></table></div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 280" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="LSTM cell with gates and cell-state highway">
+<style>.box{fill:#0f1720;stroke:#2b3442;stroke-width:1.4;rx:10}.hwy{stroke:#ffb454;stroke-width:3.5;fill:none}.gate{fill:#14b8c433;stroke:#14b8c4;stroke-width:1.5;rx:6}.op{fill:#7c889b22;stroke:#7c889b;stroke-width:1.4}.t{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:9.5px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.6;fill:none;marker-end:url(#l1)}</style>
+<defs><marker id="l1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#aab4c4"/></marker></defs>
+<rect class="box" x="60" y="40" width="580" height="200"/>
+<line x1="60" y1="75" x2="640" y2="75" class="hwy"/>
+<text class="s" x="350" y="32" fill="#ffb454">cell state C — the highway memory travels along, barely touched (this beats vanishing gradients)</text>
+<circle cx="200" cy="75" r="13" fill="#0f1720" stroke="#ef4d6a" stroke-width="1.8"/><text class="t" x="200" y="79" fill="#ef4d6a">×</text>
+<rect class="gate" x="168" y="150" width="64" height="34"/><text class="t" x="200" y="171">forget</text>
+<line x1="200" y1="150" x2="200" y2="88" class="a"/>
+<circle cx="360" cy="75" r="13" fill="#0f1720" stroke="#34c77b" stroke-width="1.8"/><text class="t" x="360" y="80" fill="#34c77b">+</text>
+<rect class="gate" x="300" y="150" width="58" height="34"/><text class="t" x="329" y="171">input</text>
+<rect class="gate" x="364" y="150" width="64" height="34"/><text class="t" x="396" y="171">candidate</text>
+<line x1="362" y1="150" x2="362" y2="88" class="a"/>
+<rect class="gate" x="520" y="150" width="64" height="34"/><text class="t" x="552" y="171">output</text>
+<circle cx="552" cy="115" r="13" fill="#0f1720" stroke="#14b8c4" stroke-width="1.8"/><text class="t" x="552" y="119" fill="#14b8c4">×</text>
+<line x1="552" y1="150" x2="552" y2="128" class="a"/>
+<line x1="552" y1="75" x2="552" y2="102" class="a"/>
+<line x1="565" y1="115" x2="640" y2="115" class="a"/><text class="s" x="660" y="118">h<tspan baseline-shift="sub">t</tspan></text>
+<text class="s" x="120" y="215">[h<tspan baseline-shift="sub">t-1</tspan> , x<tspan baseline-shift="sub">t</tspan>] feed all gates</text>
+<text class="s" x="44" y="79" text-anchor="end">C<tspan baseline-shift="sub">t-1</tspan></text><text class="s" x="660" y="72">C<tspan baseline-shift="sub">t</tspan></text>
+</svg>
+<div class="viz-cap">The LSTM cell. The gold line is the cell state — memory's protected highway. The forget gate (×) decides what to drop, the input gate (+) decides what to add, and the output gate (×) decides what to reveal as h. Because the highway is mostly additive, gradients flow across it almost undamped — the "constant error carousel" that beats vanishing gradients.</div>
+</div>
+<div class="box math"><span class="bt">The equations (for the record)</span>
+f<sub>t</sub>=σ(W<sub>f</sub>·[h<sub>t-1</sub>,x<sub>t</sub>]) · &nbsp; i<sub>t</sub>=σ(W<sub>i</sub>·[…]) · &nbsp; o<sub>t</sub>=σ(W<sub>o</sub>·[…]) · &nbsp; g<sub>t</sub>=tanh(W<sub>g</sub>·[…])<br>
+<div class="eq">C<sub>t</sub> = f<sub>t</sub> ⊙ C<sub>t-1</sub> + i<sub>t</sub> ⊙ g<sub>t</sub> &nbsp;&nbsp;&nbsp; h<sub>t</sub> = o<sub>t</sub> ⊙ tanh(C<sub>t</sub>)</div>
+The <strong>additive</strong> update to <code class="inline">C</code> is the magic: gradients pass through ⊕ without being repeatedly multiplied down.</div>
+<div class="box good"><span class="bt">Real-life payoff</span>For a decade, LSTMs powered Google Translate, Siri, and most production sequence models. Even today, for small-to-medium tabular time-series (demand, sensors), a well-tuned LSTM is often the <em>right</em> choice — cheaper and more data-efficient than a Transformer.</div>
+</section>
+<section class="section" id="gru">
+<h2><span class="sec-no">09</span>GRU — the leaner gated cell</h2>
+<p>The <strong>Gated Recurrent Unit</strong> (2014) asks: do we really need three gates and a separate cell state? It merges things into <strong>two</strong> gates and folds the cell state into the hidden state:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Gate</th><th>Job</th></tr></thead>
+<tbody>
+<tr><td><strong>Reset</strong></td><td>how much past state to ignore when forming the new candidate</td></tr>
+<tr><td><strong>Update</strong></td><td>how much to blend old state vs new candidate (does forget + input in one)</td></tr>
+</tbody></table></div>
+<div class="box math"><span class="bt">LSTM vs GRU — how to choose</span>GRU has fewer parameters → trains faster, needs less data, often matches LSTM. LSTM's separate cell state can edge it out on very long or complex dependencies. <strong>Practical rule:</strong> start with GRU; if it underfits long-range structure, try LSTM. Always benchmark both — the winner is data-dependent.</div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button><svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="GRU gates animated">
+<style>.flowg{stroke-dasharray:7 6;animation:gf 1.7s linear infinite}@keyframes gf{to{stroke-dashoffset:-26}}.pz{animation:pz 3s ease-in-out infinite}@keyframes pz{0%,100%{opacity:.45}50%{opacity:1}}.tg{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.sg{font:9.5px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}</style>
+<rect x="60" y="55" width="580" height="120" rx="12" fill="#0f1720" stroke="#2b3442" stroke-width="1.4"/>
+<line x1="60" y1="90" x2="640" y2="90" stroke="#14b8c4" stroke-width="3.2" class="flowg"/>
+<text x="350" y="44" class="sg" fill="#14b8c4">the hidden state h flows straight through — no separate cell state (simpler than LSTM)</text>
+<g>
+<rect x="150" y="120" width="78" height="34" rx="6" fill="#ef4d6a22" stroke="#ef4d6a" stroke-width="1.5"/><text x="189" y="141" class="tg" fill="#ef4d6a">reset r</text>
+<text x="189" y="170" class="sg">how much past to ignore</text>
+<rect x="430" y="120" width="84" height="34" rx="6" fill="#34c77b22" stroke="#34c77b" stroke-width="1.5"/><text x="472" y="141" class="tg" fill="#34c77b">update z</text>
+<text x="472" y="170" class="sg">blend old vs new (forget+input in one)</text>
+</g>
+<circle cx="320" cy="90" r="14" fill="#0f1720" stroke="#34c77b" stroke-width="1.8" class="pz"/><text x="320" y="95" class="tg" fill="#34c77b">⊕</text>
+<line x1="189" y1="120" x2="280" y2="96" stroke="#aab4c4" stroke-width="1.4"/>
+<line x1="472" y1="120" x2="360" y2="96" stroke="#aab4c4" stroke-width="1.4"/>
+<text x="44" y="93" class="sg" text-anchor="end">h<tspan baseline-shift="sub">t-1</tspan></text><text x="662" y="93" class="sg">h<tspan baseline-shift="sub">t</tspan></text>
+<text x="350" y="205" class="sg">2 gates, 1 state — ~25% fewer parameters than an LSTM, often the same accuracy</text>
+</svg>
+<div class="viz-cap">The GRU. Just two gates — reset (how much past to ignore) and update (how much to keep vs refresh) — and no separate cell state. Simpler and lighter than an LSTM, yet frequently just as accurate.</div>
+</div>
+<div class="box good"><span class="bt">Real-life payoff</span>On modest datasets — the common case in business — GRUs frequently win on accuracy-per-rupee-of-compute simply because they're easier to train and less prone to overfitting.</div>
+</section>
+<section class="section" id="variants">
+<h2><span class="sec-no">10</span>Bidirectional &amp; deep RNNs</h2>
+<h3>Bidirectional RNNs</h3>
+<p>A normal RNN only knows the past. But for many tasks — tagging a word, transcribing audio — the <em>future</em> context matters too ("bank" of a river vs a bank loan). A <strong>bidirectional RNN</strong> runs two RNNs, one forward and one backward, and concatenates their states, so every position sees the whole sequence.</p>
+<div class="box warn"><span class="bt">Constraint</span>Bidirectional needs the <em>entire</em> sequence up front — so it's great for classification/tagging on complete inputs, but <strong>unusable for real-time streaming or generation</strong>, where the future hasn't happened yet.</div>
+<h3>Deep (stacked) RNNs</h3>
+<p>Stack multiple recurrent layers so the output sequence of one feeds the next. Lower layers learn local patterns, higher layers learn abstract structure — the same depth intuition as in any deep net. Two to four layers is typical; more rarely helps and is hard to train.</p>
+</section>
+<section class="section" id="seq2seq">
+<h2><span class="sec-no">11</span>Sequence-to-sequence — encoder &amp; decoder</h2>
+<p>How do you map a sequence to a <em>different-length</em> sequence — English to Hindi, audio to text, a question to an answer? The <strong>seq2seq</strong> design (2014) uses two RNNs: an <strong>encoder</strong> reads the whole input into a final hidden state (a "thought vector"), and a <strong>decoder</strong> generates the output one token at a time from that vector.</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 230" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Encoder decoder seq2seq">
+<style>.en{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.6}.de{fill:#ffb45422;stroke:#ffb454;stroke-width:1.6}.ctx{fill:#ef4d6a33;stroke:#ef4d6a;stroke-width:1.8}.t{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:9.5px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.6;fill:none;marker-end:url(#b1)}</style>
+<defs><marker id="b1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#aab4c4"/></marker></defs>
+<rect class="en" x="34" y="95" width="52" height="40" rx="7"/><text class="t" x="60" y="119">enc</text><text class="s" x="60" y="160">x1</text><line x1="60" y1="148" x2="60" y2="137" class="a"/><line x1="86" y1="115" x2="114" y2="115" class="a"/><rect class="en" x="114" y="95" width="52" height="40" rx="7"/><text class="t" x="140" y="119">enc</text><text class="s" x="140" y="160">x2</text><line x1="140" y1="148" x2="140" y2="137" class="a"/><line x1="166" y1="115" x2="194" y2="115" class="a"/><rect class="en" x="194" y="95" width="52" height="40" rx="7"/><text class="t" x="220" y="119">enc</text><text class="s" x="220" y="160">x3</text><line x1="220" y1="148" x2="220" y2="137" class="a"/><line x1="246" y1="115" x2="300" y2="115" class="a"/><rect class="ctx" x="300" y="98" width="72" height="34" rx="6"/><text class="t" x="336" y="119" fill="#ef4d6a">context</text><text class="s" x="336" y="150" fill="#ef4d6a">whole input squeezed</text><text class="s" x="336" y="163" fill="#ef4d6a">into ONE vector ⚠</text><line x1="372" y1="115" x2="400-26" y2="115" class="a"/><rect class="de" x="374" y="95" width="52" height="40" rx="7"/><text class="t" x="400" y="119">dec</text><text class="s" x="400" y="78">y1</text><line x1="400" y1="95" x2="400" y2="84" class="a"/><line x1="426" y1="115" x2="454" y2="115" class="a"/><rect class="de" x="454" y="95" width="52" height="40" rx="7"/><text class="t" x="480" y="119">dec</text><text class="s" x="480" y="78">y2</text><line x1="480" y1="95" x2="480" y2="84" class="a"/><line x1="506" y1="115" x2="534" y2="115" class="a"/><rect class="de" x="534" y="95" width="52" height="40" rx="7"/><text class="t" x="560" y="119">dec</text><text class="s" x="560" y="78">y3</text><line x1="560" y1="95" x2="560" y2="84" class="a"/><line x1="586" y1="115" x2="614" y2="115" class="a"/><rect class="de" x="614" y="95" width="52" height="40" rx="7"/><text class="t" x="640" y="119">dec</text><text class="s" x="640" y="78">y4</text><line x1="640" y1="95" x2="640" y2="84" class="a"/><text class="s" x="155" y="40" fill="#14b8c4">ENCODER reads the input</text><text class="s" x="520" y="40" fill="#ffb454">DECODER writes the output</text></svg>
+<div class="viz-cap">Encoder–decoder seq2seq. The encoder compresses the entire input into one context vector; the decoder unrolls it into the output. Elegant — but notice the red bottleneck.</div>
+</div>
+<div class="box warn"><span class="bt">The bottleneck problem</span>Cramming a 40-word sentence into one fixed vector loses information — and the longer the input, the worse it gets. Translation quality fell off a cliff for long sentences. The fix for this single flaw is the most important idea in modern AI: <strong>attention</strong>.</div>
+</section>
+<section class="section" id="attention">
+<h2><span class="sec-no">12</span>Attention — the idea that changed everything</h2>
+<p>Instead of forcing the decoder to rely on one frozen context vector, <strong>attention</strong> (Bahdanau 2014; Luong 2015) lets it <em>look back at every encoder state</em> at each output step, and take a weighted average — focusing on the input words most relevant <em>right now</em>.</p>
+<div class="box math"><span class="bt">Attention in three steps</span>(1) <strong>Score</strong> the current decoder state against every encoder state. (2) <strong>Softmax</strong> the scores into weights that sum to 1. (3) <strong>Blend</strong>: the context is the weighted sum of encoder states. Repeat for every output token, with fresh weights each time.</div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 240" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Attention alignment between decoder and encoder">
+<style>.en{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.6}.de{fill:#ffb45422;stroke:#ffb454;stroke-width:1.6}.t{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:9.5px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}</style>
+<rect class="en" x="40" y="160" width="60" height="36" rx="7"/><text class="s" x="70" y="182">je</text><rect class="en" x="130" y="160" width="60" height="36" rx="7"/><text class="s" x="160" y="182">suis</text><rect class="en" x="220" y="160" width="60" height="36" rx="7"/><text class="s" x="250" y="182">très</text><rect class="en" x="310" y="160" width="60" height="36" rx="7"/><text class="s" x="340" y="182">content</text><rect class="de" x="526" y="70" width="68" height="38" rx="7"/><text class="t" x="560" y="94">"happy"</text><line x1="70" y1="160" x2="540" y2="104" stroke="#a78bfa" stroke-width="1.6" opacity="0.35"/><line x1="160" y1="160" x2="540" y2="104" stroke="#a78bfa" stroke-width="1.7" opacity="0.37"/><line x1="250" y1="160" x2="540" y2="104" stroke="#a78bfa" stroke-width="2.1" opacity="0.43"/><line x1="340" y1="160" x2="540" y2="104" stroke="#a78bfa" stroke-width="4.6" opacity="0.85"/><text class="s" x="350" y="225" fill="#a78bfa">each output word looks back at ALL input words and weights them — here "happy" attends mostly to "content"</text><text class="s" x="200" y="30" fill="#a78bfa">soft alignment learned by the model — no fixed bottleneck</text></svg>
+<div class="viz-cap">Soft alignment: generating "happy", the decoder attends mostly to "content" (the French word it translates). The model learns these alignments on its own — no dictionary, no fixed bottleneck. Thicker line = more attention.</div>
+</div>
+<div class="box good"><span class="bt">Why it's a turning point</span>Attention removed the bottleneck, made models interpretable (you can <em>see</em> the alignments), and handled long sequences gracefully. It worked so well that researchers asked a radical question: if attention is doing the heavy lifting, do we even need the slow recurrent loop?</div>
+</section>
+<section class="section" id="ctc">
+<h2><span class="sec-no">13</span>CTC — training without alignment</h2>
+<p>Some tasks have input and output sequences of <em>different</em> lengths with <strong>unknown alignment</strong>: speech (thousands of audio frames → a few words) and handwriting (pixels → characters). You don't know which frames map to which letter. <strong>Connectionist Temporal Classification (CTC)</strong> solves this without per-frame labels.</p>
+<div class="box math"><span class="bt">The idea</span>Add a special <strong>blank</strong> token. The network labels every input frame; then a <em>collapse</em> rule (merge repeated labels, then delete blanks) turns the long frame-level sequence into the short output. CTC's loss sums the probability over <em>all</em> frame-labellings that collapse to the correct target — so the model learns alignment implicitly.</div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="CTC alignment collapsing">
+<style>.fr{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.4}.bl{fill:#7c889b22;stroke:#7c889b;stroke-width:1.4}.t{font:600 12px JetBrains Mono,monospace;fill:#e7ecf3;text-anchor:middle}.s{font:10px Inter,sans-serif;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.5;fill:none;marker-end:url(#c1)}</style>
+<defs><marker id="c1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#aab4c4"/></marker></defs>
+<rect class="fr" x="34" y="40" width="52" height="40" rx="6"/><text class="t" x="60" y="65">C</text><rect class="fr" x="106" y="40" width="52" height="40" rx="6"/><text class="t" x="132" y="65">C</text><rect class="bl" x="178" y="40" width="52" height="40" rx="6"/><text class="t" x="204" y="65">_</text><rect class="fr" x="250" y="40" width="52" height="40" rx="6"/><text class="t" x="276" y="65">A</text><rect class="fr" x="322" y="40" width="52" height="40" rx="6"/><text class="t" x="348" y="65">A</text><rect class="bl" x="394" y="40" width="52" height="40" rx="6"/><text class="t" x="420" y="65">_</text><rect class="bl" x="466" y="40" width="52" height="40" rx="6"/><text class="t" x="492" y="65">_</text><rect class="fr" x="538" y="40" width="52" height="40" rx="6"/><text class="t" x="564" y="65">T</text><text class="s" x="350" y="25">raw per-frame predictions (input length = 8 audio frames)</text><text class="s" x="350" y="115" fill="#ffb454">↓ merge repeats, then drop blanks (_)</text><rect class="fr" x="256" y="135" width="48" height="40" rx="6"/><text class="t" x="280" y="160">C</text><rect class="fr" x="326" y="135" width="48" height="40" rx="6"/><text class="t" x="350" y="160">A</text><rect class="fr" x="396" y="135" width="48" height="40" rx="6"/><text class="t" x="420" y="160">T</text><text class="s" x="540" y="160" fill="#34c77b">→ "CAT"</text></svg>
+<div class="viz-cap">CTC collapse: per-frame predictions "C C _ A A _ _ T" → merge repeats → drop blanks (_) → "CAT". The blank lets the model say "no new letter here" and separate genuine repeats ("ll" in "hello") from stutters.</div>
+</div>
+<div class="box good"><span class="bt">Real-life payoff</span>CTC powered a generation of speech-to-text and OCR systems (and still anchors many streaming ASR pipelines) precisely because it needs only (audio, transcript) pairs — no expensive frame-by-frame alignment. Pair a BiLSTM/Conv encoder with a CTC head and you have a working recogniser.</div>
+</section>
+<section class="section" id="to-transformers">
+<h2><span class="sec-no">14</span>From attention to Transformers</h2>
+<p>In 2017, "Attention Is All You Need" answered that question: <strong>no</strong>. Drop recurrence entirely; use <strong>self-attention</strong> (every position attends to every other position) plus positional encodings to inject order. The result — the <strong>Transformer</strong> — could process a whole sequence in parallel and model arbitrarily long-range dependencies directly.</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 210" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="RNN sequential vs Transformer parallel">
+<style>.r{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.5}.tf{fill:#a78bfa22;stroke:#a78bfa;stroke-width:1.5}.t{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:9.5px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.5;fill:none;marker-end:url(#v1)}</style>
+<defs><marker id="v1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#aab4c4"/></marker></defs>
+<text class="t" x="160" y="24">RNN — sequential</text><rect class="r" x="38" y="60" width="44" height="32" rx="6"/><text class="s" x="60" y="80">1</text><line x1="82" y1="76" x2="118" y2="76" class="a"/><rect class="r" x="118" y="60" width="44" height="32" rx="6"/><text class="s" x="140" y="80">2</text><line x1="162" y1="76" x2="198" y2="76" class="a"/><rect class="r" x="198" y="60" width="44" height="32" rx="6"/><text class="s" x="220" y="80">3</text><line x1="242" y1="76" x2="278" y2="76" class="a"/><rect class="r" x="278" y="60" width="44" height="32" rx="6"/><text class="s" x="300" y="80">4</text><text class="s" x="180" y="118" fill="#14b8c4">must wait: step N needs step N-1 → slow, but O(1) memory/step</text><text class="t" x="540" y="24">Transformer — parallel</text><rect class="tf" x="398" y="60" width="44" height="32" rx="6"/><text class="s" x="420" y="80">1</text><rect class="tf" x="468" y="60" width="44" height="32" rx="6"/><text class="s" x="490" y="80">2</text><rect class="tf" x="538" y="60" width="44" height="32" rx="6"/><text class="s" x="560" y="80">3</text><rect class="tf" x="608" y="60" width="44" height="32" rx="6"/><text class="s" x="630" y="80">4</text><line x1="420" y1="92" x2="490" y2="92" stroke="#a78bfa" stroke-width="0.8" opacity="0.5"/><line x1="420" y1="92" x2="560" y2="92" stroke="#a78bfa" stroke-width="0.8" opacity="0.5"/><line x1="420" y1="92" x2="630" y2="92" stroke="#a78bfa" stroke-width="0.8" opacity="0.5"/><line x1="490" y1="92" x2="560" y2="92" stroke="#a78bfa" stroke-width="0.8" opacity="0.5"/><line x1="490" y1="92" x2="630" y2="92" stroke="#a78bfa" stroke-width="0.8" opacity="0.5"/><line x1="560" y1="92" x2="630" y2="92" stroke="#a78bfa" stroke-width="0.8" opacity="0.5"/><text class="s" x="525" y="118" fill="#a78bfa">all positions at once → fast on GPUs, but O(N²) attention cost</text><text class="s" x="350" y="180">This trade — sequential memory vs parallel compute — is the whole 2026 debate.</text></svg>
+<div class="viz-cap">The core trade. RNNs are sequential — step N waits for N-1 — but use constant memory per step. Transformers process all positions at once (fast on GPUs) at the cost of O(N²) attention. This single trade-off explains both the Transformer takeover and the 2026 comeback of efficient recurrence.</div>
+</div>
+<div class="box info"><span class="bt">The honest lineage</span>Transformers didn't fall from the sky — they're the seq2seq-with-attention model with the recurrence removed. Everything you just learned (encoder/decoder, attention, teacher forcing, embeddings, beam search) carries straight over. You now understand the foundation GPT and BERT are built on.</div>
+<div class="crosslink-banner"><strong>Going deeper into Transformers next?</strong> They deserve their own guide — this section is the bridge. The RNN concepts here are the prerequisites.</div>
+</section>
+<section class="section" id="embeddings">
+<h2><span class="sec-no">15</span>Feeding sequences in: tokens &amp; embeddings</h2>
+<p>An RNN consumes vectors, but language is symbols. The bridge is <strong>tokenization</strong> (split text into units — words, sub-words, or characters) followed by <strong>embeddings</strong> (map each token id to a learned dense vector).</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Tokenization</th><th>Trade-off</th></tr></thead>
+<tbody>
+<tr><td>Character</td><td>tiny vocab, handles any word, but long sequences</td></tr>
+<tr><td>Word</td><td>short sequences, but huge vocab + out-of-vocabulary words</td></tr>
+<tr><td>Sub-word (BPE)</td><td>the modern default — balances both, no OOV</td></tr>
+</tbody></table></div>
+<div class="box info"><span class="bt">Embeddings carry meaning</span>The embedding layer is just a lookup table, learned with the rest of the model, that places similar tokens near each other in vector space ("king" near "queen"). For time-series the analogue is straightforward: your features are already vectors — just scale/normalise them.</div>
+<div class="box levelup"><span class="bt">⬆ It's a learned matrix</span>An embedding layer is a plain weight matrix trained by the same backprop you know — one row per token, selected by id.</div>
+</section>
+<section class="section" id="training-recipe">
+<h2><span class="sec-no">16</span>Training RNNs well</h2>
+<p>RNNs are notoriously finicky. A handful of techniques separate "won't converge" from "works":</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Technique</th><th>Why it's essential</th></tr></thead>
+<tbody>
+<tr><td><strong>Gradient clipping</strong></td><td>caps gradient norm (e.g. 1.0–5.0) — the cheap fix for exploding gradients. Non-negotiable.</td></tr>
+<tr><td><strong>Teacher forcing</strong></td><td>during training, feed the <em>true</em> previous token (not the model's guess) into the decoder — faster, more stable convergence.</td></tr>
+<tr><td><strong>Orthogonal / identity init</strong></td><td>initialise the recurrent matrix to preserve gradient norm across steps.</td></tr>
+<tr><td><strong>Variational / recurrent dropout</strong></td><td>apply the <em>same</em> dropout mask across all time-steps (<strong>Gal &amp; Ghahramani, 2016</strong>) — naïve per-step dropout destroys memory.</td></tr>
+<tr><td><strong>Pack/pad + masking</strong></td><td>batch variable-length sequences with padding, then mask the pad steps so they don't pollute the loss.</td></tr>
+</tbody></table></div>
+<div class="box warn"><span class="bt">Teacher-forcing's catch: exposure bias</span>At test time there's no ground truth to feed — the model eats its own predictions, and small errors compound. Mitigations: scheduled sampling, or just decode carefully (<a href="#generation">§ Generation</a>).</div>
+</section>
+<section class="section" id="evaluation">
+<h2><span class="sec-no">17</span>Evaluating sequence models</h2>
+<p>Accuracy alone rarely fits sequence tasks. Match the metric to the shape:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Task</th><th>Metric</th><th>Reads as</th></tr></thead>
+<tbody>
+<tr><td>Language modelling / generation</td><td><strong>Perplexity</strong></td><td>how "surprised" the model is — lower is better</td></tr>
+<tr><td>Translation / summarisation</td><td><strong>BLEU / ROUGE</strong></td><td>n-gram overlap with references (imperfect but standard)</td></tr>
+<tr><td>Classification (sentiment)</td><td>Accuracy / F1</td><td>F1 when classes are imbalanced</td></tr>
+<tr><td>Tagging (NER)</td><td>Entity-level F1</td><td>credit only for fully-correct spans</td></tr>
+<tr><td>Forecasting</td><td><strong>MAE / RMSE / MAPE</strong></td><td>error in the units the business cares about</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">Business-first metric</span>For demand forecasting, RMSE punishes big misses; MAPE gives a percentage execs understand; but the real question is often "did we over- or under-stock, and what did <em>that</em> cost?" — a custom, asymmetric cost metric beats any textbook one.</div>
+</section>
+<section class="section" id="generation">
+<h2><span class="sec-no">18</span>Decoding &amp; generation</h2>
+<p>A trained sequence model outputs a probability distribution over the next token. <em>How you pick</em> from it changes the output dramatically.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Strategy</th><th>What it does</th><th>Use when</th></tr></thead>
+<tbody>
+<tr><td><strong>Greedy</strong></td><td>always take the top token</td><td>fast, but bland &amp; repetitive</td></tr>
+<tr><td><strong>Beam search</strong></td><td>keep the top-k partial sequences</td><td>translation, where there's a "right" answer</td></tr>
+<tr><td><strong>Sampling + temperature</strong></td><td>sample; temperature controls randomness</td><td>creative generation (text, music)</td></tr>
+<tr><td><strong>Top-k / top-p</strong></td><td>sample only from the most likely tokens</td><td>the modern default for fluent, varied text</td></tr>
+</tbody></table></div>
+<div class="box info"><span class="bt">Temperature, intuitively</span>Low temperature (→0) = confident and repetitive; high (→1+) = diverse but riskier. It's the single most useful knob when a generator feels "too boring" or "too unhinged".</div>
+</section>
+<section class="section" id="worked-example">
+<h2><span class="sec-no">19</span>Worked example — one RNN step by hand</h2>
+<p>Numbers make it concrete. Take a 2-dim hidden state, 1-dim input, and tiny weights. Start <code class="inline">h<sub>0</sub>=[0,0]</code>, input <code class="inline">x<sub>1</sub>=1.0</code>.</p>
+<div class="box math"><span class="bt">Step 1</span>
+Let W<sub>x</sub>=[0.5, −0.3]ᵀ, W<sub>h</sub>=[[0.1,0.2],[0.0,0.1]], b=0.<br>
+pre-activation = W<sub>x</sub>·x<sub>1</sub> + W<sub>h</sub>·h<sub>0</sub> = [0.5, −0.3] + [0,0] = [0.5, −0.3]<br>
+<div class="eq">h<sub>1</sub> = tanh([0.5, −0.3]) = [0.462, −0.291]</div></div>
+<div class="box math"><span class="bt">Step 2</span>
+Now x<sub>2</sub>=0.5. pre = W<sub>x</sub>·0.5 + W<sub>h</sub>·h<sub>1</sub> = [0.25,−0.15] + [0.1·0.462+0.2·(−0.291), 0.1·(−0.291)] = [0.25,−0.15]+[−0.012,−0.029] = [0.238,−0.179]<br>
+<div class="eq">h<sub>2</sub> = tanh([0.238, −0.179]) = [0.234, −0.177]</div>
+See how h<sub>2</sub> depends on x<sub>2</sub> <em>and</em> (through h<sub>1</sub>) on x<sub>1</sub>? That's memory, arithmetically.</div>
+<p>The code lab in <a href="#code">§ Code</a> reproduces these exact numbers in NumPy so you can verify by running it.</p>
+</section>
+<section class="section" id="code">
+<h2><span class="sec-no">20</span>Code labs — scratch → PyTorch → seq2seq</h2>
+<p>Four labs, each verified on 2026 APIs (PyTorch 2.11). Read them top to bottom: the NumPy cell demystifies the loop, then PyTorch does it for real.</p>
+<div class="tabs" data-tabgroup="code"><div class="tab-nav">
+<button class="active" data-target="code-numpy" onclick="switchTab('code','code-numpy')">RNN from scratch (NumPy)</button>
+<button class="" data-target="code-lstm" onclick="switchTab('code','code-lstm')">LSTM in PyTorch</button>
+<button class="" data-target="code-seq2seq" onclick="switchTab('code','code-seq2seq')">seq2seq + attention</button>
+<button class="" data-target="code-forecast" onclick="switchTab('code','code-forecast')">Time-series forecast</button>
+<button class="" data-target="code-mamba" onclick="switchTab('code','code-mamba')">Real Mamba block</button>
+</div>
+<div class="tab-content active" id="code-numpy" data-tabpanel="code"><div class="code-block"><div class="code-head"><span class="lang">numpy_rnn.py — verified: h1=[0.462,-0.291], h2=[0.234,-0.177]</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># numpy_rnn.py — a vanilla RNN forward pass (and one BPTT step) from scratch.
+# Reproduces the exact numbers in the Reference &quot;worked example&quot; section.
+import numpy as np
+
+
+def rnn_forward(xs, Wx, Wh, b, h0):
+    &quot;&quot;&quot;xs: list of scalars/vectors. Returns the hidden states over time.&quot;&quot;&quot;
+    h = h0.copy()
+    hs = []
+    for x in xs:
+        h = np.tanh(Wx * x + Wh @ h + b)   # the whole RNN, one line
+        hs.append(h.copy())
+    return hs
+
+
+if __name__ == &quot;__main__&quot;:
+    Wx = np.array([0.5, -0.3])
+    Wh = np.array([[0.1, 0.2],
+                   [0.0, 0.1]])
+    b = np.array([0.0, 0.0])
+    h0 = np.array([0.0, 0.0])
+
+    hs = rnn_forward([1.0, 0.5], Wx, Wh, b, h0)
+    print(&quot;h1 =&quot;, np.round(hs[0], 3))   # -&gt; [ 0.462 -0.291 ]
+    print(&quot;h2 =&quot;, np.round(hs[1], 3))   # -&gt; [ 0.25  -0.177 ]
+
+    # --- one step of BPTT intuition: gradient of h1 wrt the pre-activation ---
+    # d/dz tanh(z) = 1 - tanh(z)^2  (this &lt;=1 factor, chained over steps, is why
+    # vanilla RNN gradients vanish over long sequences).
+    dtanh = 1 - hs[0] ** 2
+    print(&quot;tanh&#x27; at step 1 =&quot;, np.round(dtanh, 3), &quot; (each step multiplies by &lt;=1)&quot;)
+</code></pre></div></div><div class="tab-content " id="code-lstm" data-tabpanel="code"><div class="code-block"><div class="code-head"><span class="lang">pytorch_lstm.py — verified: logits (8,2), 519k params</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># pytorch_lstm.py — many-to-one: an LSTM that classifies a sequence (e.g. sentiment).
+import torch
+import torch.nn as nn
+
+
+class LSTMClassifier(nn.Module):
+    def __init__(self, vocab_size, embed_dim=64, hidden=128, num_classes=2,
+                 layers=1, bidirectional=True):
+        super().__init__()
+        self.embed = nn.Embedding(vocab_size, embed_dim, padding_idx=0)
+        self.lstm = nn.LSTM(embed_dim, hidden, num_layers=layers,
+                            batch_first=True, bidirectional=bidirectional,
+                            dropout=0.0)
+        out_dim = hidden * (2 if bidirectional else 1)
+        self.head = nn.Linear(out_dim, num_classes)
+
+    def forward(self, x, lengths=None):
+        e = self.embed(x)                       # (B, T, E)
+        if lengths is not None:                 # mask padding properly
+            packed = nn.utils.rnn.pack_padded_sequence(
+                e, lengths.cpu(), batch_first=True, enforce_sorted=False)
+            out, (h, c) = self.lstm(packed)
+        else:
+            out, (h, c) = self.lstm(e)
+        # use the final hidden state(s); concat both directions if bidirectional
+        if self.lstm.bidirectional:
+            last = torch.cat([h[-2], h[-1]], dim=1)
+        else:
+            last = h[-1]
+        return self.head(last)                  # (B, num_classes) logits
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    model = LSTMClassifier(vocab_size=5000)
+    x = torch.randint(1, 5000, (8, 40))         # batch 8, length 40
+    lengths = torch.randint(10, 41, (8,))
+    logits = model(x, lengths)
+    print(&quot;logits:&quot;, tuple(logits.shape))       # (8, 2)
+    print(&quot;params:&quot;, sum(p.numel() for p in model.parameters()))
+    # Train with nn.CrossEntropyLoss + Adam; ALWAYS clip grads:
+    #   torch.nn.utils.clip_grad_norm_(model.parameters(), 5.0)
+</code></pre></div></div><div class="tab-content " id="code-seq2seq" data-tabpanel="code"><div class="code-block"><div class="code-head"><span class="lang">seq2seq_attn.py — verified: attention weights sum to 1.0</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># seq2seq_attn.py — encoder-decoder with additive (Bahdanau) attention.
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class Encoder(nn.Module):
+    def __init__(self, vocab, emb=64, hid=128):
+        super().__init__()
+        self.embed = nn.Embedding(vocab, emb, padding_idx=0)
+        self.gru = nn.GRU(emb, hid, batch_first=True, bidirectional=True)
+        self.bridge = nn.Linear(hid * 2, hid)
+
+    def forward(self, src):
+        e = self.embed(src)
+        outs, h = self.gru(e)                       # outs: (B,T,2H)
+        h = torch.tanh(self.bridge(torch.cat([h[0], h[1]], dim=1)))  # (B,H)
+        return outs, h
+
+
+class Attention(nn.Module):
+    def __init__(self, hid):
+        super().__init__()
+        self.W = nn.Linear(hid * 2 + hid, hid)
+        self.v = nn.Linear(hid, 1, bias=False)
+
+    def forward(self, dec_h, enc_outs):
+        # dec_h: (B,H), enc_outs: (B,T,2H)
+        T = enc_outs.size(1)
+        dec = dec_h.unsqueeze(1).repeat(1, T, 1)         # (B,T,H)
+        score = self.v(torch.tanh(self.W(torch.cat([dec, enc_outs], dim=2))))  # (B,T,1)
+        alpha = F.softmax(score, dim=1)                  # attention weights
+        ctx = (alpha * enc_outs).sum(dim=1)              # (B,2H)
+        return ctx, alpha.squeeze(-1)
+
+
+class Decoder(nn.Module):
+    def __init__(self, vocab, emb=64, hid=128):
+        super().__init__()
+        self.embed = nn.Embedding(vocab, emb, padding_idx=0)
+        self.attn = Attention(hid)
+        self.gru = nn.GRU(emb + hid * 2, hid, batch_first=True)
+        self.out = nn.Linear(hid + hid * 2 + emb, vocab)
+
+    def forward(self, tok, dec_h, enc_outs):
+        e = self.embed(tok).unsqueeze(1)                 # (B,1,emb)
+        ctx, alpha = self.attn(dec_h, enc_outs)          # (B,2H)
+        gru_in = torch.cat([e, ctx.unsqueeze(1)], dim=2)
+        out, h = self.gru(gru_in, dec_h.unsqueeze(0))
+        logit = self.out(torch.cat([out.squeeze(1), ctx, e.squeeze(1)], dim=1))
+        return logit, h.squeeze(0), alpha
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    V = 2000
+    enc, dec = Encoder(V), Decoder(V)
+    src = torch.randint(1, V, (4, 12))                   # batch 4, src len 12
+    enc_outs, h = enc(src)
+    tok = torch.randint(1, V, (4,))                      # one decoder step
+    logit, h, alpha = dec(tok, h, enc_outs)
+    print(&quot;step logits:&quot;, tuple(logit.shape))           # (4, 2000)
+    print(&quot;attention weights:&quot;, tuple(alpha.shape))     # (4, 12) -&gt; sums to 1 per row
+    print(&quot;alpha row sums:&quot;, alpha.sum(1).round(decimals=3).tolist())
+    # Train with teacher forcing + CrossEntropyLoss; decode with beam search.
+</code></pre></div></div><div class="tab-content " id="code-forecast" data-tabpanel="code"><div class="code-block"><div class="code-head"><span class="lang">forecast_lstm.py — verified: trains, 7-day horizon</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># forecast_lstm.py — multivariate time-series forecasting (e.g. FMCG demand).
+# Many-to-one (or multi-output) LSTM with leakage-safe windowing.
+import numpy as np
+import torch
+import torch.nn as nn
+
+
+def make_windows(series, lookback=30, horizon=7):
+    &quot;&quot;&quot;series: (T, F). Returns X:(N,lookback,F), Y:(N,horizon) for target col 0.
+    NOTE: windows are time-ordered; split BEFORE scaling to avoid leakage.&quot;&quot;&quot;
+    X, Y = [], []
+    for i in range(len(series) - lookback - horizon + 1):
+        X.append(series[i:i + lookback])
+        Y.append(series[i + lookback:i + lookback + horizon, 0])  # forecast col 0
+    return np.array(X, dtype=np.float32), np.array(Y, dtype=np.float32)
+
+
+class Forecaster(nn.Module):
+    def __init__(self, n_features, hidden=64, horizon=7, layers=2):
+        super().__init__()
+        self.lstm = nn.LSTM(n_features, hidden, num_layers=layers,
+                            batch_first=True, dropout=0.1)
+        self.head = nn.Linear(hidden, horizon)      # direct multi-step output
+
+    def forward(self, x):
+        out, (h, c) = self.lstm(x)
+        return self.head(h[-1])                     # (B, horizon)
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    np.random.seed(0)
+    # fake 2-feature series: sales (with weekly seasonality + trend) + a promo flag
+    T = 400
+    t = np.arange(T)
+    sales = 100 + 0.1 * t + 15 * np.sin(2 * np.pi * t / 7) + np.random.randn(T) * 5
+    promo = (np.random.rand(T) &gt; 0.85).astype(float)
+    series = np.stack([sales, promo], axis=1)       # (T, 2)
+
+    # time split FIRST, then scale using train stats only (no leakage)
+    split = 320
+    mu, sd = series[:split].mean(0), series[:split].std(0) + 1e-8
+    scaled = (series - mu) / sd
+    Xtr, Ytr = make_windows(scaled[:split])
+    Xte, Yte = make_windows(scaled[split - 30:])    # keep lookback context
+
+    model = Forecaster(n_features=2, horizon=7)
+    Xtr_t, Ytr_t = torch.tensor(Xtr), torch.tensor(Ytr)
+    opt = torch.optim.Adam(model.parameters(), 1e-2)
+    lossf = nn.MSELoss()
+    for epoch in range(60):
+        opt.zero_grad()
+        pred = model(Xtr_t)
+        loss = lossf(pred, Ytr_t)
+        loss.backward()
+        nn.utils.clip_grad_norm_(model.parameters(), 5.0)   # essential
+        opt.step()
+    print(f&quot;final train MSE (scaled): {loss.item():.4f}&quot;)
+    with torch.no_grad():
+        te = model(torch.tensor(Xte))
+        print(&quot;test MSE (scaled):&quot;, round(lossf(te, torch.tensor(Yte)).item(), 4))
+        print(&quot;forecast shape:&quot;, tuple(te.shape), &quot;(samples x 7-day horizon)&quot;)
+    # Business metric: convert back to units, then MAPE / asymmetric stock-out cost.
+</code></pre></div></div><div class="tab-content " id="code-mamba" data-tabpanel="code"><div class="code-block"><div class="code-head"><span class="lang">mamba_block.py — faithful S6 selective SSM, verified on CPU</span><button class="copy" onclick="copyCode(this)">Copy</button></div><pre><code># mamba_block.py — a FAITHFUL minimal implementation of the Mamba (S6) block.
+# This is the REAL selective state-space algorithm from Gu &amp; Dao (2023):
+#   - input-dependent (selective) Delta, B, C
+#   - zero-order-hold discretization of the continuous A, B
+#   - a sequential selective scan
+#   - the gated (SiLU) branch and the short causal depthwise conv
+# The ONLY thing missing vs the official CUDA implementation is the fused
+# hardware-aware kernel — the math and architecture here are identical, and
+# this runs on CPU. (Reference architecture: johnma2006/mamba-minimal.)
+import math
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+
+
+class MambaBlock(nn.Module):
+    def __init__(self, d_model, d_state=16, d_conv=4, expand=2, dt_rank=None):
+        super().__init__()
+        self.d_model = d_model
+        self.d_inner = expand * d_model
+        self.d_state = d_state
+        self.dt_rank = dt_rank or math.ceil(d_model / 16)
+
+        # project input up to (x, gate), each of size d_inner
+        self.in_proj = nn.Linear(d_model, self.d_inner * 2, bias=False)
+        # short causal depthwise conv over time (local context before the SSM)
+        self.conv1d = nn.Conv1d(self.d_inner, self.d_inner, kernel_size=d_conv,
+                                groups=self.d_inner, padding=d_conv - 1, bias=True)
+        # produces the *input-dependent* Delta, B, C  (this is the &quot;selective&quot; part)
+        self.x_proj = nn.Linear(self.d_inner, self.dt_rank + 2 * d_state, bias=False)
+        self.dt_proj = nn.Linear(self.dt_rank, self.d_inner, bias=True)
+
+        # A is a learned, per-channel diagonal state matrix (kept negative for stability)
+        A = torch.arange(1, d_state + 1, dtype=torch.float32).repeat(self.d_inner, 1)
+        self.A_log = nn.Parameter(torch.log(A))           # (d_inner, d_state)
+        self.D = nn.Parameter(torch.ones(self.d_inner))   # skip connection
+        self.out_proj = nn.Linear(self.d_inner, d_model, bias=False)
+
+    def forward(self, x):                                  # x: (B, L, d_model)
+        b, l, _ = x.shape
+        xz = self.in_proj(x)                               # (B, L, 2*d_inner)
+        x_in, z = xz.chunk(2, dim=-1)                      # each (B, L, d_inner)
+
+        # causal depthwise conv (truncate the right padding back to length L)
+        x_in = x_in.transpose(1, 2)                        # (B, d_inner, L)
+        x_in = self.conv1d(x_in)[:, :, :l].transpose(1, 2)
+        x_in = F.silu(x_in)
+
+        y = self._ssm(x_in)                                # selective scan
+        y = y * F.silu(z)                                  # gated branch
+        return self.out_proj(y)
+
+    def _ssm(self, x):                                     # x: (B, L, d_inner)
+        A = -torch.exp(self.A_log)                         # (d_inner, d_state)
+        D = self.D
+
+        x_dbl = self.x_proj(x)                             # (B, L, dt_rank+2*d_state)
+        delta, B, C = torch.split(
+            x_dbl, [self.dt_rank, self.d_state, self.d_state], dim=-1)
+        delta = F.softplus(self.dt_proj(delta))            # (B, L, d_inner)  -&gt; selective step size
+        return self._selective_scan(x, delta, A, B, C, D)
+
+    def _selective_scan(self, u, delta, A, B, C, D):
+        b, l, d_in = u.shape
+        n = A.shape[1]
+        # discretize: dA = exp(delta * A),  dB*u  (zero-order hold)
+        dA = torch.exp(torch.einsum(&#x27;bld,dn-&gt;bldn&#x27;, delta, A))        # (B,L,d_in,n)
+        dB_u = torch.einsum(&#x27;bld,bln,bld-&gt;bldn&#x27;, delta, B, u)         # (B,L,d_in,n)
+
+        h = torch.zeros(b, d_in, n, device=u.device, dtype=u.dtype)
+        ys = []
+        for t in range(l):                                  # the selective scan (O(L))
+            h = dA[:, t] * h + dB_u[:, t]                   # state update
+            y = torch.einsum(&#x27;bdn,bn-&gt;bd&#x27;, h, C[:, t])      # readout
+            ys.append(y)
+        y = torch.stack(ys, dim=1)                          # (B, L, d_in)
+        return y + u * D                                    # skip connection
+
+
+if __name__ == &quot;__main__&quot;:
+    torch.manual_seed(0)
+    block = MambaBlock(d_model=64, d_state=16)
+    x = torch.randn(2, 100, 64)                             # batch 2, length 100
+    y = block(x)
+    print(&quot;in :&quot;, tuple(x.shape))
+    print(&quot;out:&quot;, tuple(y.shape))                           # (2, 100, 64)
+    print(&quot;params:&quot;, sum(p.numel() for p in block.parameters()))
+    # quick sanity: gradients flow
+    y.sum().backward()
+    print(&quot;grad on A_log present:&quot;, block.A_log.grad is not None)
+    print(&quot;This is the real selective-SSM (S6) — only the fused CUDA kernel differs.&quot;)
+</code></pre></div></div>
+</div>
+</section>
+<section class="section" id="interpretability">
+<h2><span class="sec-no">21</span>Looking inside — interpretability &amp; debugging</h2>
+<p>RNNs aren't black boxes if you know where to look. Four practical lenses turn "it's not working" into "here's why".</p>
+
+<h3>1 · Hidden-state trajectories (PCA / t-SNE)</h3>
+<p>The hidden state is a vector that moves through space as the sequence unfolds. Project it to 2-D with PCA or t-SNE and <em>watch it travel</em> — you'll often see it sort inputs into meaningful regions.</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Hidden state trajectory PCA">
+<style>.t{font:11px Inter,sans-serif;fill:#e7ecf3}.s{font:9.5px JetBrains Mono,monospace;fill:#7c889b}.path{fill:none;stroke-width:2}</style>
+<line x1="50" y1="210" x2="650" y2="210" stroke="#2b3442"/><line x1="50" y1="30" x2="50" y2="210" stroke="#2b3442"/><text class="s" x="640" y="228">PC1</text><text class="s" x="20" y="40">PC2</text><path class="path" d="M90,180 L150,150 L230,120 L330,95 L440,80 L540,72" stroke="#34c77b"/><circle cx="90" cy="180" r="4" fill="#34c77b"/><circle cx="150" cy="150" r="4" fill="#34c77b"/><circle cx="230" cy="120" r="4" fill="#34c77b"/><circle cx="330" cy="95" r="4" fill="#34c77b"/><circle cx="440" cy="80" r="4" fill="#34c77b"/><circle cx="540" cy="72" r="4" fill="#34c77b"/><circle cx="540" cy="72" r="8" fill="none" stroke="#34c77b" stroke-width="1.5"/><path class="path" d="M90,185 L160,175 L250,178 L360,182 L470,188 L560,192" stroke="#ef4d6a"/><circle cx="90" cy="185" r="4" fill="#ef4d6a"/><circle cx="160" cy="175" r="4" fill="#ef4d6a"/><circle cx="250" cy="178" r="4" fill="#ef4d6a"/><circle cx="360" cy="182" r="4" fill="#ef4d6a"/><circle cx="470" cy="188" r="4" fill="#ef4d6a"/><circle cx="560" cy="192" r="4" fill="#ef4d6a"/><circle cx="560" cy="192" r="8" fill="none" stroke="#ef4d6a" stroke-width="1.5"/><text class="t" x="560" y="60" fill="#34c77b">"…loved it"</text><text class="t" x="560" y="210" fill="#ef4d6a">"…hated it"</text><text class="s" x="350" y="245" text-anchor="middle">each dot = the hidden state after one more word, projected to 2-D (PCA). The paths drift apart as sentiment becomes clear.</text></svg>
+<div class="viz-cap">Hidden states of a sentiment model, projected to 2-D. Each dot is the state after one more word; the positive and negative reviews drift into separate regions as the verdict becomes clear. If your classes <em>don't</em> separate here, the model hasn't learned the signal.</div>
+</div>
+
+<h3>2 · Gate-activation tracking</h3>
+<p>For LSTMs/GRUs, plot the <strong>forget-gate</strong> activations over time. Values near 1 mean "keep the memory"; near 0 mean "wipe it". The wipes usually land on meaningful boundaries (sentence ends, topic shifts).</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 180" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Forget gate activations over time">
+<style>.t{font:11px Inter,sans-serif;fill:#e7ecf3}.s{font:9px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}</style>
+<text class="t" x="50" y="22">Forget-gate activation per time-step (1 = keep memory, 0 = wipe)</text><rect x="50" y="45.0" width="36" height="95.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="68.0" y="155">1</text><rect x="92" y="47.0" width="36" height="93.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="110.0" y="155">2</text><rect x="134" y="50.0" width="36" height="90.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="152.0" y="155">3</text><rect x="176" y="120.0" width="36" height="20.0" rx="2" fill="#ef4d6a" opacity="0.85"/><text class="s" x="194.0" y="155">4</text><rect x="218" y="125.0" width="36" height="15.0" rx="2" fill="#ef4d6a" opacity="0.85"/><text class="s" x="236.0" y="155">5</text><rect x="260" y="48.0" width="36" height="92.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="278.0" y="155">6</text><rect x="302" y="46.0" width="36" height="94.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="320.0" y="155">7</text><rect x="344" y="50.0" width="36" height="90.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="362.0" y="155">8</text><rect x="386" y="52.0" width="36" height="88.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="404.0" y="155">9</text><rect x="428" y="130.0" width="36" height="10.0" rx="2" fill="#ef4d6a" opacity="0.85"/><text class="s" x="446.0" y="155">10</text><rect x="470" y="50.0" width="36" height="90.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="488.0" y="155">11</text><rect x="512" y="47.0" width="36" height="93.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="530.0" y="155">12</text><rect x="554" y="45.0" width="36" height="95.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="572.0" y="155">13</text><rect x="596" y="50.0" width="36" height="90.0" rx="2" fill="#34c77b" opacity="0.85"/><text class="s" x="614.0" y="155">14</text><text class="s" x="190" y="128" fill="#ef4d6a">↓ resets here</text><text class="s" x="455" y="120" fill="#ef4d6a">↓ here too</text></svg>
+<div class="viz-cap">Forget-gate activations across a sequence. Mostly ~1 (memory preserved), with sharp drops where the cell decides to reset. Auditing these tells you whether the model is using long-term memory at all — flat-near-zero means it isn't.</div>
+</div>
+
+<h3>3 · Gradient-flow monitoring</h3>
+<p>Track the <strong>gradient norm per layer / per time-step</strong> during training. If early-step gradients are orders of magnitude smaller than late-step ones, you're watching the vanishing-gradient problem live — switch to gated cells, add skip connections, or shorten the BPTT window. If the norm pins to your clip value every step, lower the learning rate.</p>
+<div class="box good"><span class="bt">Cheap, high-value habit</span>Log <code class="inline">total_norm</code> from gradient clipping every step. A flat-then-spiking trace screams "exploding"; a slow decay to near-zero screams "vanishing". This one number diagnoses most RNN training failures.</div>
+
+<h3>4 · Attention heatmaps</h3>
+<p>If your model has attention, its weights are a free explanation: a matrix of which inputs each output attended to.</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 460 320" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Attention heatmap alignment matrix">
+<style>.t{font:11px JetBrains Mono,monospace;fill:#e7ecf3}.s{font:10px Inter,sans-serif;fill:#7c889b}</style>
+<text class="t" x="152.0" y="30" text-anchor="middle">the</text><text class="t" x="216.0" y="30" text-anchor="middle">black</text><text class="t" x="280.0" y="30" text-anchor="middle">cat</text><text class="t" x="344.0" y="30" text-anchor="middle">sat</text><text class="t" x="110" y="76.0" text-anchor="end">le</text><rect x="120" y="40" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.80"/><text class="t" x="143.0" y="76.0" fill="#0b0f14">0.8</text><rect x="184" y="40" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.21"/><rect x="248" y="40" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><rect x="312" y="40" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><text class="t" x="110" y="140.0" text-anchor="end">chat</text><rect x="120" y="104" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><rect x="184" y="104" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.21"/><rect x="248" y="104" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.80"/><text class="t" x="271.0" y="140.0" fill="#0b0f14">0.8</text><rect x="312" y="104" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><text class="t" x="110" y="204.0" text-anchor="end">noir</text><rect x="120" y="168" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><rect x="184" y="168" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.80"/><text class="t" x="207.0" y="204.0" fill="#0b0f14">0.8</text><rect x="248" y="168" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.21"/><rect x="312" y="168" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><text class="t" x="110" y="268.0" text-anchor="end">s'assit</text><rect x="120" y="232" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><rect x="184" y="232" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.16"/><rect x="248" y="232" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.21"/><rect x="312" y="232" width="61" height="61" rx="3" fill="#a78bfa" opacity="0.80"/><text class="t" x="335.0" y="268.0" fill="#0b0f14">0.8</text><text class="s" x="230" y="305" text-anchor="middle">brighter = more attention. The off-diagonal "cat↔noir / black↔chat" cells show the model learned French word reordering.</text></svg>
+<div class="viz-cap">An attention alignment matrix (target French rows × source English columns). A near-diagonal with sensible off-diagonal jumps (here, the noun/adjective reorder) means the model learned real correspondences. Scattered noise usually means a masking or shape bug.</div>
+</div>
+<div class="box info"><span class="bt">Why this matters for the business</span>In regulated settings — healthcare, finance, legal — a number nobody can explain won't get deployed. Attention maps, gate audits, and trajectory plots are how you earn a domain expert's trust (and pass a model-risk review).</div>
+</section>
+<section class="section" id="beyond">
+<h2><span class="sec-no">22</span>Sequence tasks in the wild</h2>
+<p>The same RNN machinery, with a different head and data, solves a huge range of problems:</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Domain</th><th>Task</th><th>Shape</th></tr></thead>
+<tbody>
+<tr><td>NLP</td><td>sentiment, NER, intent detection</td><td>many-to-one / aligned</td></tr>
+<tr><td>Translation / chat</td><td>seq2seq + attention</td><td>seq2seq</td></tr>
+<tr><td>Speech</td><td>speech-to-text, wake-word</td><td>many-to-many</td></tr>
+<tr><td>Time-series</td><td>demand, energy, sensor, finance forecasting</td><td>many-to-one / many-to-many</td></tr>
+<tr><td>Healthcare</td><td>ECG/EEG classification, vitals monitoring</td><td>many-to-one</td></tr>
+<tr><td>Music / creative</td><td>melody &amp; text generation</td><td>one-to-many</td></tr>
+</tbody></table></div>
+<h3>Anomaly detection with LSTM autoencoders</h3><p>One pattern deserves a special mention because it shows up everywhere in industry: the <strong>LSTM autoencoder</strong>. Train an encoder–decoder LSTM to <em>reconstruct</em> normal sequences only. At inference, feed new data and measure reconstruction error — <strong>high error = the input doesn't look normal = anomaly</strong>. It needs no labelled failures (which are rare and expensive), making it ideal for predictive maintenance, fraud, network intrusion, and process monitoring.</p><div class="box good"><span class="bt">Why it's so useful in the real world</span>Failures are rare, so you usually can't train a normal classifier on them. An autoencoder sidesteps that: it learns "what healthy looks like" from abundant normal data, then flags anything that deviates. The <a href="3_rnn_projects.html#capstone-maint">predictive-maintenance capstone</a> builds exactly this.</div><div class="box good"><span class="bt">The unifying insight</span>Pick the <em>shape</em> (§ shapes), choose a cell (LSTM/GRU), add bidirectionality if you have the full sequence, attention if it's seq2seq — and you can attack almost any sequence problem with the same toolkit.</div>
+</section>
+<section class="section" id="modern">
+<h2><span class="sec-no">23</span>The 2026 landscape — are RNNs dead?</h2>
+<p>Honest answer: classic LSTMs/GRUs have been <em>largely replaced by Transformers</em> for large-scale NLP — but <strong>recurrence itself is having a renaissance</strong>, because the Transformer's O(N²) cost and growing memory make very long contexts expensive.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Architecture</th><th>Idea</th><th>Why it matters in 2026</th></tr></thead>
+<tbody>
+<tr><td><strong>Transformers</strong></td><td>full self-attention</td><td>still the default for most NLP</td></tr>
+<tr><td><strong>State-space models (S4, Mamba)</strong></td><td>a learned linear recurrence (selective scan)</td><td>linear-time, long-context, RNN-like; strong on audio/genomics/long docs</td></tr>
+<tr><td><strong>RWKV</strong></td><td>RNN that trains like a Transformer</td><td>Transformer-quality with RNN inference cost</td></tr>
+<tr><td><strong>Linear attention / hybrids</strong></td><td>approximate attention as recurrence</td><td>blends parallel training + cheap streaming inference</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">Why your RNN knowledge is more relevant than ever</span>Mamba and RWKV are, at heart, <em>smart RNNs</em> — they bring back the constant-memory, streaming-friendly recurrence you just learned, and fix the old training and gradient problems. Understanding hidden state, gating, and the sequential/parallel trade-off is exactly what you need to read these 2026 papers. The wheel turned full circle.</div>
+<div class="crosslink-banner"><strong>Want the mechanism?</strong> The next section opens up <a href="#mamba">Mamba &amp; selective SSMs</a> in depth — with a faithful, runnable implementation.</div>
+<div class="box info"><span class="bt">Practical takeaway</span>For a new project in 2026: short sequences / small data → an LSTM/GRU is still excellent and cheap. Large-scale language → a Transformer (or fine-tune an LLM). Very long sequences (audio, genomics, long documents) on a budget → look hard at Mamba/SSMs.</div>
+</section>
+<section class="section" id="mamba">
+<h2><span class="sec-no">24</span>Mamba &amp; selective state-space models — in depth</h2>
+<p>The <strong>modern landscape</strong> section sketched why recurrence is back. Here's how <strong>Mamba</strong> (Gu &amp; Dao, 2023) actually works — because it's the architecture most likely to matter next, and it's a direct descendant of everything you've learned.</p>
+
+<h3>From RNN to state-space model</h3>
+<p>A state-space model (SSM) is a <em>linear</em> recurrence with continuous-time roots:</p>
+<div class="box math"><span class="bt">The SSM recurrence</span>
+<div class="eq">h<sub>t</sub> = <span style="color:var(--accent)">A&#773;</span> h<sub>t-1</sub> + <span style="color:var(--accent)">B&#773;</span> x<sub>t</sub> &nbsp;&nbsp;&nbsp; y<sub>t</sub> = C h<sub>t</sub></div>
+Like an RNN, but with <em>no</em> non-linearity in the recurrence. <code class="inline">A&#773;, B&#773;</code> are <strong>discretized</strong> from continuous matrices A, B via a step size <strong>Δ</strong> (zero-order hold): A&#773; = exp(ΔA). The matrix A is initialised with <strong>HiPPO</strong> theory so the state optimally compresses history.</div>
+<p>Because it's linear, this recurrence can be computed two ways: as a fast parallel <strong>convolution</strong> during training, <em>and</em> as a cheap step-by-step <strong>recurrence</strong> during inference. Best of both worlds — Transformer-like training speed, RNN-like O(1) streaming.</p>
+
+<h3>The "selective" breakthrough (S6)</h3>
+<p>Classic SSMs (S4) used <em>fixed</em> A, B, C — they couldn't choose what to focus on based on content. Mamba's key idea: make <strong>Δ, B, and C functions of the input</strong>. Now the model dynamically decides, per token, how much to remember vs ignore — content-based reasoning, the thing attention gave Transformers.</p>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 250" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mamba selective SSM block">
+<style>.bx{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.5}.sel{fill:#a78bfa22;stroke:#a78bfa;stroke-width:1.7}.gate{fill:#ffb45422;stroke:#ffb454;stroke-width:1.5}.t{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:9px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.6;fill:none;marker-end:url(#m1)}</style>
+<defs><marker id="m1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#aab4c4"/></marker></defs>
+<text class="s" x="60" y="120" text-anchor="end">x<tspan baseline-shift="sub">t</tspan></text><line x1="62" y1="115" x2="95" y2="115" class="a"/><rect class="bx" x="95" y="95" width="80" height="40" rx="7"/><text class="t" x="135" y="119">conv1d</text><line x1="175" y1="115" x2="210" y2="115" class="a"/><rect class="sel" x="210" y="40" width="120" height="40" rx="7"/><text class="t" x="270" y="58">selective</text><text class="t" x="270" y="72">Δ, B, C = f(x)</text><line x1="240" y1="115" x2="240" y2="80" class="a"/><rect class="bx" x="210" y="95" width="120" height="40" rx="7"/><text class="t" x="270" y="119">discretize A,B</text><line x1="330" y1="115" x2="370" y2="115" class="a"/><rect class="bx" x="370" y="95" width="110" height="40" rx="7"/><text class="t" x="425" y="113">selective</text><text class="t" x="425" y="128">scan (O(L))</text><line x1="480" y1="115" x2="515" y2="115" class="a"/><circle cx="540" cy="115" r="16" class="gate"/><text class="t" x="540" y="120" fill="#ffb454">⊗</text><rect class="gate" x="500" y="170" width="80" height="32" rx="6"/><text class="t" x="540" y="190">SiLU gate</text><line x1="540" y1="170" x2="540" y2="131" class="a"/><line x1="556" y1="115" x2="610" y2="115" class="a"/><text class="s" x="630" y="119">y<tspan baseline-shift="sub">t</tspan></text><text class="s" x="270" y="28" fill="#a78bfa">the "selective" trick: the SSM parameters DEPEND on the input — so the model chooses what to remember/ignore per token</text><text class="s" x="350" y="235">linear in sequence length · constant memory at inference · rivals Transformers on long sequences</text></svg>
+<div class="viz-cap">A Mamba (S6) block: a short causal conv for local context, input-dependent (selective) Δ/B/C, discretization of A/B, a linear-time selective scan, and a SiLU gate. The selectivity is what lets it match Transformers — but it costs the parallel-convolution trick, so Mamba uses a hardware-aware parallel <em>scan</em> instead.</div>
+</div>
+<div class="box math"><span class="bt">Why it scales</span>Attention is O(L²) in sequence length L; the selective scan is <strong>O(L)</strong> with constant memory per step. On sequences of tens of thousands of tokens (genomics, audio, long documents) that's the difference between feasible and not.</div>
+
+<h3>This is in your code labs</h3>
+<p>The <a href="#code">Code §20</a> "Real Mamba block" tab contains a <em>faithful</em> pure-PyTorch implementation of this exact block — input-dependent Δ/B/C, zero-order-hold discretization, the selective scan, and the gated branch. It runs on CPU; the only thing it omits versus the official release is the fused CUDA kernel (a speed optimisation, not a change to the math). Build it in the <a href="3_rnn_projects.html#p6">Projects §6</a>.</p>
+<div class="box good"><span class="bt">The full-circle moment</span>Mamba is, at its heart, a carefully-engineered RNN: carry a hidden state forward, update it selectively, read it out. Everything you learned — hidden state, gating, the sequential/parallel trade, vanishing gradients — is exactly the toolkit needed to understand the 2026 frontier. You didn't study history; you studied the foundations of what's next.</div>
+</section>
+<section class="section" id="pitfalls">
+<h2><span class="sec-no">25</span>Common pitfalls</h2>
+<ul>
+<li><strong>No gradient clipping</strong> → loss explodes to NaN. The first thing to add, always.</li>
+<li><strong>Not carrying/detaching hidden state</strong> across chunks of a long stream → either broken memory or a backward-through-everything crash.</li>
+<li><strong>Per-step dropout</strong> on recurrent connections → shredded memory. Use variational (shared-mask) dropout.</li>
+<li><strong>Forgetting to mask padding</strong> → the model learns from pad tokens and your metric lies.</li>
+<li><strong>Train/serve skew in generation</strong> → teacher forcing in training, free-running at test (exposure bias). Decode carefully.</li>
+<li><strong>Leaking the future in time-series</strong> → scaling or splitting using future data inflates backtests. Split by time, fit the scaler on train only.</li>
+<li><strong>Using a bidirectional model for streaming</strong> → impossible at inference; you don't have the future yet.</li>
+</ul>
+</section>
+<section class="section" id="tuning">
+<h2><span class="sec-no">26</span>Tuning &amp; debugging recipe</h2>
+<ol>
+<li><strong>Overfit a tiny batch first.</strong> If the model can't memorise 8 sequences, there's a bug — fix that before anything else.</li>
+<li><strong>Clip gradients</strong> (norm 1–5) and watch the gradient norm; if it pins to the clip constantly, lower the LR.</li>
+<li><strong>Hidden size &amp; layers:</strong> start small (128–256, 1–2 layers); grow only if underfitting.</li>
+<li><strong>Sequence length / truncation:</strong> longer context helps only if the signal is actually long-range — and costs memory.</li>
+<li><strong>LR:</strong> Adam at 1e-3 is a safe start; add a scheduler if it plateaus.</li>
+<li><strong>GRU vs LSTM:</strong> benchmark both — it's quick and the winner is data-dependent.</li>
+</ol>
+<div class="box good"><span class="bt">Debugging mantra</span>"Tiny batch → clip → small model → scale up." Most RNN training failures are exploding gradients or a state-handling bug, not the architecture.</div>
+</section>
+<section class="section" id="production">
+<h2><span class="sec-no">27</span>Production &amp; deployment</h2>
+<p>RNNs have a genuine <em>advantage</em> in production that's easy to forget: because they carry a fixed-size state, they're naturally <strong>streaming</strong> — you can feed one new element and get an updated prediction in constant time and memory, without re-reading the whole history. Transformers can't do that cheaply.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Concern</th><th>For RNNs</th></tr></thead>
+<tbody>
+<tr><td><strong>Streaming inference</strong></td><td>natural fit — keep the hidden state between calls (live captioning, monitoring)</td></tr>
+<tr><td><strong>Latency</strong></td><td>O(1) per step, but sequential — can't parallelise across time. On GPU, fused <strong>cuDNN LSTM/GRU kernels</strong> are many× faster than a hand-rolled Python loop — always use the built-in <code class="inline">nn.LSTM</code>, not a manual cell, in production.</td></tr>
+<tr><td><strong>Compression</strong></td><td>INT8 quantisation + pruning; small LSTMs run fine on microcontrollers</td></tr>
+<tr><td><strong>Export</strong></td><td>ONNX → <strong>TensorRT</strong> for low-latency NVIDIA serving; TFLite / Core ML for mobile. Mind the stateful loop when exporting.</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">Real-life payoff</span>For on-device, always-on tasks — wake-word detection, live anomaly detection on a sensor — a small quantised LSTM/GRU is often the <em>best</em> choice in 2026: tiny, low-latency, streaming, and battery-friendly where a Transformer would be overkill.</div>
+</section>
+<section class="section" id="real-world">
+<h2><span class="sec-no">28</span>Sequence models in the real world — the business view</h2>
+<p>The question that actually pays: <strong>how does this become a real business problem solved?</strong> Here's where sequence models earn their keep, and what bites once you leave the notebook.</p>
+<div class="table-wrap"><table>
+<thead><tr><th>Business problem</th><th>Sequence framing</th><th>The real constraint</th></tr></thead>
+<tbody>
+<tr><td><strong>FMCG demand forecasting</strong></td><td>last 90 days of sales/price/promo → next 7–28 days</td><td>promotions &amp; festivals break patterns; cost of stock-out ≠ overstock</td></tr>
+<tr><td><strong>Predictive maintenance</strong></td><td>sensor stream → time-to-failure / anomaly</td><td>failures are rare; must run streaming on the edge</td></tr>
+<tr><td><strong>Customer churn / LTV</strong></td><td>activity sequence → will-churn probability</td><td>imbalanced classes; explanations needed for action</td></tr>
+<tr><td><strong>Call-centre / review NLP</strong></td><td>text → intent, sentiment, routing</td><td>code-mixed Indian languages; sarcasm; privacy</td></tr>
+<tr><td><strong>Fraud / transactions</strong></td><td>transaction sequence → risk score</td><td>real-time latency budget; adversaries adapt</td></tr>
+<tr><td><strong>Energy / load forecasting</strong></td><td>past load + weather → future load</td><td>weather dependence; regulatory accuracy targets</td></tr>
+<tr><td><strong>Healthcare</strong></td><td>vitals stream → deterioration / sepsis risk</td><td>rare positives; recall-first; explainability mandatory</td></tr>
+<tr><td><strong>Pharma / biotech</strong></td><td>adverse-event reports; protein/DNA sequences</td><td>safety-critical; long biological sequences (SSMs shine)</td></tr>
+<tr><td><strong>Manufacturing / chemicals</strong></td><td>sensor logs → anomaly / time-to-failure</td><td>no labelled failures; edge/streaming; drift as plant ages</td></tr>
+<tr><td><strong>Environmental</strong></td><td>past readings → air-quality / flood / load forecast</td><td>extreme-event tails matter most; sparse stations</td></tr>
+<tr><td><strong>Legal / compliance</strong></td><td>document text → clause tagging, risk, routing</td><td>long documents; auditability; domain jargon</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">Three capstones across three industries</span>The Projects guide ships <strong>three</strong> end-to-end capstones, each a different domain and a different RNN paradigm: <a href="3_rnn_projects.html#capstone">FMCG demand forecasting</a> (retail — multivariate forecasting on a business cost), <a href="3_rnn_projects.html#capstone-health">clinical early-warning</a> (healthcare — streaming, imbalanced, recall-first classification), and <a href="3_rnn_projects.html#capstone-maint">predictive maintenance</a> (manufacturing — unsupervised anomaly detection with an LSTM autoencoder). Between them they cover forecasting, classification, and anomaly detection — the three shapes most business problems reduce to.</div>
+<h3>The constraints that decide whether it ships</h3>
+<div class="table-wrap"><table>
+<thead><tr><th>Constraint</th><th>Why it bites</th><th>What you do</th></tr></thead>
+<tbody>
+<tr><td>Concept drift</td><td>a new promo, competitor, or season and accuracy drops</td><td>monitor error, retrain on a schedule</td></tr>
+<tr><td>Data leakage</td><td>using future info in features/scaling inflates backtests</td><td>strict time-based splits; fit scalers on train only</td></tr>
+<tr><td>Cost asymmetry</td><td>under-forecasting (stock-out) ≠ over-forecasting</td><td>custom asymmetric loss / business cost metric</td></tr>
+<tr><td>Cold start</td><td>new SKU/store has no history</td><td>hierarchical models, transfer from similar series</td></tr>
+<tr><td>Explainability</td><td>planners must trust the number to act</td><td>attention weights, feature attributions, sane baselines</td></tr>
+</tbody></table></div>
+<div class="viz-container">
+<button class="viz-zoom" onclick="zoomViz(this)" title="Zoom">⤢</button>
+<svg viewBox="0 0 700 130" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Sequence model project lifecycle">
+<style>.lb{fill:#14b8c422;stroke:#14b8c4;stroke-width:1.5}.t{font:600 11px Inter,sans-serif;fill:#e7ecf3;text-anchor:middle}.s{font:9px JetBrains Mono,monospace;fill:#7c889b;text-anchor:middle}.a{stroke:#aab4c4;stroke-width:1.8;fill:none;marker-end:url(#g1)}.r{stroke:#ffb454;stroke-width:1.8;fill:none;marker-end:url(#g2);stroke-dasharray:6 4}</style>
+<defs><marker id="g1" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#aab4c4"/></marker><marker id="g2" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#ffb454"/></marker></defs>
+<rect class="lb" x="14" y="45" width="92" height="40" rx="8"/><text class="t" x="60" y="63">Frame &</text><text class="t" x="60" y="76">shape</text><line x1="106" y1="65" x2="124" y2="65" class="a"/><rect class="lb" x="124" y="45" width="92" height="40" rx="8"/><text class="t" x="170" y="63">Clean &</text><text class="t" x="170" y="76">window</text><line x1="216" y1="65" x2="234" y2="65" class="a"/><rect class="lb" x="234" y="45" width="92" height="40" rx="8"/><text class="t" x="280" y="63">Train</text><text class="t" x="280" y="76">LSTM/GRU</text><line x1="326" y1="65" x2="344" y2="65" class="a"/><rect class="lb" x="344" y="45" width="92" height="40" rx="8"/><text class="t" x="390" y="63">Backtest</text><line x1="436" y1="65" x2="454" y2="65" class="a"/><rect class="lb" x="454" y="45" width="92" height="40" rx="8"/><text class="t" x="500" y="63">Deploy</text><text class="t" x="500" y="76">& serve</text><line x1="546" y1="65" x2="564" y2="65" class="a"/><rect class="lb" x="564" y="45" width="92" height="40" rx="8"/><text class="t" x="610" y="63">Monitor</text><text class="t" x="610" y="76">drift</text><path d="M610,85 C 610,115 280,115 280,87" class="r"/><text class="s" x="445" y="112" fill="#ffb454">retrain when accuracy drifts</text></svg>
+<div class="viz-cap">A real forecasting project's lifecycle. As with any ML system, framing, clean time-aware data, honest backtesting, and drift monitoring matter more than the exact cell you pick. The orange loop — retrain on drift — is where the long-term value lives.</div>
+</div>
+<div class="box levelup"><span class="bt">⬆ You're ready for real life when you can…</span>…name the <em>shape</em> of a business problem, pick LSTM/GRU (or a Transformer/SSM) for the data scale, window and split time-series without leakage, train with clipping + the right metric, decode or forecast sensibly, ship a streaming model, and watch it for drift. Every one of those has a section and a project here. That's the whole climb — you've made it.</div>
+<div class="crosslink-banner"><strong>Tie it together:</strong> the <a href="4_rnn_field_card.html">Field Card</a> compresses these defaults into a one-page checklist; the <a href="3_rnn_projects.html#capstone">Capstone</a> walks the full forecasting lifecycle end-to-end.</div>
+</section>
+<section class="section" id="qa">
+<h2><span class="sec-no">29</span>Q&amp;A bank</h2>
+<div class="qa-filters">
+<button class="active" onclick="filterQA('all',this)">All</button>
+<button onclick="filterQA('concept',this)">Concept</button>
+<button onclick="filterQA('math',this)">Math</button>
+<button onclick="filterQA('practical',this)">Practical</button>
+</div>
+<details class="qa-item" data-cat="concept"><summary>Why can't a vanilla RNN remember long-range dependencies?</summary><p>Because the gradient signal is multiplied by the recurrent weight (and tanh derivatives ≤1) at every step travelling back in time. Over many steps it shrinks geometrically toward zero (vanishing) — so early steps receive almost no learning signal. LSTMs/GRUs fix this with a gated, additive memory path.</p></details>
+<details class="qa-item" data-cat="concept"><summary>What exactly is the hidden state?</summary><p>A fixed-size vector that summarises everything the network has seen up to the current step. It's the RNN's entire memory; its dimension is a key hyperparameter.</p></details>
+<details class="qa-item" data-cat="concept"><summary>What does "unrolling" an RNN mean — is it a deeper network?</summary><p>No. Unrolling just draws one copy of the <em>same</em> cell per time-step to visualise the loop. The weights are identical at every step; it's one cell applied repeatedly, not many distinct layers.</p></details>
+<details class="qa-item" data-cat="concept"><summary>Why share weights across time-steps at all?</summary><p>So a pattern is recognised wherever it occurs in the sequence, and so the model handles any length with a fixed parameter count. It's the temporal analogue of a CNN sharing a filter across space.</p></details>
+<details class="qa-item" data-cat="math"><summary>Why does the LSTM's cell state help gradients?</summary><p>The cell-state update is largely <em>additive</em> (C<sub>t</sub> = f⊙C<sub>t-1</sub> + i⊙g). Additive paths let gradients flow backward without being repeatedly multiplied down, so they survive across many steps — the "constant error carousel".</p></details>
+<details class="qa-item" data-cat="math"><summary>Where precisely do exploding gradients come from?</summary><p>The backward pass across k steps carries a factor like (W<sub>h</sub>)<sup>k</sup>. If the largest eigenvalue (spectral radius) of W<sub>h</sub> exceeds 1, that term grows without bound. Gradient clipping caps the norm so a single huge step can't wreck training.</p></details>
+<details class="qa-item" data-cat="math"><summary>What's the role of the tanh derivative in vanishing gradients?</summary><p>d/dz tanh(z) = 1 − tanh²(z), which is ≤ 1 (and near 0 when the unit saturates). Chained over many steps, these sub-1 factors multiply the gradient down — compounding the shrinkage from the recurrent weight.</p></details>
+<details class="qa-item" data-cat="math"><summary>How many parameters does an LSTM layer have?</summary><p>Roughly 4 × (hidden·(hidden+input) + hidden) — the factor 4 because the forget, input, output gates and candidate each have their own weight matrix and bias. A GRU has ~3× (two gates + candidate), so it's lighter.</p></details>
+<details class="qa-item" data-cat="math"><summary>What is perplexity, intuitively?</summary><p>exp(average cross-entropy). It's the effective number of equally-likely choices the model is "torn between" at each step. Perplexity 10 ≈ as unsure as picking uniformly among 10 options. Lower is better.</p></details>
+<details class="qa-item" data-cat="math"><summary>How does attention compute its weights?</summary><p>Score each encoder state against the current decoder state (dot-product or a small MLP), softmax the scores into weights that sum to 1, then take the weighted sum of encoder states as the context. Repeat per output step.</p></details>
+<details class="qa-item" data-cat="practical"><summary>LSTM or GRU — which should I use?</summary><p>Start with GRU (fewer params, trains faster, less data). Switch to LSTM if you need to capture very long or complex dependencies. Always benchmark both; the winner depends on your data.</p></details>
+<details class="qa-item" data-cat="practical"><summary>My RNN loss became NaN. What happened?</summary><p>Almost certainly exploding gradients. Add gradient clipping (norm 1–5). If it persists, lower the learning rate and check for bad inputs (NaNs, unscaled features).</p></details>
+<details class="qa-item" data-cat="practical"><summary>How big should my hidden state be?</summary><p>Start small (128–256) and grow only if you're underfitting. Bigger hidden states memorise more but overfit and slow down. Tune it alongside the number of layers (1–2 to start).</p></details>
+<details class="qa-item" data-cat="practical"><summary>How do I handle variable-length sequences in a batch?</summary><p>Pad to the longest in the batch, record true lengths, and use packing (e.g. pack_padded_sequence) plus masking so the pad steps don't contribute to outputs or loss.</p></details>
+<details class="qa-item" data-cat="practical"><summary>How do I forecast multiple future steps?</summary><p>Two ways: (1) recursive — predict one step, feed it back, repeat (simple, but errors compound); (2) direct/seq2seq — output the whole horizon at once. Direct multi-output is usually more stable for business forecasting.</p></details>
+<details class="qa-item" data-cat="practical"><summary>When should I use a bidirectional RNN?</summary><p>Only when you have the entire sequence available at inference (classification, tagging, offline transcription). Never for streaming or generation — you can't see the future yet.</p></details>
+<details class="qa-item" data-cat="practical"><summary>Why is my dropout hurting the RNN?</summary><p>Standard per-step dropout on recurrent connections randomly severs memory. Use variational (locked) dropout that applies the <em>same</em> mask across all time-steps, or apply dropout only between layers/on inputs.</p></details>
+<details class="qa-item" data-cat="practical"><summary>What is teacher forcing and what's its downside?</summary><p>Feeding the true previous token (not the model's own prediction) into the decoder during training — it stabilises and speeds learning. Downside: exposure bias, since at test time the model must consume its own (possibly wrong) outputs. Mitigate with scheduled sampling or careful decoding.</p></details>
+<details class="qa-item" data-cat="practical"><summary>How do I avoid data leakage in time-series?</summary><p>Split strictly by time (no shuffling), fit any scaler/encoder on the training portion only, and never let a feature peek at the future (e.g. a rolling mean must use only past values). Leakage inflates backtests and collapses in production.</p></details>
+<details class="qa-item" data-cat="concept"><summary>Are RNNs obsolete now that we have Transformers?</summary><p>For large-scale NLP, mostly yes. But for small data, streaming/edge inference, and very long sequences, RNN-style models (including 2026's Mamba and RWKV) are excellent — and recurrence is actively resurgent for efficiency.</p></details>
+<details class="qa-item" data-cat="concept"><summary>Why is attention such a big deal?</summary><p>It removed the seq2seq bottleneck by letting the decoder look at all encoder states with learned weights. It improved quality, added interpretability, and directly led to the Transformer — the basis of modern LLMs.</p></details>
+<details class="qa-item" data-cat="concept"><summary>What's the difference between a Transformer and an RNN, in one line?</summary><p>An RNN processes tokens sequentially with a carried hidden state (O(1) memory/step, but can't parallelise across time); a Transformer attends to all tokens at once (parallel, but O(N²) compute and memory in sequence length).</p></details>
+<details class="qa-item" data-cat="concept"><summary>What problem do state-space models (Mamba) solve?</summary><p>They restore RNN-like linear-time, constant-memory, streaming recurrence — but with training tricks and selectivity that fix the old gradient/expressivity issues — making them strong and cheap on very long sequences where Transformers get expensive.</p></details>
+<details class="qa-item" data-cat="concept"><summary>One-to-many, many-to-one, seq2seq — how do I tell which I need?</summary><p>Count inputs vs outputs. One input, many outputs (image→caption) = one-to-many. Many inputs, one output (review→label) = many-to-one. Different-length in and out (translate) = seq2seq. Naming the shape picks the wiring.</p></details>
+<details class="qa-item" data-cat="practical"><summary>Truncated BPTT — what length should I pick?</summary><p>Long enough to span the dependencies that matter, short enough to fit memory and keep gradients sane — commonly 50–200 steps. Carry (and detach) the hidden state across chunks so memory persists without backpropagating through everything.</p></details>
+<details class="qa-item" data-cat="practical"><summary>My generated text is repetitive / too random — what knob?</summary><p>Temperature. Too repetitive → raise it (or use top-p sampling); too incoherent → lower it (or use beam search for tasks with a single right answer). Top-k/top-p give the best fluency/diversity balance.</p></details>
+<details class="qa-item" data-cat="practical"><summary>Should I always beat a naïve baseline first?</summary><p>Yes. For forecasting, "repeat last week" or a seasonal-naïve baseline is shockingly strong. If your LSTM can't beat it, the problem is data/framing, not architecture — fix that before scaling the model.</p></details>
+<details class="qa-item" data-cat="math"><summary>Why concatenate both directions in a BiLSTM?</summary><p>The forward pass encodes left-context, the backward pass right-context. Concatenating gives each position a representation informed by the whole sequence, which is why BiLSTMs excel at tagging and classification.</p></details>
+<details class="qa-item" data-cat="practical"><summary>How do I deploy an RNN for real-time streaming?</summary><p>Keep the hidden/cell state between calls and feed one new element at a time — constant time and memory per step. Quantise (INT8) for edge devices, and export via ONNX/TFLite, being careful to preserve the stateful loop.</p></details>
+<details class="qa-item" data-cat="concept"><summary>Does an RNN need embeddings for time-series?</summary><p>No — numeric features are already vectors; just scale/normalise them (on train stats). Embeddings are for discrete tokens (words, categories); you can embed categorical features (e.g. store id) and concatenate with numeric ones.</p></details>
+</section>
+<section class="section" id="glossary">
+<h2><span class="sec-no">30</span>Notation &amp; glossary</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Term</th><th>Meaning</th></tr></thead>
+<tbody>
+<tr><td><code class="inline">h<sub>t</sub></code></td><td>hidden state (memory) at step t</td></tr>
+<tr><td><code class="inline">C<sub>t</sub></code></td><td>LSTM cell state (the memory highway)</td></tr>
+<tr><td>BPTT</td><td>backpropagation through time</td></tr>
+<tr><td>Gate</td><td>a sigmoid unit (0–1) controlling information flow</td></tr>
+<tr><td>seq2seq</td><td>encoder–decoder model mapping one sequence to another</td></tr>
+<tr><td>Attention</td><td>weighted look-back over all encoder states</td></tr>
+<tr><td>Teacher forcing</td><td>feeding the true previous token during training</td></tr>
+<tr><td>Perplexity</td><td>exp(cross-entropy) — language-model "surprise"</td></tr>
+<tr><td>SSM</td><td>state-space model (e.g. Mamba) — a learned linear recurrence</td></tr>
+<tr><td>Exposure bias</td><td>train/test mismatch from teacher forcing</td></tr>
+<tr><td>CTC</td><td>connectionist temporal classification — alignment-free loss for speech/handwriting</td></tr>
+<tr><td>LSTM autoencoder</td><td>reconstruct-normal model; high error = anomaly</td></tr>
+<tr><td>Selective scan</td><td>Mamba's input-dependent linear recurrence, O(L)</td></tr>
+</tbody></table></div>
+</section>
+<section class="section" id="cheatsheet">
+<h2><span class="sec-no">31</span>Formula cheat-sheet</h2>
+<div class="table-wrap"><table>
+<thead><tr><th>Thing</th><th>Formula</th></tr></thead>
+<tbody>
+<tr><td>RNN step</td><td>h<sub>t</sub> = tanh(W<sub>x</sub>x<sub>t</sub> + W<sub>h</sub>h<sub>t-1</sub> + b)</td></tr>
+<tr><td>LSTM cell</td><td>C<sub>t</sub> = f<sub>t</sub>⊙C<sub>t-1</sub> + i<sub>t</sub>⊙g<sub>t</sub> ; h<sub>t</sub> = o<sub>t</sub>⊙tanh(C<sub>t</sub>)</td></tr>
+<tr><td>Gates</td><td>f,i,o = σ(W·[h<sub>t-1</sub>,x<sub>t</sub>]) ; g = tanh(W<sub>g</sub>·[…])</td></tr>
+<tr><td>GRU</td><td>two gates (reset, update); no separate cell state</td></tr>
+<tr><td>Attention</td><td>α = softmax(score(h<sub>dec</sub>, h<sub>enc</sub>)); ctx = Σ α·h<sub>enc</sub></td></tr>
+<tr><td>Perplexity</td><td>PPL = exp(mean cross-entropy)</td></tr>
+<tr><td>CTC</td><td>sum prob over all frame-labellings that collapse to target (blank token)</td></tr>
+<tr><td>SSM / Mamba</td><td>h<sub>t</sub>=A&#773;h<sub>t-1</sub>+B&#773;x<sub>t</sub>, y=Ch<sub>t</sub> ; selective Δ,B,C=f(x) ; O(L)</td></tr>
+<tr><td>Output dim (each step)</td><td>same recurrence regardless of sequence length</td></tr>
+</tbody></table></div>
+<div class="box good"><span class="bt">The one slide to remember</span>Memory = hidden state carried forward. Vanilla RNNs forget (vanishing gradients). LSTMs/GRUs add gated memory. seq2seq + attention maps sequence→sequence and led to Transformers. In 2026, recurrence is back via Mamba/RWKV for long, efficient context.</div>
+</section>
+<section class="section" id="references">
+<h2><span class="sec-no">32</span>References &amp; further reading</h2>
+<h3>Foundational papers</h3>
+<ul>
+<li>Elman (1990), <em>Finding Structure in Time</em> — the foundational simple RNN.</li>
+<li>Werbos (1990), <em>Backpropagation Through Time</em> — the learning algorithm.</li>
+<li>Hochreiter &amp; Schmidhuber (1997), <em>Long Short-Term Memory</em> — the LSTM.</li>
+<li>Bengio et al. (1994), <em>Learning long-term dependencies is difficult</em> — the vanishing-gradient analysis.</li>
+<li>Gers et al. (2000), <em>Learning to Forget</em> — the forget gate.</li>
+</ul>
+<h3>Sequence-to-sequence &amp; attention</h3>
+<ul>
+<li>Sutskever, Vinyals &amp; Le (2014), <em>Sequence to Sequence Learning</em>.</li>
+<li>Cho et al. (2014), <em>GRU / encoder–decoder for SMT</em>.</li>
+<li>Bahdanau, Cho &amp; Bengio (2014), <em>Neural MT by Jointly Learning to Align and Translate</em> — additive attention.</li>
+<li>Luong et al. (2015), <em>Effective Approaches to Attention</em> — multiplicative attention.</li>
+<li>Vaswani et al. (2017), <em>Attention Is All You Need</em> — the Transformer.</li>
+</ul>
+<h3>The 2026 recurrence revival</h3>
+<ul>
+<li>Gu, Goel &amp; Ré (2022), <em>S4 — Efficiently Modeling Long Sequences with Structured State Spaces</em>.</li>
+<li>Gu &amp; Dao (2023), <em>Mamba — Linear-Time Sequence Modeling with Selective State Spaces</em>.</li>
+<li>Peng et al. (2023), <em>RWKV — Reinventing RNNs for the Transformer Era</em>.</li>
+</ul>
+<h3>Intuition &amp; tutorials</h3>
+<ul>
+<li>Karpathy, <em>The Unreasonable Effectiveness of Recurrent Neural Networks</em> (blog) — still the best intuition read.</li>
+<li>Olah, <em>Understanding LSTM Networks</em> (colah's blog) — the classic visual explainer.</li>
+<li>Goodfellow, Bengio &amp; Courville, <em>Deep Learning</em> (2016), ch. 10 — sequence modelling, rigorous treatment.</li>
+</ul>
+</section></main>
+</div>
+<footer class="foot"><p><strong>RNN Reference</strong> — part of the Foundations study series. Pairs with the <a href="1_rnn_primer.html">Visual Primer</a> (start here if it's new) and the <a href="3_rnn_projects.html">Projects</a> guide (build it yourself). Builds on the <a href="../ann/2_neural_network_foundations.html">Neural-Network Foundations</a> guide. Quick revision: the <a href="4_rnn_field_card.html">Field Card</a>.</p><p>Math derived from first principles · code verified against current 2026 APIs (PyTorch 2.11).</p></footer>
+
+
+<button class="totop" id="toTop" onclick="scrollTop()" aria-label="Back to top">↑</button>
+
+<div class="zoom-overlay" id="zoomOverlay" onclick="closeZoom()">
+<button class="zoom-close" onclick="closeZoom()" aria-label="Close">×</button>
+<div id="zoomHolder"></div>
+</div>
+
+<script>
+// ===== THEME (localStorage wrapped) =====
+(function(){
+  var KEY='vidyalaya-theme';
+  try{var s=localStorage.getItem(KEY);if(s)document.documentElement.setAttribute('data-theme',s);}catch(e){}
+  window.toggleTheme=function(){
+    var cur=document.documentElement.getAttribute('data-theme')==='light'?'dark':'light';
+    document.documentElement.setAttribute('data-theme',cur);
+    try{localStorage.setItem(KEY,cur);}catch(e){}
+    var b=document.getElementById('themeBtn');if(b)b.textContent=cur==='light'?'🌙 Dark':'☀️ Light';
+  };
+})();
+// ===== TOC DRAWER =====
+function toggleTOC(){
+  var t=document.getElementById('toc'),b=document.getElementById('backdrop');
+  if(!t)return;t.classList.toggle('open');if(b)b.classList.toggle('show');
+}
+function closeTOC(){
+  var t=document.getElementById('toc'),b=document.getElementById('backdrop');
+  if(t)t.classList.remove('open');if(b)b.classList.remove('show');
+}
+// ===== COPY =====
+function copyCode(btn){
+  var pre=btn.closest('.code-block').querySelector('pre');
+  var txt=pre.innerText;
+  navigator.clipboard.writeText(txt).then(function(){
+    var o=btn.textContent;btn.textContent='✓ Copied';setTimeout(function(){btn.textContent=o;},1500);
+  }).catch(function(){
+    var o=btn.textContent;btn.textContent='⌘C to copy';setTimeout(function(){btn.textContent=o;},1500);
+  });
+}
+// ===== TABS =====
+function switchTab(group,id){
+  var nav=document.querySelector('[data-tabgroup="'+group+'"]');
+  if(nav){nav.querySelectorAll('button').forEach(function(b){b.classList.remove('active');});
+    var ab=nav.querySelector('[data-target="'+id+'"]');if(ab)ab.classList.add('active');}
+  var sel=document.querySelectorAll('[data-tabpanel="'+group+'"]');
+  sel.forEach(function(p){p.classList.remove('active');});
+  var t=document.getElementById(id);if(t)t.classList.add('active');
+}
+// ===== Q&A FILTER =====
+function filterQA(cat,btn){
+  document.querySelectorAll('.qa-filters button').forEach(function(b){b.classList.remove('active');});
+  if(btn)btn.classList.add('active');
+  document.querySelectorAll('.qa-item').forEach(function(it){
+    var ic=it.getAttribute('data-cat')||'',itier=it.getAttribute('data-tier')||'';
+    var show=(cat==='all')||(ic.indexOf(cat)>-1)||(itier===cat);
+    it.style.display=show?'':'none';
+  });
+}
+// ===== ZOOM =====
+function zoomViz(btn){
+  var svg=btn.closest('.viz-container').querySelector('svg').cloneNode(true);
+  var ov=document.getElementById('zoomOverlay');
+  var holder=document.getElementById('zoomHolder');
+  holder.innerHTML='';holder.appendChild(svg);ov.classList.add('show');
+}
+function closeZoom(){document.getElementById('zoomOverlay').classList.remove('show');}
+// ===== ACTIVE SECTION + BACK TO TOP =====
+document.addEventListener('DOMContentLoaded',function(){
+  var links=[].slice.call(document.querySelectorAll('.toc a'));
+  var map={};links.forEach(function(a){var h=a.getAttribute('href');if(h&&h.charAt(0)==='#')map[h.slice(1)]=a;});
+  var secs=[].slice.call(document.querySelectorAll('section.section'));
+  if('IntersectionObserver' in window){
+    var obs=new IntersectionObserver(function(es){
+      es.forEach(function(e){
+        if(e.isIntersecting){
+          links.forEach(function(a){a.classList.remove('active');});
+          var a=map[e.target.id];if(a){a.classList.add('active');}
+        }
+      });
+    },{rootMargin:'-40% 0px -55% 0px'});
+    secs.forEach(function(s){obs.observe(s);});
+  }
+  var tt=document.getElementById('toTop');
+  window.addEventListener('scroll',function(){
+    if(tt){if(window.scrollY>600)tt.classList.add('show');else tt.classList.remove('show');}
+  },{passive:true});
+  // close drawer on link tap (mobile)
+  links.forEach(function(a){a.addEventListener('click',function(){if(window.innerWidth<=1250)closeTOC();});});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape'){closeZoom();closeTOC();}});
+});
+function scrollTop(){window.scrollTo({top:0,behavior:'smooth'});}
+</script>
+</body>
+</html>

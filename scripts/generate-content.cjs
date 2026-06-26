@@ -16,6 +16,8 @@ const TOPIC_DESCRIPTIONS = {
   forecasting: 'Predict future demand from past patterns — baselines to real methods.',
   boosting_and_bagging: 'Combine many weak models into one strong one — bagging, forests, and boosting.',
   linear_and_logistic: 'The two workhorse models — predicting numbers and predicting classes.',
+  cnn: 'The standard architecture for images — convolutions, pooling, and learned features from pixels to patterns.',
+  rnn: 'Process sequences with memory — from time series to text, LSTMs, GRUs, and beyond.',
 };
 
 function toTitleCase(str) {
@@ -79,16 +81,15 @@ function collectAllHtmlFiles(dir) {
   return files;
 }
 
-function validateContentStructure(dir) {
+function validateContentStructure(dir, allHtml) {
   if (!existsSync(dir)) return;
 
-  const allHtml = collectAllHtmlFiles(dir);
   const entries = readdirSync(dir, { withFileTypes: true });
 
   for (const entry of entries) {
     const srcPath = join(dir, entry.name);
     if (entry.isDirectory()) {
-      validateContentStructure(srcPath);
+      validateContentStructure(srcPath, allHtml);
       continue;
     }
     if (!entry.name.endsWith('.html')) continue;
@@ -125,7 +126,8 @@ function validateContentStructure(dir) {
     for (const m of linkMatches) {
       const hrefFile = m[1];
       if (hrefFile.includes('://')) continue; // external URL, skip
-      if (!allHtml.has(hrefFile)) {
+      const filename = hrefFile.split('/').pop(); // strip directory prefix, e.g. "../ann/foo.html" → "foo.html"
+      if (!allHtml.has(filename)) {
         throw new Error(`${srcPath}: broken cross-lesson link href="${hrefFile}" — file not found under content/`);
       }
     }
@@ -208,7 +210,8 @@ function copyContentToPublic(srcDir, destDir) {
 
 console.log('Scanning content/ folder...');
 validateContentIds(CONTENT_DIR);
-validateContentStructure(CONTENT_DIR);
+const allHtml = collectAllHtmlFiles(CONTENT_DIR);
+validateContentStructure(CONTENT_DIR, allHtml);
 const { topics, manifest } = scanContentDir(CONTENT_DIR);
 
 writeFileSync(MANIFEST_PATH, JSON.stringify({ topics, topicMeta: manifest }, null, 2));
